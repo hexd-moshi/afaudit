@@ -1,0 +1,178 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="serveId"/>
+
+    <transition name="findServeLine">
+        <default-response url="."/></transition>
+    <transition name="createServeLine">
+        <default-response url="../EditServeLine"/>
+    </transition>
+    <transition name="editServeLine">
+        <default-response url="../EditServeLine"/>
+    </transition>
+    <transition name="deleteServeLine">
+        <actions>
+            <service-call name="delete#afaudit.ServeLine" in-map="[serveLineId:serveLineId]"/>
+        </actions>
+        <default-response url="."/>
+    </transition>
+    <transition name="getServeId">
+        <service-call name="afaudit.afauditServices.get#ServeIds" in-map="[customerId:customerId]"/>
+
+        <default-response type="none"/>
+    </transition>
+    <transition name="getChecklistId">
+        <service-call name="afaudit.afauditServices.get#ChecklistIds" in-map="[customerId:customerId]"/>
+
+        <default-response type="none"/>
+    </transition>
+    <transition name="importServeLine">
+        <actions>
+            <if condition="!serveId">
+                <message error="true">Fields of Serve Id is required</message><return/></if>
+            <entity-find-one entity-name="afaudit.Serve" value-field="serve">
+                <field-map field-name="serveId" from="serveId"/></entity-find-one>
+            <entity-find entity-name="afaudit.ViewChecklist" list="checklistList">
+                <econdition field-name="customerId" from="customerId"/><econdition field-name="serveTypeRefId" from="serve.serveTypeRefId"/>
+                <econdition field-name="active" value="1"/><order-by field-name="-checklistVersion"/></entity-find>
+
+            <if condition="!checklistList">
+                <message error="true">No matched Checklist for Serve Type</message><return/></if>
+            <set field="checklistId" from="checklistList.checklistId[0]"/>
+
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                import org.moqui.util.StringUtilities
+                import org.apache.poi.hssf.usermodel.HSSFRow
+                import org.apache.poi.hssf.usermodel.HSSFSheet
+                import org.apache.poi.hssf.usermodel.HSSFWorkbook
+                import org.apache.poi.poifs.filesystem.POIFSFileSystem
+
+                org.moqui.context.ExecutionContext ec = context.ec
+                org.apache.commons.fileupload.FileItem contentFile = context.importFile
+                String fileName = contentFile.getName()
+
+                if(fileName.length() != 0){
+                    InputStream fileStream = contentFile.getInputStream()
+
+                    POIFSFileSystem fs = new POIFSFileSystem(fileStream)
+                    HSSFWorkbook wb = new HSSFWorkbook(fs)
+                    HSSFSheet sheet = wb.getSheetAt(0)
+
+                    //ec.entity.find("afaudit.Store").condition("serveId", serveId).condition("checklistId", checklistId).deleteAll()
+
+                    HSSFRow row;
+	                String serveLineNo; String fromDate; String thruDate; String remark;
+                    for(int rownum = sheet.getFirstRowNum()+1; rownum <= sheet.getLastRowNum(); rownum++){
+                        row = sheet.getRow(rownum);
+                        serveLineNo = row.getCell(1).getStringCellValue();
+                        fromDate = row.getCell(3).getStringCellValue();
+                        thruDate = row.getCell(4).getStringCellValue();
+                        remark = row.getCell(5).getStringCellValue();
+
+                        EntityValue serveLine = ec.entity.find("afaudit.ServeLine").condition("serveId", serveId).condition("serveLineNo", serveLineNo).one()
+                        if(!serveLine){
+                            ec.service.sync().name("create", "afaudit.ServeLine").parameters([serveId:serveId, serveLineNo:serveLineNo, checklistId:checklistId, fromDate:fromDate, thruDate:thruDate, remark:remark]).call()
+                        }
+                    }
+
+                    fileStream.close()
+                }
+            ]]></script>
+        </actions>
+        <default-response url="."/>
+    </transition>
+
+    <actions>
+        <if condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')">
+            <entity-find entity-name="afaudit.ViewServeLine" list="serveLineList">
+                <search-form-inputs default-order-by="serveId,fromDate"/></entity-find>
+        <else>
+            <entity-find entity-name="afaudit.ViewServeLine" list="serveLineList">
+                <search-form-inputs default-order-by="serveId,fromDate"/>
+                <econdition field-name="kaId" from="ec.user.userId"/></entity-find>
+        </else></if>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <container-dialog id="FindServeLineDialog" button-text="Find">
+                    <form-single name="FindServeLine" transition="findServeLine">
+                        <field name="serveLineId"><default-field title="ID"><text-find/></default-field></field>
+                        <field name="customerId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer"/></entity-options>
+                            </drop-down></default-field></field>
+                        <field name="serveId"><default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getServeId" label-field="serveIdTemplate" value-field="serveId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down></default-field></field>
+                        <field name="serveLineNo"><default-field><text-find/></default-field></field>
+                        <field name="checklistId"><default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getChecklistId" label-field="checklistIdTemplate" value-field="checklistId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down></default-field></field>
+                        <field name="fromDate"><default-field><date-find type="date"/></default-field></field>
+                        <field name="thruDate"><default-field><date-find type="date"/></default-field></field>
+                        <field name="remark"><default-field><text-find/></default-field></field>
+                        <field name="findButton"><default-field title="Find"><submit icon="glyphicon glyphicon-search"/></default-field></field>
+                    </form-single>
+                </container-dialog>
+                <link url="createServeLine" text="Create" link-type="hidden-form" icon="glyphicon glyphicon-plus"/>
+                <container-dialog id="ImportServeLineDialog" button-text="Import">
+                    <form-single name="ImportServeLine" transition="importServeLine">
+                        <field name="customerId">
+                            <conditional-field condition="ec.user.isInGroup('afaudit_KA')">
+                                <drop-down allow-empty="true">
+                                    <entity-options text="CustomerIdTemplate">
+                                        <entity-find entity-name="afaudit.Customer">
+                                            <econdition field-name="kaId" from="ec.user.userId"/></entity-find></entity-options>
+                                </drop-down><label text="*" style="label-red"/></conditional-field>
+                            <default-field>
+                                <drop-down allow-empty="true">
+                                    <entity-options text="CustomerIdTemplate">
+                                        <entity-find entity-name="afaudit.Customer"/></entity-options>
+                                </drop-down><label text="*" style="label-red"/></default-field></field>
+                        <field name="serveId"><default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getServeId" label-field="serveIdTemplate" value-field="serveId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                        <field name="importFile"><default-field><file/></default-field></field>
+                        <field name="submitButton"><default-field title="OK"><submit icon="glyphicon glyphicon-ok" confirmation="${ec.l10n.localize('Really Import?')}"/></default-field></field>
+                    </form-single>
+                    <section name="Template"><widgets>
+                        <label text=" ${ec.l10n.localize('Template file link')} : "/><link url="../templateServeLine.xls" text="templateServeLine.xls" target-window="_blank" link-type="anchor"/>
+                    </widgets></section>
+                </container-dialog>
+            </container>
+
+            <form-list name="ListServeLine" list="serveLineList" show-text-button="true">
+                <auto-fields-entity entity-name="afaudit.ServeLine" field-type="display">
+                    <exclude field-name="lastUpdatedStamp"/></auto-fields-entity>
+                <field name="serveLineId"><header-field title="ID"/><default-field>
+                    <link text="${serveLineId}" url="editServeLine" link-type="anchor-button" icon="glyphicon glyphicon-chevron-right"/>
+                    <link url="../../ServeLineStore/FindServeLineStore" text="Store" icon="glyphicon glyphicon-tasks" parameter-map="[serveLineId:serveLineId]"/>
+                </default-field></field>
+                <field name="serveId"><default-field>
+                    <display-entity entity-name="afaudit.ViewServe" text="ServeIdTemplate" key-field-name="serveId"/>
+                </default-field></field>
+                <field name="checklistId"><default-field>
+                    <display-entity entity-name="afaudit.ViewChecklist" text="ChecklistIdTemplate" key-field-name="checklistId"/>
+                </default-field></field>
+                <field name="delete"><default-field title="">
+                    <link url="deleteServeLine" text="Delete" icon="glyphicon glyphicon-remove" confirmation="${ec.l10n.localize('Really Delete?')}" parameter-map="[serveLineId:serveLineId]"/>
+                </default-field></field>
+            </form-list>
+        </container>
+
+    </widgets>
+</screen>

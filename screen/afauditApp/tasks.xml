@@ -1,0 +1,22 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <actions>
+        <if condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')">
+            <entity-find entity-name="afaudit.ViewServeLineStore" list="viewServeLineStoreList">
+                <econdition field-name="checklistStatus" operator="in" value="20,30,35"/>
+                <order-by field-name="serveLineId"/></entity-find>
+        <else>
+            <entity-find entity-name="afaudit.ViewServeLineStore" list="viewServeLineStoreList">
+                <econdition field-name="auditorId" from="ec.user.userId"/>
+                <econdition field-name="checklistStatus" operator="in" value="20,30,35"/>
+                <order-by field-name="serveLineId"/></entity-find>
+        </else></if>
+    </actions>
+
+    <widgets>
+        <render-mode>
+            <text type="html" location="component://afaudit/screen/afauditApp/tasks.html.ftl"/></render-mode>
+    </widgets>
+
+</screen>

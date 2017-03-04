@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/service-definition-2.0.xsd">
+
+    <service verb="fill" noun="Checklist">
+        <in-parameters>
+            <parameter name="serveLineStoreId" required="true"/>
+            <parameter name="viewAuditCheckItem" type="Map" required="true"/>
+            <parameter name="viewServeLineStore" type="Map" required="true"/>
+            <parameter name="viewAuditCheckItemList" type="List" required="true"/>
+            <parameter name="attachment" type="Map" required="true"/>
+        </in-parameters>
+
+        <actions>
+            <entity-find entity-name="afaudit.Attachment" list="attachmentList">
+                <econdition field-name="attachmentType" value="ServeLineStore-AuditConfirm"/>
+                <econdition field-name="dataId" from="serveLineStoreId"/>
+                <order-by field-name="attachmentId"/>
+            </entity-find>
+            <entity-find entity-name="afaudit.ViewCheckItemAttachment" list="checkItemAttachmentList">
+                <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
+                <order-by field-name="dataId"/>
+            </entity-find>
+
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                import org.moqui.util.StringUtilities
+                import org.apache.poi.xssf.usermodel.XSSFRow
+                import org.apache.poi.xssf.usermodel.XSSFSheet
+                import org.apache.poi.xssf.usermodel.XSSFWorkbook
+                import org.apache.poi.openxml4j.opc.OPCPackage
+                import org.apache.poi.ss.usermodel.ClientAnchor;
+                import org.apache.poi.ss.usermodel.CreationHelper;
+                import org.apache.poi.ss.usermodel.Drawing;
+                import org.apache.poi.ss.usermodel.Picture;
+
+                org.moqui.context.ExecutionContext ec = context.ec
+
+                ResourceReference newRr = ec.resource.getLocationReference(attachment.attachmentLocation)
+                InputStream resourceInputStream = newRr.openStream()
+
+                OPCPackage fs = OPCPackage.open(resourceInputStream)
+                XSSFWorkbook wb = new XSSFWorkbook(fs)
+
+                HashMap map; HashMap mapMonth; XSSFSheet sheet; XSSFRow row;
+                int beginRow; int beginCol; int itemNoCol; int selfCol; int jointCol; int providerCol; int defectCol;
+                String operation; String checkGroup;
+
+                Iterator it = viewAuditCheckItemList.iterator()
+                while(it.hasNext()){
+                    map = it.next()
+
+                    checkGroup = map.get("checkGroup")
+                    sheet = wb.getSheet(checkGroup)
+
+                    if("检查1".indexOf(checkGroup) >=0 ){
+                        beginRow = 1; itemNoCol = 0; defectCol = 2; beginCol = 3;
+                        for(int rownum = beginRow; rownum <= sheet.getLastRowNum(); rownum++){
+                            row = sheet.getRow(rownum);
+                            if(row.getCell(itemNoCol).getStringCellValue().equals(map.get("itemNo"))){
+                                row.getCell(defectCol).setCellValue(map.get("defect")==0 ? "是":"否")
+
+                                Iterator itCheckItemAttachment = checkItemAttachmentList.iterator()
+                                while(itCheckItemAttachment.hasNext()){
+                                    HashMap mapCheckItemAttachment =  itCheckItemAttachment.next()
+
+                                    if(mapCheckItemAttachment.get("dataId").equals(map.get("serveLineStoreCheckItemId"))){
+
+                                        newRr = ec.resource.getLocationReference(mapCheckItemAttachment.get("attachmentLocation"))
+                                        InputStream is = newRr.openStream()
+
+                                        byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
+                                        int pictureIdx = wb.addPicture(bytes, XSSFWorkbook.PICTURE_TYPE_JPEG);
+                                        is.close();
+
+                                        CreationHelper helper = wb.getCreationHelper();
+                                        Drawing drawing = sheet.createDrawingPatriarch();
+                                        ClientAnchor anchor = helper.createClientAnchor();
+                                        anchor.setCol1(beginCol);
+                                        anchor.setRow1(rownum);
+                                        Picture pict = drawing.createPicture(anchor, pictureIdx);
+                                        pict.resize();
+
+                                        break;
+                                    }
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+                    sheet.setForceFormulaRecalculation(true);
+                }
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                wb.write(bos)
+                resourceInputStream.close()
+                ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+                String fileName = "Checklist_" + viewServeLineStore.shortName + "_" + viewServeLineStore.storeName + "_" + viewServeLineStore.auditDate + "(" + serveLineStoreId + ")" + ".xlsx"
+                String attachmentType = "ServeLineStore-Checklist"
+                String attachmentLocation = "dbresource://afauditApp/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+                String attachmentUrl = ec.web.getWebappRootUrl(true, null) + "/apps/afauditApp/rest/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+
+                newRr = ec.resource.getLocationReference(attachmentLocation)
+                newRr.putStream(bis)
+                bos.close()
+                bis.close()
+
+                ec.service.sync().name("create", "afaudit.Attachment").parameters([attachmentType: attachmentType, dataId: serveLineStoreId, attachmentLocation: attachmentLocation, attachmentUrl: attachmentUrl]).call()
+
+            ]]></script>
+        </actions>
+    </service>
+</services>

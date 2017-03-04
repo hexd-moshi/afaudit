@@ -1,0 +1,38 @@
+.project-afaudit .btn.btn-primary.btn-sm {
+    width: 100px;
+}
+.label-red{
+    color: #ff0000;
+    font-size: 25px;
+}
+@media screen and (max-width: 400px){
+    .app-list-link{
+        width: 100%;
+    }
+}
+#apps-footer-content {
+    /*display: none;*/
+}
+/*.btn-primary {*/
+    /*color: #fff;*/
+    /*background-color: #f60;*/
+    /*border-color: #f60;*/
+/*}*/
+/*.btn-primary:focus,*/
+/*.btn-primary.focus {*/
+    /*color: #fff;*/
+    /*background-color: #f60;*/
+    /*border-color: #f60;*/
+/*}*/
+/*.btn-primary:hover {*/
+    /*color: #fff;*/
+    /*background-color: #f60;*/
+    /*border-color: #f60;*/
+/*}*/
+/*.btn-primary:active,*/
+/*.btn-primary.active,*/
+/*.open > .dropdown-toggle.btn-primary {*/
+    /*color: #fff;*/
+    /*background-color: #f60;*/
+    /*border-color: #f60;*/
+/*}*/

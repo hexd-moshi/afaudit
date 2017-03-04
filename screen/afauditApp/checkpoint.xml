@@ -1,0 +1,115 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd" >
+
+    <parameter name="serveLineStoreId" from="serveLineStoreId" required="true"/>
+    <parameter name="checkItemId" from="checkItemId" required="true"/>
+    <parameter name="fromScreen" required="true"/>
+    <parameter name="serveLineStoreCheckItemId"/>
+
+    <transition name="save">
+        <actions>
+            <if condition="defect">
+                <if condition="serveLineStoreCheckItemId">
+                    <service-call name="update#afaudit.ServeLineStoreCheckItem" in-map="context"/>
+                    <else>
+                        <service-call name="create#afaudit.ServeLineStoreCheckItem" in-map="context" out-map="context"/>
+                    </else></if>
+            </if>
+        </actions>
+        <default-response url=".">
+            <parameter name="serveLineStoreId" from="serveLineStoreId"/>
+            <parameter name="checkItemId" from="checkItemId"/>
+            <parameter name="fromScreen" from="fromScreen"/>
+            <parameter name="serveLineStoreCheckItemId" from="serveLineStoreCheckItemId"/>
+        </default-response>
+    </transition>
+    <transition name="uploadPhoto">
+        <actions>
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                import org.moqui.util.StringUtilities
+
+                org.moqui.context.ExecutionContext ec = context.ec
+                org.apache.commons.fileupload.FileItem contentFile = context.uploaderInput
+                String fileName = contentFile.getName()
+
+                if((fileName.length() == 0) || (contentFile.getSize() > (256 * 1024))){
+                    ec.logger.warn("File name is empty or File size limit exceeded 256K")
+                    return
+                }
+
+                fileName = StringUtilities.getRandomString(5)+ '_' + fileName
+                String attachmentLocation = "dbresource://afauditApp/attachment/ServeLineStoreCheckItem-Photo/${serveLineStoreCheckItemId}/${fileName}"
+                String attachmentUrl = ec.web.getWebappRootUrl(true, null) + "/apps/afauditApp/rest/attachment/ServeLineStoreCheckItem-Photo/${serveLineStoreCheckItemId}/${fileName}"
+
+                ResourceReference newRr = ec.resource.getLocationReference(attachmentLocation)
+                InputStream fileStream = contentFile.getInputStream()
+                newRr.putStream(fileStream)
+                fileStream.close()
+
+                ec.service.sync().name("create", "afaudit.Attachment").parameters([attachmentType:"ServeLineStoreCheckItem-Photo", dataId: serveLineStoreCheckItemId, attachmentLocation: attachmentLocation, attachmentUrl: attachmentUrl]).call()
+            ]]></script>
+        </actions>
+        <default-response url="."/>
+    </transition>
+    <transition name="deletePhoto">
+        <actions>
+            <entity-find-one entity-name="afaudit.Attachment" value-field="attachment">
+                <field-map field-name="attachmentId" from="attachmentId"/>
+            </entity-find-one>
+
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                org.moqui.context.ExecutionContext ec = context.ec
+                ResourceReference newRr = ec.resource.getLocationReference("${attachment.attachmentLocation}")
+                newRr.delete()
+            ]]></script>
+
+            <service-call name="delete#afaudit.Attachment" in-map="[attachmentId:attachmentId]"/>
+        </actions>
+        <default-response url="."/>
+    </transition>
+
+    <actions>
+        <if condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')">
+        <else>
+            <entity-find-count entity-name="afaudit.ViewServeLineStore" count-field="count">
+                <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
+                <econdition field-name="auditorId" from="ec.user.userId"/>
+                <econdition field-name="checklistStatus" operator="in" value="20,30,35"/>
+            </entity-find-count>
+            <if condition="count == 0">
+                <message error="true">No permission</message><return/></if>
+        </else></if>
+
+        <entity-find-one entity-name="afaudit.ViewServeLineStoreCheckItem" value-field="viewCheckItem">
+            <field-map field-name="serveLineStoreId" from="serveLineStoreId"/>
+            <field-map field-name="checkItemId" from="checkItemId"/>
+        </entity-find-one>
+
+        <if condition="serveLineStoreCheckItemId">
+            <entity-find-one entity-name="afaudit.ServeLineStoreCheckItem" value-field="checkItem">
+                <field-map field-name="serveLineStoreCheckItemId"/>
+            </entity-find-one>
+
+            <entity-find entity-name="afaudit.Attachment" list="attachmentList">
+                <econdition field-name="attachmentType" value="ServeLineStoreCheckItem-Photo"/>
+                <econdition field-name="dataId" from="serveLineStoreCheckItemId"/>
+            </entity-find>
+        </if>
+
+        <entity-find-one entity-name="afaudit.Reference" value-field="referenceCustomer">
+            <field-map field-name="referenceId" from="viewCheckItem.customerRefId"/>
+        </entity-find-one>
+        <entity-find-one entity-name="afaudit.Reference" value-field="referenceDisplayFields">
+            <field-map field-name="enterprise" from="referenceCustomer.attribute"/>
+            <field-map field-name="category" value="DisplayFields"/>
+            <field-map field-name="attribute" value="Checkpoint"/>
+        </entity-find-one>
+    </actions>
+
+    <widgets>
+        <render-mode>
+            <text type="html" location="component://afaudit/screen/afauditApp/checkpoint.html.ftl"/></render-mode>
+    </widgets>
+</screen>

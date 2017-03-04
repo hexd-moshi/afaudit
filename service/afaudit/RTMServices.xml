@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/service-definition-2.0.xsd">
+
+    <service verb="fill" noun="Checklist">
+        <in-parameters>
+            <parameter name="serveLineStoreId" required="true"/>
+            <parameter name="viewAuditCheckItem" type="Map" required="true"/>
+            <parameter name="viewServeLineStore" type="Map" required="true"/>
+            <parameter name="viewAuditCheckItemList" type="List" required="true"/>
+            <parameter name="attachment" type="Map" required="true"/>
+        </in-parameters>
+
+        <actions>
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                import org.moqui.util.StringUtilities
+                import org.apache.poi.hssf.usermodel.HSSFRow
+                import org.apache.poi.hssf.usermodel.HSSFSheet
+                import org.apache.poi.hssf.usermodel.HSSFWorkbook
+                import org.apache.poi.poifs.filesystem.POIFSFileSystem
+
+                org.moqui.context.ExecutionContext ec = context.ec
+
+                ResourceReference newRr = ec.resource.getLocationReference(attachment.attachmentLocation)
+                InputStream resourceInputStream = newRr.openStream()
+
+                POIFSFileSystem fs = new POIFSFileSystem(resourceInputStream)
+                HSSFWorkbook wb = new HSSFWorkbook(fs)
+
+                HashMap map; HashMap mapMonth; HSSFSheet sheet; HSSFRow row;
+                int currentMonth; int beginRow; int beginCol; int itemNoCol; int selfCol; int jointCol; int defectCol; int actionCol;
+                String operation;
+                def auditTypes = ["Normal", "Morning", "Night", "ReAudit", "Festival"];
+
+                sheet = wb.getSheet("封面")
+                sheet.getRow(6).getCell(2).setCellValue(viewServeLineStore.storeName)
+                sheet.getRow(7).getCell(2).setCellValue(viewServeLineStore.region + "(" + viewServeLineStore.location + ")")
+                sheet.getRow(8).getCell(2).setCellValue(viewServeLineStore.storeCode)
+                sheet.getRow(10).getCell(2).setCellValue(viewServeLineStore.serveLineNo)
+                sheet.getRow(11).getCell(2).setCellValue(viewServeLineStore.auditDate)
+                sheet.getRow(12).getCell(2).setCellValue(auditTypes[(int)(viewServeLineStore.auditType-1)])
+                sheet.getRow(13).getCell(2).setCellValue(viewServeLineStore.auditor)
+                sheet.getRow(14).getCell(2).setCellValue(viewServeLineStore.reviewer)
+                sheet.getRow(15).getCell(2).setCellValue(viewServeLineStore.ka)
+
+                Iterator it = viewAuditCheckItemList.iterator()
+                while(it.hasNext()){
+                    map = it.next()
+
+                    sheet = wb.getSheet(map.get("checkGroup"))
+
+                    beginCol = 5; beginRow = 5; itemNoCol = 1; selfCol = 17; jointCol = 18; defectCol = 19; actionCol = 20;
+                    if(map.get("checkGroup").equals("管理评估-收货区")){beginRow = 4; selfCol = -1; jointCol = -1; defectCol = 17; actionCol = 18;}
+                    if(map.get("checkGroup").equals("管理评估-其他")){beginRow = 4; selfCol = -1; jointCol = -1; defectCol = 17; actionCol = 18;}
+                    if(map.get("checkGroup").equals("生鲜改进")){beginRow = 2; selfCol = -1; jointCol = -1; defectCol = 17; actionCol = 18;}
+                    if(map.get("checkGroup").equals("员工餐厅")){beginRow = 2; selfCol = -1; jointCol = -1; defectCol = 17; actionCol = 18;}
+
+                    row = sheet.getRow(beginRow)
+                    if(!mapMonth){
+                        mapMonth = new HashMap()
+                        for(int colnum = beginCol; colnum < beginCol + 12; colnum++){
+                            if(row.getCell(colnum).getStringCellValue().equals("一月")){mapMonth.put(0, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("二月")){mapMonth.put(1, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("三月")){mapMonth.put(2, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("四月")){mapMonth.put(3, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("五月")){mapMonth.put(4, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("六月")){mapMonth.put(5, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("七月")){mapMonth.put(6, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("八月")){mapMonth.put(7, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("九月")){mapMonth.put(8, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("十月")){mapMonth.put(9, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("十一月")){mapMonth.put(10, colnum); continue}
+                            if(row.getCell(colnum).getStringCellValue().equals("十二月")){mapMonth.put(11, colnum); continue}
+                        }
+
+                        currentMonth = mapMonth.get(viewAuditCheckItem.fromDate.getMonth())
+                    }
+
+                    for(int rownum = beginRow + 2; rownum <= sheet.getLastRowNum(); rownum++){
+                        row = sheet.getRow(rownum);
+
+                        if(row.getCell(itemNoCol).getStringCellValue().equals(map.get("itemNo"))){
+                            int col = mapMonth.get(map.get("fromDate").getMonth())
+                            row.getCell(col).setCellValue(row.getCell(col).getNumericCellValue() + map.get("defect"))
+
+                            if(currentMonth == col){
+                                operation = ""
+
+                                if(selfCol > 0){
+                                    if(map.get("operation").equals("Self-Operation")){
+                                        operation = " [Self]"
+                                        row.getCell(selfCol).setCellValue(row.getCell(selfCol).getNumericCellValue() + map.get("defect"))}
+                                    else{
+                                        operation = " [Joint]"
+                                        row.getCell(jointCol).setCellValue(row.getCell(jointCol).getNumericCellValue() + map.get("defect"))}
+                                }
+
+                                String val1 = row.getCell(defectCol).getStringCellValue(); if(val1){val1 = val1 + ";\r\n"}
+                                if(map.get("defectRemark")){
+                                    row.getCell(defectCol).setCellValue(val1 + map.get("defectRemark") + operation)
+                                }
+
+                                String val2 = row.getCell(actionCol).getStringCellValue(); if(val2){val2 = val2 + ";\r\n"}
+                                if(map.get("actionRemark")){
+                                    row.getCell(actionCol).setCellValue(val2 + map.get("actionRemark") + operation)
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    sheet.setForceFormulaRecalculation(true);
+                }
+
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                wb.write(bos)
+                resourceInputStream.close()
+                ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+                //def checklistStatus = ["Created", "Planned", "Auditing", "Audited", "Reviewed", "Finished"]
+                //String fileName = "Checklist_" + viewServeLineStore.storeName + "_" + viewServeLineStore.auditDate + "(" + serveLineStoreId + ")" + checklistStatus[(int)(viewServeLineStore.checklistStatus - 1)] + ".xls"
+
+                String fileName = "Checklist_" + viewServeLineStore.shortName + "_" + viewServeLineStore.storeName + "_" + viewServeLineStore.auditDate + "(" + serveLineStoreId + ")" + ".xls"
+                String attachmentType = "ServeLineStore-Checklist"
+                String attachmentLocation = "dbresource://afauditApp/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+                String attachmentUrl = ec.web.getWebappRootUrl(true, null) + "/apps/afauditApp/rest/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+
+                newRr = ec.resource.getLocationReference(attachmentLocation)
+                newRr.putStream(bis)
+                bos.close()
+                bis.close()
+
+                ec.service.sync().name("create", "afaudit.Attachment").parameters([attachmentType: attachmentType, dataId: serveLineStoreId, attachmentLocation: attachmentLocation, attachmentUrl: attachmentUrl]).call()
+
+            ]]></script>
+        </actions>
+    </service>
+</services>

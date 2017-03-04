@@ -1,0 +1,44 @@
+Release Notes
+
+-------------------------------------------------
+1.0.24-alpha
+
+1. Add AF Audit Web for Customer
+-------------------------------------------------
+1.0.23-alpha
+
+1. Audit date is created by system if Auditor
+-------------------------------------------------
+1.0.22-alpha
+
+1. New template for Customer CRV
+2. Update Summary template for CRV
+3. Summary file name include checklist status
+-------------------------------------------------
+1.0.21-alpha
+
+1. Fix bugs in ServeLine function
+-------------------------------------------------
+1.0.20-alpha
+
+1. Add new Customer ELE format template
+-------------------------------------------------
+1.0.19-alpha
+
+1. Let role of auditor access to AF Audit Admin
+-------------------------------------------------
+1.0.18-alpha
+
+1. Default value is '是' in CheckGroup '食品安全小组' for CRV Checklist
+2. Summary and Checklist file name include customer short name
+3. Add new field Store manager in App
+-------------------------------------------------
+1.0.17-alpha
+
+1. Implement release notes
+2. Trigger formula on creating Checklist
+-------------------------------------------------
+1.0.16-alpha
+
+1. Implement CRV checklist
+2. Show different checkpoint fields in APP based on different customer

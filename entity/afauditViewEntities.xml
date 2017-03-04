@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/entity-definition-2.0.xsd">
+
+    <view-entity entity-name="ViewUserAccount" package="afaudit">
+        <member-entity entity-alias="UserAccount" entity-name="moqui.security.UserAccount"/>
+        <member-entity entity-alias="UserGroupMember" entity-name="moqui.security.UserGroupMember" join-from-alias="UserAccount">
+            <key-map field-name="userId"/></member-entity>
+        <member-entity entity-alias="UserGroup" entity-name="moqui.security.UserGroup" join-from-alias="UserGroupMember">
+            <key-map field-name="userGroupId"/></member-entity>
+        <alias-all entity-alias="UserAccount"/>
+        <alias-all entity-alias="UserGroup"/>
+    </view-entity>
+    
+    <view-entity entity-name="ViewServe" package="afaudit">
+        <member-entity entity-alias="Serve" entity-name="afaudit.Serve"/>
+        <member-entity entity-alias="Customer" entity-name="afaudit.Customer" join-from-alias="Serve">
+            <key-map field-name="customerId"/>
+        </member-entity>
+        <alias-all entity-alias="Serve"/>
+        <!--<alias-all entity-alias="Customer"/>-->
+        <!--<alias entity-alias="Serve" name="serveId" field="serveId"/>-->
+        <!--<alias entity-alias="Serve" name="serveNo" field="serveNo"/>-->
+        <alias entity-alias="Customer" name="customerId" field="customerId"/>
+        <alias entity-alias="Customer" name="kaId" field="kaId"/>
+        <alias entity-alias="Customer" name="shortName" field="shortName"/>
+        <alias entity-alias="Customer" name="englishName" field="englishName"/>
+        <alias entity-alias="Customer" name="chineseName" field="chineseName"/>
+    </view-entity>
+
+    <view-entity entity-name="ViewServeLine" package="afaudit">
+        <member-entity entity-alias="ServeLine" entity-name="afaudit.ServeLine"/>
+        <member-entity entity-alias="Serve" entity-name="afaudit.Serve" join-from-alias="ServeLine">
+            <key-map field-name="serveId"/>
+        </member-entity>
+        <member-entity entity-alias="Customer" entity-name="afaudit.Customer" join-from-alias="Serve">
+            <key-map field-name="customerId"/>
+        </member-entity>
+        <alias-all entity-alias="ServeLine"/>
+        <alias entity-alias="Serve" name="serveNo" field="serveNo"/>
+        <alias entity-alias="Customer" name="customerId" field="customerId"/>
+        <alias entity-alias="Customer" name="kaId" field="kaId"/>
+        <alias entity-alias="Customer" name="shortName" field="shortName"/>
+        <alias entity-alias="Customer" name="englishName" field="englishName"/>
+        <alias entity-alias="Customer" name="chineseName" field="chineseName"/>
+    </view-entity>
+
+    <view-entity entity-name="ViewServeLineStore" package="afaudit">
+        <member-entity entity-alias="ServeLineStore" entity-name="afaudit.ServeLineStore"/>
+        <member-entity entity-alias="ServeLine" entity-name="afaudit.ServeLine" join-from-alias="ServeLineStore">
+            <key-map field-name="serveLineId"/>
+        </member-entity>
+        <member-entity entity-alias="Serve" entity-name="afaudit.Serve" join-from-alias="ServeLine">
+            <key-map field-name="serveId"/>
+        </member-entity>
+        <member-entity entity-alias="Store" entity-name="afaudit.Store" join-from-alias="ServeLineStore">
+            <key-map field-name="storeId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceRegion" entity-name="afaudit.Reference" join-from-alias="Store">
+            <key-map field-name="regionRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceLocation" entity-name="afaudit.Reference" join-from-alias="Store">
+            <key-map field-name="locationRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="UserAccountAuditor" entity-name="moqui.security.UserAccount" join-from-alias="ServeLineStore" join-optional="true">
+            <key-map field-name="auditorId" related="userId"/>
+        </member-entity>
+        <member-entity entity-alias="UserAccountReviewer" entity-name="moqui.security.UserAccount" join-from-alias="ServeLineStore" join-optional="true">
+            <key-map field-name="reviewerId" related="userId"/>
+        </member-entity>
+        <member-entity entity-alias="UserAccountKa" entity-name="moqui.security.UserAccount" join-from-alias="ServeLineStore" join-optional="true">
+            <key-map field-name="kaId" related="userId"/>
+        </member-entity>
+        <member-entity entity-alias="Customer" entity-name="afaudit.Customer" join-from-alias="Serve">
+            <key-map field-name="customerId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCustomer" entity-name="afaudit.Reference" join-from-alias="Customer">
+            <key-map field-name="customerRefId" related="referenceId"/>
+        </member-entity>
+        <alias-all entity-alias="ServeLineStore"/>
+        <alias entity-alias="ServeLine" name="serveLineNo" field="serveLineNo"/>
+        <alias entity-alias="ServeLine" name="checklistId" field="checklistId"/>
+        <alias entity-alias="Store" name="storeId" field="storeId"/>
+        <alias entity-alias="ReferenceRegion" name="region" field="attributeValue"/>
+        <alias entity-alias="ReferenceLocation" name="location" field="attributeValue"/>
+        <alias entity-alias="Store" name="storeName" field="storeName"/>
+        <alias entity-alias="Store" name="storeCode" field="storeCode"/>
+        <alias entity-alias="UserAccountAuditor" name="auditor" field="username"/>
+        <alias entity-alias="UserAccountReviewer" name="reviewer" field="username"/>
+        <alias entity-alias="UserAccountKa" name="ka" field="username"/>
+        <alias entity-alias="Serve" name="serveNo" field="serveNo"/>
+        <alias entity-alias="Serve" name="serveId" field="serveId"/>
+        <alias entity-alias="Customer" name="customerRefId" field="customerRefId"/>
+        <alias entity-alias="Customer" name="customerId" field="customerId"/>
+        <alias entity-alias="Customer" name="customerKaId" field="kaId"/>
+        <alias entity-alias="Customer" name="shortName" field="shortName"/>
+        <alias entity-alias="ReferenceCustomer" name="customer" field="attribute"/>
+    </view-entity>
+
+    <view-entity entity-name="ViewServeLineStoreCheckItem" package="afaudit">
+        <member-entity entity-alias="ServeLineStore" entity-name="afaudit.ServeLineStore"/>
+        <member-entity entity-alias="ServeLine" entity-name="afaudit.ServeLine" join-from-alias="ServeLineStore">
+            <key-map field-name="serveLineId"/>
+        </member-entity>
+        <member-entity entity-alias="Serve" entity-name="afaudit.Serve" join-from-alias="ServeLine">
+            <key-map field-name="serveId"/>
+        </member-entity>
+        <member-entity entity-alias="Store" entity-name="afaudit.Store" join-from-alias="ServeLineStore">
+            <key-map field-name="storeId"/>
+        </member-entity>
+        <member-entity entity-alias="Customer" entity-name="afaudit.Customer" join-from-alias="Serve">
+            <key-map field-name="customerId"/>
+        </member-entity>
+        <member-entity entity-alias="CheckItem" entity-name="afaudit.CheckItem" join-from-alias="ServeLine">
+            <key-map field-name="checklistId"/>
+        </member-entity>
+        <member-entity entity-alias="ServeLineStoreCheckItem" entity-name="afaudit.ServeLineStoreCheckItem" join-from-alias="CheckItem" join-optional="true">
+            <key-map field-name="checkItemId"/>
+            <entity-condition>
+                <econdition field-name="serveLineStoreId" entity-alias="ServeLineStoreCheckItem" to-field-name="serveLineStoreId" to-entity-alias="ServeLineStore"/>
+            </entity-condition>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCheckGroup" entity-name="afaudit.Reference" join-from-alias="CheckItem">
+            <key-map field-name="checkGroupRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCheckType" entity-name="afaudit.Reference" join-from-alias="CheckItem">
+            <key-map field-name="checkTypeRefId" related="referenceId"/>
+        </member-entity>
+        <alias-all entity-alias="CheckItem"/>
+        <alias name="serveLineStoreId" entity-alias="ServeLineStore"/>
+        <alias name="comment" entity-alias="ServeLineStore"/>
+        <alias name="checkGroup" entity-alias="ReferenceCheckGroup" field="attributeValue"/>
+        <alias name="checkType" entity-alias="ReferenceCheckType" field="attributeValue"/>
+        <alias name="totalDefect" entity-alias="ServeLineStoreCheckItem" field="defect" function="sum"/>
+        <alias entity-alias="Customer" name="customerId" field="customerId"/>
+        <alias entity-alias="Customer" name="customerRefId" field="customerRefId"/>
+        <alias entity-alias="Customer" name="kaId" field="kaId"/>
+        <!--<alias name="serveLineStoreCheckItemId" entity-alias="ServeLineStoreCheckItem" field="serveLineStoreCheckItemId"/>-->
+        <alias entity-alias="Store" name="storeId" field="storeId"/>
+    </view-entity>
+
+    <view-entity entity-name="ViewChecklist" package="afaudit">
+        <member-entity entity-alias="Checklist" entity-name="afaudit.Checklist"/>
+        <member-entity entity-alias="Reference" entity-name="afaudit.Reference" join-from-alias="Checklist">
+            <key-map field-name="serveTypeRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="Customer" entity-name="afaudit.Customer" join-from-alias="Checklist">
+            <key-map field-name="customerId"/>
+        </member-entity>
+        <alias-all entity-alias="Checklist"/>
+        <alias-all entity-alias="Customer"/>
+        <alias-all entity-alias="Reference"/>
+    </view-entity>
+
+    <view-entity entity-name="ViewCheckItem" package="afaudit">
+        <member-entity entity-alias="Customer" entity-name="afaudit.Customer"/>
+        <member-entity entity-alias="Checklist" entity-name="afaudit.Checklist" join-from-alias="Customer">
+            <key-map field-name="customerId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceServeType" entity-name="afaudit.Reference" join-from-alias="Checklist">
+            <key-map field-name="serveTypeRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="CheckItem" entity-name="afaudit.CheckItem" join-from-alias="Checklist">
+            <key-map field-name="checklistId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCheckGroup" entity-name="afaudit.Reference" join-from-alias="CheckItem" join-optional="true">
+            <key-map field-name="checkGroupRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCheckType" entity-name="afaudit.Reference" join-from-alias="CheckItem" join-optional="true">
+            <key-map field-name="checkTypeRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCheckLevel" entity-name="afaudit.Reference" join-from-alias="CheckItem" join-optional="true">
+            <key-map field-name="checkLevelRefId" related="referenceId"/>
+        </member-entity>
+        <alias-all entity-alias="Customer"/>
+        <alias-all entity-alias="Checklist"/>
+        <alias-all entity-alias="CheckItem"/>
+        <alias name="checkGroup" entity-alias="ReferenceCheckGroup" field="attributeValue"/>
+        <alias name="checkType" entity-alias="ReferenceCheckType" field="attributeValue"/>
+        <alias name="checkLevel" entity-alias="ReferenceCheckLevel" field="attributeValue"/>
+        <alias name="serveType" entity-alias="ReferenceServeType" field="attributeValue"/>
+    </view-entity>
+
+    <view-entity entity-name="ViewAuditedCheckItem" package="afaudit">
+        <member-entity entity-alias="ServeLineStore" entity-name="afaudit.ServeLineStore"/>
+        <member-entity entity-alias="ServeLine" entity-name="afaudit.ServeLine" join-from-alias="ServeLineStore">
+            <key-map field-name="serveLineId"/>
+        </member-entity>
+        <member-entity entity-alias="Serve" entity-name="afaudit.Serve" join-from-alias="ServeLine">
+            <key-map field-name="serveId"/>
+        </member-entity>
+        <member-entity entity-alias="Customer" entity-name="afaudit.Customer" join-from-alias="Serve">
+            <key-map field-name="customerId"/>
+        </member-entity>
+        <member-entity entity-alias="Store" entity-name="afaudit.Store" join-from-alias="ServeLineStore">
+            <key-map field-name="storeId"/>
+        </member-entity>
+        <member-entity entity-alias="ServeLineStoreCheckItem" entity-name="afaudit.ServeLineStoreCheckItem" join-from-alias="ServeLineStore">
+            <key-map field-name="serveLineStoreId"/>
+        </member-entity>
+        <member-entity entity-alias="CheckItem" entity-name="afaudit.CheckItem" join-from-alias="ServeLineStoreCheckItem">
+            <key-map field-name="checkItemId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCheckGroup" entity-name="afaudit.Reference" join-from-alias="CheckItem">
+            <key-map field-name="checkGroupRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCheckType" entity-name="afaudit.Reference" join-from-alias="CheckItem">
+            <key-map field-name="checkTypeRefId" related="referenceId"/>
+        </member-entity>
+
+        <alias name="customerId" entity-alias="Customer"/>
+        <alias name="kaId" entity-alias="Customer"/>
+        <alias name="shortName" entity-alias="Customer"/>
+        <alias name="serveId" entity-alias="Serve"/>
+        <alias name="serveNo" entity-alias="Serve"/>
+        <alias name="serveLineId" entity-alias="ServeLine"/>
+        <alias name="serveLineNo" entity-alias="ServeLine"/>
+        <alias name="checklistId" entity-alias="ServeLine"/>
+        <alias name="fromDate" entity-alias="ServeLine"/>
+        <alias name="thruDate" entity-alias="ServeLine"/>
+        <alias name="storeId" entity-alias="Store"/>
+        <alias name="storeName" entity-alias="Store"/>
+        <alias name="serveLineStoreId" entity-alias="ServeLineStore"/>
+        <alias name="checklistStatus" entity-alias="ServeLineStore"/>
+        <alias name="auditDate" entity-alias="ServeLineStore"/>
+        <alias name="checkItemId" entity-alias="CheckItem"/>
+        <alias name="checkGroup" entity-alias="ReferenceCheckGroup" field="attributeValue"/>
+        <alias name="checkType" entity-alias="ReferenceCheckType" field="attributeValue"/>
+        <alias name="itemNo" entity-alias="CheckItem"/>
+        <alias name="checkPoint" entity-alias="CheckItem"/>
+        <alias name="serveLineStoreCheckItemId" entity-alias="ServeLineStoreCheckItem"/>
+        <alias name="defect" entity-alias="ServeLineStoreCheckItem"/>
+        <alias name="defectRemark" entity-alias="ServeLineStoreCheckItem"/>
+        <alias name="actionRemark" entity-alias="ServeLineStoreCheckItem"/>
+        <alias name="remark" entity-alias="ServeLineStoreCheckItem"/>
+        <alias name="operation" entity-alias="ServeLineStoreCheckItem" field="field01"/>
+        <alias name="provider" entity-alias="ServeLineStoreCheckItem" field="field02"/>
+        <alias name="productName" entity-alias="ServeLineStoreCheckItem" field="field03"/>
+        <alias name="productNo"  entity-alias="ServeLineStoreCheckItem" field="field04"/>
+        <alias name="dayAudit"  entity-alias="ServeLineStoreCheckItem" field="field05"/>
+        <alias name="dayDefect"  entity-alias="ServeLineStoreCheckItem" field="field06"/>
+    </view-entity>
+
+    <view-entity entity-name="ViewServeLineStoreAttachment" package="afaudit">
+        <member-entity entity-alias="ServeLineStore" entity-name="afaudit.ServeLineStore"/>
+        <member-entity entity-alias="AttachmentChecklist" entity-name="afaudit.Attachment" join-from-alias="ServeLineStore" join-optional="true">
+            <key-map field-name="serveLineStoreId" related="dataId"/>
+            <entity-condition><econdition entity-alias="AttachmentChecklist" field-name="attachmentType" value="ServeLineStore-Checklist"/></entity-condition>
+        </member-entity>
+        <member-entity entity-alias="AttachmentSummary" entity-name="afaudit.Attachment" join-from-alias="ServeLineStore" join-optional="true">
+            <key-map field-name="serveLineStoreId" related="dataId"/>
+            <entity-condition><econdition entity-alias="AttachmentSummary" field-name="attachmentType" value="ServeLineStore-Summary"/></entity-condition>
+        </member-entity>
+
+        <alias-all entity-alias="ServeLineStore"/>
+        <alias name="attachmentLocationChecklist" entity-alias="AttachmentChecklist" field="attachmentLocation"/>
+        <alias name="attachmentLocationSummary" entity-alias="AttachmentSummary" field="attachmentLocation"/>
+    </view-entity>
+
+    <view-entity entity-name="ViewCheckItemAttachment" package="afaudit">
+        <member-entity entity-alias="ServeLineStore" entity-name="afaudit.ServeLineStore"/>
+        <member-entity entity-alias="ServeLineStoreCheckItem" entity-name="afaudit.ServeLineStoreCheckItem" join-from-alias="ServeLineStore">
+            <key-map field-name="serveLineStoreId"/>
+        </member-entity>
+        <member-entity entity-alias="CheckItem" entity-name="afaudit.CheckItem" join-from-alias="ServeLineStoreCheckItem">
+            <key-map field-name="checkItemId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCheckGroup" entity-name="afaudit.Reference" join-from-alias="CheckItem">
+            <key-map field-name="checkGroupRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceCheckType" entity-name="afaudit.Reference" join-from-alias="CheckItem">
+            <key-map field-name="checkTypeRefId" related="referenceId"/>
+        </member-entity>
+        <member-entity entity-alias="Attachment" entity-name="afaudit.Attachment" join-from-alias="ServeLineStoreCheckItem">
+            <key-map field-name="serveLineStoreCheckItemId" related="dataId"/>
+            <entity-condition><econdition field-name="attachmentType" value="ServeLineStoreCheckItem-Photo"/></entity-condition>
+        </member-entity>
+
+        <alias-all entity-alias="Attachment"/>
+        <alias name="serveLineStoreId" entity-alias="ServeLineStore"/>
+        <alias name="serveLineStoreCheckItemId" entity-alias="ServeLineStoreCheckItem"/>
+        <alias name="checkGroup" entity-alias="ReferenceCheckGroup" field="attributeValue"/>
+        <alias name="checkType" entity-alias="ReferenceCheckType" field="attributeValue"/>
+        <alias name="itemNo" entity-alias="CheckItem"/>
+    </view-entity>
+</entities>

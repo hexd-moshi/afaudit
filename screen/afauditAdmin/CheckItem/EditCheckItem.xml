@@ -1,0 +1,111 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="checkItemId"/>
+
+    <transition name="updateCheckItem">
+        <actions>
+            <if condition="!checklistId || !checkGroupRefId || !checkTypeRefId || !itemNo || !checkPoint">
+                <message error="true">Fields of Checklist Id, Check Group Ref Id, Check Type Ref Id, Item No, Check Point are required</message><return/>
+            </if>
+
+            <if condition="checkItemId">
+                <set field="map" from="context"/><script>map.remove("checklistId"); map.remove("checkGroupRefId"); map.remove("checkTypeRefId"); map.remove("ItemNo")</script>
+                <service-call name="update#afaudit.CheckItem" in-map="map"/>
+            <else>
+                <entity-find-one entity-name="afaudit.CheckItem" value-field="checkItem">
+                    <field-map field-name="checklistId"/><field-map field-name="checkGroupRefId"/><field-map field-name="itemNo"/>
+                </entity-find-one>
+                <if condition="checkItem">
+                    <message error="true">Fields of Checklist Id, Check Group Ref Id, Item No are existed</message><return/>
+                </if>
+                <service-call name="create#afaudit.CheckItem" in-map="context" out-map="context"/></else></if>
+        </actions>
+
+        <default-response url="."/>
+    </transition>
+    <transition name="getChecklistId">
+        <service-call name="afaudit.afauditServices.get#ChecklistIds" in-map="[customerId:customerId]"/>
+
+        <default-response type="none"/>
+    </transition>
+    <transition name="getReferenceId">
+        <service-call name="afaudit.afauditServices.get#ReferenceIds" in-map="[customerId:customerId, category:category]"/>
+
+        <default-response type="none"/>
+    </transition>
+
+    <actions>
+        <if condition="checkItemId">
+            <entity-find-one entity-name="afaudit.CheckItem" value-field="checkItem"/>
+
+            <entity-find-one entity-name="afaudit.ViewCheckItem" value-field="viewCheckItem">
+                <field-map field-name="checkItemId" from="checkItemId"/></entity-find-one>
+            <set field="customerId" from="viewCheckItem.customerId"/>
+        <else>
+            <entity-make-value entity-name="afaudit.CheckItem" value-field="checkItem"/></else></if>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <link url="../FindCheckItem" text="Back" icon="glyphicon glyphicon-step-backward"/>
+            </container>
+            <container>
+                <form-single name="EditCheckItem" transition="updateCheckItem" map="checkItem">
+                    <field name="checkItemId"><default-field title="ID"><display/></default-field></field>
+                    <field name="customerId" from="customerId">
+                        <conditional-field condition="checkItemId">
+                            <display-entity entity-name="afaudit.Customer" key-field-name="customerId" text="CustomerIdTemplate"/></conditional-field>
+                        <default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer"/></entity-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="checklistId">
+                        <conditional-field condition="checkItemId">
+                            <display-entity entity-name="afaudit.ViewChecklist" key-field-name="checklistId" text="ChecklistIdTemplate"/></conditional-field>
+                        <default-field>
+                            <drop-down>
+                                <dynamic-options transition="getChecklistId" label-field="checklistIdTemplate" value-field="checklistId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="checkGroupRefId">
+                        <conditional-field condition="checkItemId">
+                            <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate" key-field-name="referenceId"/></conditional-field>
+                        <default-field title="Check Group">
+                            <drop-down>
+                                <dynamic-options transition="getReferenceId?category=CheckGroup" label-field="referenceIdTemplate" value-field="referenceId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="checkTypeRefId">
+                        <conditional-field condition="checkItemId">
+                            <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate" key-field-name="referenceId"/></conditional-field>
+                        <default-field title="Check Type">
+                            <drop-down>
+                                <dynamic-options transition="getReferenceId?category=CheckType" label-field="referenceIdTemplate" value-field="referenceId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="itemNo">
+                        <conditional-field condition="checkItemId">
+                            <display/></conditional-field>
+                        <default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="checkLevelRefId"><default-field title="Check Level">
+                        <drop-down allow-empty="true">
+                            <dynamic-options transition="getReferenceId?category=CheckLevel" label-field="referenceIdTemplate" value-field="referenceId">
+                                <depends-on field="customerId"/>
+                            </dynamic-options>
+                        </drop-down></default-field></field>
+                    <field name="checkPoint"><default-field><text-area/><label text="*" style="label-red"/></default-field></field>
+                    <field name="remark"><default-field><text-area/></default-field></field>
+
+                    <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
+                </form-single>
+            </container>
+        </container>
+
+    </widgets>
+</screen>

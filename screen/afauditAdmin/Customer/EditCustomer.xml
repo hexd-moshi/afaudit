@@ -1,0 +1,89 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="customerId"/>
+
+    <transition name="updateCustomer">
+        <actions>
+            <if condition="!customerRefId || !shortName || !englishName || !chineseName || !kaId">
+                <message error="true">Fields of Customer Ref Id, Short Name, English Name, Chinese Name, KA Id are required</message><return/>
+            </if>
+
+            <if condition="customerId">
+                <set field="map" from="context"/>
+                <!--<script>map.remove("customerRefId")</script>-->
+                <service-call name="update#afaudit.Customer" in-map="map"/>
+            <else>
+                <entity-find-one entity-name="afaudit.Customer" value-field="customer">
+                    <field-map field-name="customerRefId"/>
+                </entity-find-one>
+                <if condition="customer">
+                    <message error="true">Fields of Customer Ref Id is existed</message><return/>
+                </if>
+                <service-call name="create#afaudit.Customer" in-map="context" out-map="context"/></else></if>
+        </actions>
+
+        <default-response url="."/>
+    </transition>
+
+    <actions>
+        <!--not used customer reference Id-->
+        <entity-find entity-name="afaudit.Customer" list="customerList">
+            <econdition field-name="customerId" operator="not-equals" from="customerId"/>
+            <select-field field-name="customerRefId"/>
+        </entity-find>
+        <entity-find entity-name="afaudit.Reference" list="customerRefList">
+            <econdition field-name="enterprise" value="COMMON"/>
+            <econdition field-name="category" value="Customer"/>
+            <econdition field-name="referenceId" operator="not-in" from="customerList.customerRefId"/>
+        </entity-find>
+
+        <if condition="customerId">
+            <entity-find-one entity-name="afaudit.Customer" value-field="customer"/>
+        <else>
+            <entity-make-value entity-name="afaudit.Customer" value-field="customer"/></else></if>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <link url="../FindCustomer" text="Back" icon="glyphicon glyphicon-step-backward"/>
+            </container>
+            <container>
+                <form-single name="EditCustomer" transition="updateCustomer" map="customer">
+                    <field name="customerId"><default-field title="ID"><display/></default-field></field>
+                    <field name="customerRefId">
+                        <!--<conditional-field condition="customerId">-->
+                            <!--<display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate" key-field-name="referenceId"/></conditional-field>-->
+                        <default-field>
+                            <drop-down>
+                                <list-options list="customerRefList" text="ReferenceIdTemplate"/>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="shortName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="englishName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="chineseName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="kaId"><default-field>
+                        <drop-down allow-empty="true">
+                            <entity-options text="UsernameTemplate">
+                                <entity-find entity-name="afaudit.ViewUserAccount">
+                                    <econdition field-name="userGroupId" value="afaudit_KA"/><order-by field-name="username"/></entity-find></entity-options>
+                        </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="locationRefId"><default-field>
+                        <drop-down allow-empty="true">
+                            <entity-options text="ReferenceIdTemplate">
+                                <entity-find entity-name="afaudit.Reference">
+                                    <econdition field-name="enterprise" value="COMMON"/>
+                                    <econdition field-name="category" value="Location"/></entity-find></entity-options>
+                        </drop-down></default-field></field>
+                    <field name="contact"><default-field><text-line/></default-field></field>
+                    <field name="tel"><default-field><text-line/></default-field></field>
+                    <field name="email"><default-field><text-line/></default-field></field>
+                    <field name="address"><default-field><text-line/></default-field></field>
+                    <field name="remark"><default-field><text-area/></default-field></field>
+
+                    <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
+                </form-single>
+            </container>
+        </container>
+    </widgets>
+</screen>

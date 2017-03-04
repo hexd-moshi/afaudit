@@ -1,0 +1,94 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd"
+        default-menu-title="AF Audit Web" include-child-content="true" menu-image="glyphicon glyphicon-globe" menu-image-type="icon">
+
+    <transition name="downloadAttachment">
+        <actions>
+            <script>ec.web.sendResourceResponse(attachmentLocation)</script>
+        </actions>
+        <default-response type="none"/>
+    </transition>
+
+    <actions>
+        <if condition="ec.user.isInGroup('ADMIN')||ec.user.isInGroup('afaudit_ADMIN')">
+            <entity-find entity-name="afaudit.ViewServeLineStore" list="serveLineStoreList">
+                <search-form-inputs default-order-by="serveId,serveLineId,storeId,-auditDate"/>
+                <econdition field-name="checklistStatus" operator="in" value="40,50,60"/>
+            </entity-find>
+        <else>
+            <entity-find entity-name="moqui.security.UserPreference" list="userPreferenceList">
+                <econdition field-name="userId" from="ec.user.userId"/>
+                <econdition field-name="preferenceKey" value="CUSTOMER"/>
+            </entity-find>
+            <entity-find entity-name="afaudit.ViewServeLineStore" list="serveLineStoreList">
+                <search-form-inputs default-order-by="serveId,serveLineId,storeId,-auditDate"/>
+                <econdition field-name="checklistStatus" operator="in" value="40,50,60"/>
+                <econdition field-name="customer" from="userPreferenceList.preferenceValue"/>
+            </entity-find>
+        </else></if>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <container-dialog id="FindServeLineStoreDialog" button-text="Find">
+                    <form-single name="FindServeLineStore" transition="findServeLineStore">
+                        <field name="serveLineStoreId"><default-field title="ID"><text-find/></default-field></field>
+                        <field name="checklistStatus"><default-field title="Status">
+                            <drop-down allow-empty="true" allow-multiple="true">
+                                <option key="10" text="Created [10]"/><option key="20" text="Planned [20]"/><option key="30" text="Auditing [30]"/><option key="35" text="Auditing_Reject [35]"/><option
+                                    key="40" text="Audited [40]"/><option key="50" text="Reviewed [50]"/><option key="60" text="Finished [60]"/>
+                            </drop-down></default-field></field>
+                        <field name="serveNo"><default-field><text-find/></default-field></field>
+                        <field name="serveLineNo"><default-field><text-find/></default-field></field>
+                        <field name="storeName"><default-field><text-find/></default-field></field>
+                        <field name="storeCode"><default-field><text-find/></default-field></field>
+                        <field name="region"><default-field><text-find/></default-field></field>
+                        <field name="location"><default-field><text-find/></default-field></field>
+                        <field name="auditDate"><default-field><date-find type="date"/></default-field></field>
+                        <field name="reviewDate"><default-field><date-find type="date"/></default-field></field>
+                        <field name="finishDate"><default-field><date-find type="date"/></default-field></field>
+                        <field name="storeManager"><default-field><text-find/></default-field></field>
+
+                        <field name="findButton"><default-field title="Find"><submit icon="glyphicon glyphicon-search"/></default-field></field>
+                    </form-single>
+                </container-dialog>
+            </container>
+
+            <form-list name="ListServeLineStore" list="serveLineStoreList" show-text-button="true">
+                <row-actions>
+                    <entity-find-one entity-name="afaudit.ViewServeLineStoreAttachment" value-field="attachment">
+                        <field-map field-name="serveLineStoreId" from="serveLineStoreId"/>
+                    </entity-find-one>
+                </row-actions>
+                <field name="serveLineStoreId"><header-field title="ID"/><default-field><display/></default-field></field>
+                <field name="serveNo"><default-field><display/></default-field></field>
+                <field name="serveLineNo"><default-field><display/></default-field></field>
+                <field name="region"><default-field><display/></default-field></field>
+                <field name="location"><default-field><display/></default-field></field>
+                <field name="storeName"><default-field><display/></default-field></field>
+                <field name="storeCode"><default-field><display/></default-field></field>
+                <field name="storeManager"><default-field><display/></default-field></field>
+                <field name="checklistStatus"><header-field title="Status"/><default-field>
+                    <display text="${checklistStatus==10?'Created':(checklistStatus==20?'Planned':(checklistStatus==30?'Auditing':(checklistStatus==35?'Auditing_Reject':(checklistStatus==40?'Audited':(checklistStatus==50?'Reviewed':(checklistStatus==60?'Finished':''))))))}"/></default-field></field>
+                <field name="auditDate"><default-field><display/></default-field></field>
+                <field name="reviewDate"><default-field><display/></default-field></field>
+                <field name="finishDate"><default-field><display/></default-field></field>
+                <field name="checklist"><header-field title=""/><conditional-field condition="attachment.attachmentLocationChecklist != null &amp;&amp; checklistStatus == 60">
+                    <link text="Checklist" url="downloadAttachment" icon="glyphicon glyphicon-save" parameter-map="[attachmentLocation:attachment.attachmentLocationChecklist]"/></conditional-field>
+                    <default-field><display text="No Checklist"/></default-field></field>
+                <field name="summary"><header-field title=""/><conditional-field condition="attachment.attachmentLocationSummary != null">
+                    <link text="Summary" url="downloadAttachment" icon="glyphicon glyphicon-save" parameter-map="[attachmentLocation:attachment.attachmentLocationSummary]"/></conditional-field>
+                    <default-field><display text="No Summary"/></default-field></field>
+
+                <form-list-column><field-ref name="checklist"/><field-ref name="summary"/></form-list-column>
+                <form-list-column><field-ref name="serveLineStoreId"/><field-ref name="checklistStatus"/></form-list-column>
+                <form-list-column><field-ref name="serveNo"/><field-ref name="serveLineNo"/></form-list-column>
+                <form-list-column><field-ref name="storeName"/><field-ref name="storeCode"/></form-list-column>
+                <form-list-column><field-ref name="region"/><field-ref name="location"/></form-list-column>
+                <form-list-column><field-ref name="auditDate"/><field-ref name="reviewDate"/></form-list-column>
+                <form-list-column><field-ref name="finishDate"/><field-ref name="storeManager"/></form-list-column>
+            </form-list>
+        </container>
+    </widgets>
+</screen>

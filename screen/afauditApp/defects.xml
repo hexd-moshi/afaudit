@@ -1,0 +1,81 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd" >
+
+    <parameter name="serveLineStoreId" from="serveLineStoreId" required="true"/>
+    <parameter name="checkItemId" from="checkItemId" required="true"/>
+    <parameter name="fromScreen" required="true"/>
+    <parameter name="totalDefect" from="totalDefect"/>
+
+    <transition name="delete" read-only="true">
+        <actions>
+            <script><![CDATA[
+                    import org.moqui.resource.ResourceReference
+                    org.moqui.context.ExecutionContext ec = context.ec
+                ]]></script>
+
+            <service-call name="delete#afaudit.ServeLineStoreCheckItem" in-map="[serveLineStoreCheckItemId:serveLineStoreCheckItemId]"/>
+
+            <entity-find entity-name="afaudit.Attachment" list="attachmentList">
+                <econdition field-name="attachmentType" value="ServeLineStoreCheckItem-Photo"/>
+                <econdition field-name="dataId" from="serveLineStoreCheckItemId"/>
+            </entity-find>
+            <iterate list="attachmentList" entry="attachment">
+                <script><![CDATA[
+                    ResourceReference newRr = ec.resource.getLocationReference("${attachment.attachmentLocation}")
+                    newRr.delete()
+                ]]></script>
+                <service-call name="delete#afaudit.Attachment" in-map="[attachmentId:attachment.attachmentId]"/>
+            </iterate>
+
+            <entity-find-one entity-name="afaudit.ViewServeLineStoreCheckItem" value-field="viewServeLineStoreCheckItem">
+                <field-map field-name="serveLineStoreId" from="serveLineStoreId"/>
+                <field-map field-name="checkItemId" from="checkItemId"/>
+            </entity-find-one>
+        </actions>
+
+        <default-response url=".">
+            <parameter name="serveLineStoreId" from="serveLineStoreId"/>
+            <parameter name="checkItemId" from="checkItemId"/>
+            <parameter name="totalDefect" from="viewServeLineStoreCheckItem.totalDefect"/>
+        </default-response>
+    </transition>
+
+    <actions>
+        <if condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')">
+        <else>
+            <entity-find-count entity-name="afaudit.ViewServeLineStore" count-field="count">
+                <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
+                <econdition field-name="auditorId" from="ec.user.userId"/>
+                <econdition field-name="checklistStatus" operator="in" value="20,30,35"/>
+            </entity-find-count>
+            <if condition="count == 0">
+                <message error="true">No permission</message><return/></if>
+        </else></if>
+
+        <entity-find-one entity-name="afaudit.CheckItem" value-field="checkItem">
+            <field-map field-name="checkItemId"/>
+        </entity-find-one>
+        <entity-find-one entity-name="afaudit.Reference" value-field="referenceCheckGroup">
+            <field-map field-name="referenceId" from="checkItem.checkGroupRefId"/>
+        </entity-find-one>
+        <entity-find-one entity-name="afaudit.Reference" value-field="referenceCheckType">
+            <field-map field-name="referenceId" from="checkItem.checkTypeRefId"/>
+        </entity-find-one>
+
+        <entity-find entity-name="afaudit.ServeLineStoreCheckItem" list="checkItemList">
+            <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
+            <econdition field-name="checkItemId" from="checkItemId"/>
+            <order-by field-name="+serveLineStoreCheckItemId"/>
+        </entity-find>
+
+        <entity-find entity-name="afaudit.Attachment" list="attachmentList">
+            <econdition field-name="attachmentType" value="ServeLineStoreCheckItem-Photo"/>
+            <econdition field-name="dataId" from="checkItemList.serveLineStoreCheckItemId"/>
+        </entity-find>
+    </actions>
+
+    <widgets>
+        <render-mode>
+            <text type="html" location="component://afaudit/screen/afauditApp/defects.html.ftl"/></render-mode>
+    </widgets>
+</screen>

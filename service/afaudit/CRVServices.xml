@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/service-definition-2.0.xsd">
+
+    <service verb="fill" noun="Checklist">
+        <in-parameters>
+            <parameter name="serveLineStoreId" required="true"/>
+            <parameter name="viewAuditCheckItem" type="Map" required="true"/>
+            <parameter name="viewServeLineStore" type="Map" required="true"/>
+            <parameter name="viewAuditCheckItemList" type="List" required="true"/>
+            <parameter name="attachment" type="Map" required="true"/>
+        </in-parameters>
+
+        <actions>
+            <entity-find entity-name="afaudit.Attachment" list="attachmentList">
+                <econdition field-name="attachmentType" value="ServeLineStore-AuditConfirm"/>
+                <econdition field-name="dataId" from="serveLineStoreId"/>
+                <order-by field-name="attachmentId"/>
+            </entity-find>
+            <entity-find entity-name="afaudit.ViewCheckItemAttachment" list="checkItemAttachmentList">
+                <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
+                <order-by field-name="dataId"/>
+            </entity-find>
+
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                import org.moqui.util.StringUtilities
+                import org.apache.poi.xssf.usermodel.XSSFRow
+                import org.apache.poi.xssf.usermodel.XSSFSheet
+                import org.apache.poi.xssf.usermodel.XSSFWorkbook
+                import org.apache.poi.openxml4j.opc.OPCPackage
+                import org.apache.poi.ss.usermodel.ClientAnchor;
+                import org.apache.poi.ss.usermodel.CreationHelper;
+                import org.apache.poi.ss.usermodel.Drawing;
+                import org.apache.poi.ss.usermodel.Picture;
+
+                org.moqui.context.ExecutionContext ec = context.ec
+
+                ResourceReference newRr = ec.resource.getLocationReference(attachment.attachmentLocation)
+                InputStream resourceInputStream = newRr.openStream()
+
+                OPCPackage fs = OPCPackage.open(resourceInputStream)
+                XSSFWorkbook wb = new XSSFWorkbook(fs)
+
+                HashMap map; HashMap mapMonth; XSSFSheet sheet; XSSFRow row;
+                int beginRow; int beginCol; int itemNoCol; int selfCol; int jointCol; int providerCol; int defectCol;
+                String operation; String checkGroup;
+                int startCol; int endCol;
+
+                sheet = wb.getSheet("数据汇总")
+                sheet.getRow(2).getCell(2).setCellValue(viewServeLineStore.storeName)
+                sheet.getRow(3).getCell(2).setCellValue(viewServeLineStore.region)
+                sheet.getRow(4).getCell(2).setCellValue(viewServeLineStore.location)
+                sheet.getRow(6).getCell(2).setCellValue(viewServeLineStore.auditDate)
+                sheet.getRow(7).getCell(2).setCellValue(viewServeLineStore.auditor)
+                sheet.getRow(8).getCell(2).setCellValue(viewServeLineStore.reviewer)
+
+                sheet = wb.getSheet("原始记录")
+                beginCol = 0
+                Iterator itAttachment = attachmentList.iterator()
+                while(itAttachment.hasNext()){
+                    HashMap mapAttachment =  itAttachment.next()
+
+                    newRr = ec.resource.getLocationReference(mapAttachment.get("attachmentLocation"))
+                    InputStream is = newRr.openStream()
+
+                    byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
+                    int pictureIdx = wb.addPicture(bytes, XSSFWorkbook.PICTURE_TYPE_JPEG);
+                    is.close();
+
+                    CreationHelper helper = wb.getCreationHelper();
+                    Drawing drawing = sheet.createDrawingPatriarch();
+                    ClientAnchor anchor = helper.createClientAnchor();
+                    anchor.setCol1(beginCol++);
+                    anchor.setRow1(2);
+                    Picture pict = drawing.createPicture(anchor, pictureIdx);
+                    pict.resize();
+                }
+
+                Iterator it = viewAuditCheckItemList.iterator()
+                while(it.hasNext()){
+                    map = it.next()
+
+                    checkGroup = map.get("checkGroup")
+                    sheet = wb.getSheet(checkGroup)
+
+                    if("熟食,面包,肉品,水产,果蔬,日配,食品,收货".indexOf(checkGroup) >=0 ){
+                        beginRow = 4; itemNoCol = 1; selfCol = 6; jointCol = 7; providerCol = 8; defectCol = 9; dayAuditCol = 10; dayDefectCol = 11;
+                        for(int rownum = beginRow; rownum <= sheet.getLastRowNum(); rownum++){
+                            row = sheet.getRow(rownum);
+                            if(row.getCell(itemNoCol).getStringCellValue().equals(map.get("itemNo"))){
+                                operation = ""
+
+                                if(selfCol > 0){
+                                    if(map.get("operation").equals("Self-Operation")){
+                                        operation = " [Self]"
+                                        row.getCell(selfCol).setCellValue(row.getCell(selfCol).getNumericCellValue() + map.get("defect"))}
+                                    else{
+                                        operation = " [Joint]"
+                                        row.getCell(jointCol).setCellValue(row.getCell(jointCol).getNumericCellValue() + map.get("defect"))}
+                                }
+
+                                String val0 = row.getCell(providerCol).getStringCellValue(); if(val0){val0 = val0 + ";\r\n"}
+                                if(map.get("provider")){
+                                    row.getCell(providerCol).setCellValue(val0 + map.get("provider") + operation)
+                                }
+
+                                String val1 = row.getCell(defectCol).getStringCellValue(); if(val1){val1 = val1 + ";\r\n"}
+                                if(map.get("defectRemark")){
+                                    row.getCell(defectCol).setCellValue(val1 + map.get("defectRemark") + operation)
+                                }
+
+                                if(map.get("dayAudit").equals("Y")){
+                                    row.getCell(dayAuditCol).setCellValue("Y")
+
+                                    int tmp = 0
+                                    if(row.getCell(dayDefectCol).getStringCellValue().length()>0){
+                                        tmp = Integer.parseInt(row.getCell(dayDefectCol).getStringCellValue()) + Integer.parseInt(map.get("dayDefect"))
+                                    }else{
+                                        tmp = Integer.parseInt(map.get("dayDefect"))
+                                    }
+                                    row.getCell(dayDefectCol).setCellValue(String.valueOf(tmp))
+                                }
+
+                                break;
+                            }
+                        }
+                    }else if(checkGroup.equals("信息")){
+                        endCol = 6;
+                        if(map.get("itemNo").equals("1")){beginRow = 1; startCol = 1; endCol = 5;}
+                        if(map.get("itemNo").equals("2")){beginRow = 9; startCol = 1;}
+                        if(map.get("itemNo").equals("3")){beginRow = 9; startCol = 4;}
+                        if(map.get("itemNo").equals("4")){beginRow = 17; startCol = 1;}
+                        if(map.get("itemNo").equals("5")){beginRow = 17; startCol = 4;}
+                        if(map.get("itemNo").equals("6")){beginRow = 25; startCol = 1;}
+                        if(map.get("itemNo").equals("7")){beginRow = 25; startCol = 4;}
+                        if(map.get("itemNo").equals("8")){beginRow = 33; startCol = 1;}
+                        if(map.get("itemNo").equals("9")){beginRow = 33; startCol = 4;}
+                        if(map.get("itemNo").equals("10")){beginRow = 41; startCol = 1;}
+                        if(map.get("itemNo").equals("11")){beginRow = 41; startCol = 4;}
+
+                        for(beginCol=startCol; beginCol<=endCol; beginCol++){
+                            if(sheet.getRow(beginRow).getCell(beginCol).getStringCellValue().length()==0 &&
+                                    sheet.getRow(beginRow + 1).getCell(beginCol).getStringCellValue().length()==0){
+                                break;
+                            }
+                        }
+
+                        if(map.get("productName") || map.get("productNo")){
+                            sheet.getRow(beginRow).getCell(beginCol).setCellValue(map.get("productName"))
+                            sheet.getRow(beginRow + 1).getCell(beginCol).setCellValue(map.get("productNo"))
+                            sheet.getRow(beginRow + 3).getCell(beginCol).setCellValue(map.get("defect")==0 ? "符合": "不符合")
+                            sheet.getRow(beginRow + 4).getCell(beginCol).setCellValue(map.get("defectRemark"))
+
+                            Iterator itCheckItemAttachment = checkItemAttachmentList.iterator()
+                            while(itCheckItemAttachment.hasNext()){
+                                HashMap mapCheckItemAttachment =  itCheckItemAttachment.next()
+
+                                if(mapCheckItemAttachment.get("dataId").equals(map.get("serveLineStoreCheckItemId"))){
+
+                                    newRr = ec.resource.getLocationReference(mapCheckItemAttachment.get("attachmentLocation"))
+                                    InputStream is = newRr.openStream()
+
+                                    byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
+                                    int pictureIdx = wb.addPicture(bytes, XSSFWorkbook.PICTURE_TYPE_JPEG);
+                                    is.close();
+
+                                    CreationHelper helper = wb.getCreationHelper();
+                                    Drawing drawing = sheet.createDrawingPatriarch();
+                                    ClientAnchor anchor = helper.createClientAnchor();
+                                    anchor.setCol1(beginCol);
+                                    anchor.setRow1(beginRow + 2);
+                                    Picture pict = drawing.createPicture(anchor, pictureIdx);
+                                    pict.resize();
+
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    sheet.setForceFormulaRecalculation(true);
+                }
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                wb.write(bos)
+                resourceInputStream.close()
+                ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+                String fileName = "Checklist_" + viewServeLineStore.shortName + "_" + viewServeLineStore.storeName + "_" + viewServeLineStore.auditDate + "(" + serveLineStoreId + ")" + ".xlsx"
+                String attachmentType = "ServeLineStore-Checklist"
+                String attachmentLocation = "dbresource://afauditApp/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+                String attachmentUrl = ec.web.getWebappRootUrl(true, null) + "/apps/afauditApp/rest/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+
+                newRr = ec.resource.getLocationReference(attachmentLocation)
+                newRr.putStream(bis)
+                bos.close()
+                bis.close()
+
+                ec.service.sync().name("create", "afaudit.Attachment").parameters([attachmentType: attachmentType, dataId: serveLineStoreId, attachmentLocation: attachmentLocation, attachmentUrl: attachmentUrl]).call()
+
+            ]]></script>
+        </actions>
+    </service>
+</services>

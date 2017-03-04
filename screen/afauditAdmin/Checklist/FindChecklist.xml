@@ -1,0 +1,85 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="customerId"/>
+
+    <transition name="findChecklist">
+        <default-response url="."/></transition>
+    <transition name="createChecklist">
+        <default-response url="../EditChecklist"/>
+    </transition>
+    <transition name="editChecklist">
+        <default-response url="../EditChecklist"/>
+    </transition>
+    <transition name="deleteChecklist">
+        <actions>
+            <entity-find-count entity-name="afaudit.Attachment" count-field="count">
+                <econdition field-name="attachmentType" value="Checklist-Checklist"/>
+                <econdition field-name="dataId" from="checklistId"/>
+            </entity-find-count>
+            <if condition="count > 0">
+                <message error="true">There is attachment under it!</message><return/></if>
+
+            <service-call name="delete#afaudit.Checklist" in-map="[checklistId:checklistId]"/>
+        </actions>
+        <default-response url="."/>
+    </transition>
+    <transition name="getReferenceId">
+        <service-call name="afaudit.afauditServices.get#ReferenceIds" in-map="[customerId:customerId, category:category]"/>
+
+        <default-response type="none"/>
+    </transition>
+
+    <actions>
+        <entity-find entity-name="afaudit.Checklist" list="checklistList">
+            <search-form-inputs default-order-by="customerId,serveTypeRefId,-checklistVersion"/></entity-find>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <container-dialog id="FindChecklistDialog" button-text="Find">
+                    <form-single name="FindChecklist" transition="findChecklist">
+                        <field name="checklistId"><default-field title="ID"><text-find/></default-field></field>
+                        <field name="customerId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer"/></entity-options>
+                            </drop-down></default-field></field>
+                        <field name="serveTypeRefId"><default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getReferenceId?category=ServeType" label-field="referenceIdTemplate" value-field="referenceId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down></default-field></field>
+                        <field name="active"><default-field>
+                            <drop-down allow-empty="true">
+                                <option key="1" text="Active"/><option key="0" text="Inactive"/>
+                            </drop-down></default-field></field>
+                        <field name="checklistVersion"><default-field><text-find/></default-field></field>
+                        <field name="remark"><default-field><text-find/></default-field></field>
+                        <field name="findButton"><default-field title="Find"><submit icon="glyphicon glyphicon-search"/></default-field></field>
+                    </form-single>
+                </container-dialog>
+                <link url="createChecklist" text="Create" link-type="hidden-form" icon="glyphicon glyphicon-plus"/>
+            </container>
+
+            <form-list name="ListChecklist" list="checklistList" show-text-button="true">
+                <auto-fields-entity entity-name="afaudit.Checklist" field-type="display">
+                    <exclude field-name="lastUpdatedStamp"/></auto-fields-entity>
+                <field name="checklistId"><header-field title="ID"/><default-field>
+                    <link text="${checklistId}" url="editChecklist" link-type="anchor-button" icon="glyphicon glyphicon-chevron-right"/>
+                    <link url="../../CheckItem/FindCheckItem" text="Check Item" icon="glyphicon glyphicon-th-list" parameter-map="[checklistId:checklistId]"/>
+                </default-field></field>
+                <field name="serveTypeRefId"><default-field>
+                    <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate"/></default-field></field>
+                <field name="active"><default-field>
+                    <display text="${active == 1? 'Active':'Inactive'}"/></default-field></field>
+                <field name="delete"><default-field title="">
+                    <link url="deleteChecklist" text="Delete" icon="glyphicon glyphicon-remove" confirmation="${ec.l10n.localize('Really Delete?')}" parameter-map="[checklistId:checklistId]"/>
+                </default-field></field>
+            </form-list>
+        </container>
+
+    </widgets>
+</screen>

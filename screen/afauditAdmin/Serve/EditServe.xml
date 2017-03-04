@@ -1,0 +1,97 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="serveId"/>
+
+    <transition name="updateServe">
+        <actions>
+            <if condition="!serveNo || !customerId || !serveTypeRefId || !orderType">
+                <message error="true">Fields of Serve No, Customer Id, Serve Type Ref Id, Order Type are required</message><return/>
+            </if>
+
+            <if condition="serveId">
+                <set field="map" from="context"/><script>map.remove("customerId"); map.remove("serveTypeRefId")</script>
+                <service-call name="update#afaudit.Serve" in-map="map"/>
+            <else>
+                <entity-find-one entity-name="afaudit.Serve" value-field="serve">
+                    <field-map field-name="serveNo"/><field-map field-name="customerId"/>
+                </entity-find-one>
+                <if condition="serve">
+                    <message error="true">Fields of Serve No, Customer Id are existed</message><return/>
+                </if>
+                <service-call name="create#afaudit.Serve" in-map="context" out-map="context"/></else></if>
+        </actions>
+
+        <default-response url="."/>
+    </transition>
+    <transition name="getReferenceId">
+        <service-call name="afaudit.afauditServices.get#ReferenceIds" in-map="[customerId:customerId, category:category]"/>
+
+        <default-response type="none"/>
+    </transition>
+
+    <actions>
+        <if condition="serveId">
+            <if condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')">
+            <else>
+                <entity-find-count entity-name="afaudit.ViewServe" count-field="count">
+                    <econdition field-name="serveId" from="serveId"/>
+                    <econdition field-name="kaId" from="ec.user.userId"/>
+                </entity-find-count>
+
+                <if condition="count==0">
+                    <message error="true">No permission</message><return/></if>
+            </else></if>
+
+            <entity-find-one entity-name="afaudit.Serve" value-field="serve"/>
+        <else>
+            <entity-make-value entity-name="afaudit.Serve" value-field="serve"/></else></if>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <link url="../FindServe" text="Back" icon="glyphicon glyphicon-step-backward"/>
+            </container>
+            <container>
+                <form-single name="EditServe" transition="updateServe" map="serve">
+                    <field name="serveId"><default-field title="ID"><display/></default-field></field>
+                    <field name="customerId">
+                        <conditional-field condition="serveId">
+                            <display-entity entity-name="afaudit.Customer" text="CustomerIdTemplate"/></conditional-field>
+                        <conditional-field condition="ec.user.isInGroup('afaudit_KA')">
+                            <drop-down>
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer">
+                                        <econdition field-name="kaId" from="ec.user.userId"/></entity-find></entity-options>
+                            </drop-down><label text="*" style="label-red"/></conditional-field>
+                        <default-field>
+                            <drop-down>
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer"/></entity-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="serveTypeRefId">
+                        <conditional-field condition="serveId">
+                            <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate" key-field-name="referenceId"/></conditional-field>
+                        <default-field>
+                            <drop-down>
+                                <dynamic-options transition="getReferenceId?category=ServeType" label-field="referenceIdTemplate" value-field="referenceId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="serveNo"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="orderType"><default-field>
+                        <drop-down>
+                            <option key="1" text="Auditing"/><option key="2" text="Sampling"/>
+                        </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="contractNo"><default-field><text-line/></default-field></field>
+                    <field name="bossNo"><default-field><text-line/></default-field></field>
+                    <field name="remark"><default-field><text-area/></default-field></field>
+
+                    <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
+                </form-single>
+            </container>
+        </container>
+
+    </widgets>
+</screen>

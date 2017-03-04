@@ -1,0 +1,10 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd"
+        default-menu-title="Check Item" default-menu-index="5" include-child-content="true" menu-image-type="icon" menu-image="glyphicon glyphicon-th-list">
+
+    <subscreens default-item="FindCheckItem"/>
+
+    <widgets>
+        <subscreens-active/>
+    </widgets>
+</screen>

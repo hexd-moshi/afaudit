@@ -1,0 +1,10 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd"
+        default-menu-title="Store" default-menu-index="3" include-child-content="true" menu-image="glyphicon glyphicon-home" menu-image-type="icon">
+
+    <subscreens default-item="FindStore"/>
+
+    <widgets>
+        <subscreens-active/>
+    </widgets>
+</screen>

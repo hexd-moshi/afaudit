@@ -1,0 +1,90 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <transition name="findCustomer">
+        <default-response url="."/></transition>
+    <transition name="createCustomer">
+        <default-response url="../EditCustomer"/>
+    </transition>
+    <transition name="editCustomer">
+        <default-response url="../EditCustomer"/>
+    </transition>
+    <transition name="deleteCustomer">
+        <actions>
+            <service-call name="delete#afaudit.Customer" in-map="[customerId:customerId]"/>
+        </actions>
+        <default-response url="."/>
+    </transition>
+
+    <actions>
+        <entity-find entity-name="afaudit.Customer" list="customerList">
+            <search-form-inputs default-order-by="shortName"/></entity-find>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <container-dialog id="FindCustomerDialog" button-text="Find">
+                    <form-single name="FindCustomer" transition="findCustomer">
+                        <field name="customerId"><default-field title="ID"><text-find/></default-field></field>
+                        <field name="customerRefId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="ReferenceIdTemplate">
+                                    <entity-find entity-name="afaudit.Reference">
+                                        <econdition field-name="enterprise" value="COMMON"/>
+                                        <econdition field-name="category" value="Customer"/></entity-find></entity-options>
+                            </drop-down></default-field></field>
+                        <field name="shortName"><default-field><text-find/></default-field></field>
+                        <field name="englishName"><default-field><text-find/></default-field></field>
+                        <field name="chineseName"><default-field><text-find/></default-field></field>
+                        <field name="locationRefId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="ReferenceIdTemplate">
+                                    <entity-find entity-name="afaudit.Reference">
+                                        <econdition field-name="enterprise" value="COMMON"/>
+                                        <econdition field-name="category" value="Location"/></entity-find></entity-options>
+                            </drop-down></default-field></field>
+                        <field name="contact"><default-field><text-find/></default-field></field>
+                        <field name="kaId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="UsernameTemplate">
+                                    <entity-find entity-name="moqui.security.UserAccount"/></entity-options>
+                            </drop-down></default-field></field>
+                        <field name="tel"><default-field><text-find/></default-field></field>
+                        <field name="email"><default-field><text-find/></default-field></field>
+                        <field name="address"><default-field><text-find/></default-field></field>
+                        <field name="remark"><default-field><text-find/></default-field></field>
+                        <field name="findButton"><default-field title="Find"><submit icon="glyphicon glyphicon-search"/></default-field></field>
+                    </form-single>
+                </container-dialog>
+                <link url="createCustomer" text="Create" link-type="hidden-form" icon="glyphicon glyphicon-plus"/>
+            </container>
+
+            <form-list name="ListCustomer" list="customerList" show-text-button="true">
+                <auto-fields-entity entity-name="afaudit.Customer" field-type="display">
+                    <exclude field-name="lastUpdatedStamp"/></auto-fields-entity>
+                <field name="customerId"><header-field title="ID"/><default-field>
+                    <link text="${customerId}" url="editCustomer" link-type="anchor-button" icon="glyphicon glyphicon-chevron-right"/>
+                    <link url="../../Store/FindStore" text="Store" icon="glyphicon glyphicon-home" parameter-map="[customerId:customerId]"/>
+                    <link url="../../Checklist/FindChecklist" text="Checklist" icon="glyphicon glyphicon-list-alt" parameter-map="[customerId:customerId]"/>
+                </default-field></field>
+                <field name="customerRefId"><default-field>
+                    <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate"/></default-field></field>
+                <field name="locationRefId"><default-field>
+                    <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate"/></default-field></field>
+                <field name="delete"><default-field title="">
+                    <link url="deleteCustomer" text="Delete" icon="glyphicon glyphicon-remove" confirmation="${ec.l10n.localize('Really Delete?')}" parameter-map="[customerId:customerId]"/>
+                </default-field></field>
+
+                <form-list-column><field-ref name="customerId"/></form-list-column>
+                <form-list-column><field-ref name="customerRefId"/><field-ref name="shortName"/></form-list-column>
+                <form-list-column><field-ref name="englishName"/><field-ref name="chineseName"/></form-list-column>
+                <form-list-column><field-ref name="locationRefId"/></form-list-column>
+                <form-list-column><field-ref name="kaId"/><field-ref name="contact"/></form-list-column>
+                <form-list-column><field-ref name="tel"/><field-ref name="email"/></form-list-column>
+                <form-list-column><field-ref name="address"/><field-ref name="remark"/></form-list-column>
+                <form-list-column><field-ref name="delete"/></form-list-column>
+            </form-list>
+        </container>
+    </widgets>
+</screen>

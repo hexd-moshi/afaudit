@@ -1,0 +1,172 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="checklistId"/>
+
+    <transition name="updateChecklist">
+        <actions>
+            <if condition="!customerId || !serveTypeRefId || !active">
+                <message error="true">Fields of Customer Id, Serve Type Ref Id, Active are required</message><return/>
+            </if>
+
+            <if condition="checklistId">
+                <set field="map" from="context"/><script>map.remove("customerId"); map.remove("serveTypeRefId")</script>
+                <service-call name="update#afaudit.Checklist" in-map="map"/>
+            <else>
+                <entity-find-one entity-name="afaudit.Checklist" value-field="checklist">
+                    <field-map field-name="customerId"/><field-map field-name="serveTypeRefId"/>
+                </entity-find-one>
+                <set field="checklistVersion" value="1"/>
+                <if condition="checklist">
+                    <set field="checklistVersion" from="checklist.checklistVersion + 1"/>
+                </if>
+                <service-call name="create#afaudit.Checklist" in-map="context" out-map="context"/></else></if>
+        </actions>
+
+        <default-response url="."/>
+    </transition>
+    <transition name="uploadAttachment">
+        <actions>
+            <entity-find-one entity-name="afaudit.Attachment" value-field="attachment">
+                <field-map field-name="attachmentType" value="Checklist-Checklist"/>
+                <field-map field-name="dataId" from="checklistId"/>
+            </entity-find-one>
+
+            <if condition="attachment">
+                <message error="true">The Checklist has been existed!</message><return/>
+            </if>
+
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                import org.moqui.util.StringUtilities
+
+                org.moqui.context.ExecutionContext ec = context.ec
+                org.apache.commons.fileupload.FileItem contentFile = context.attachmentFile
+                String fileName = contentFile.getName()
+
+                if(fileName.length() != 0){
+                    //fileName = StringUtilities.getRandomString(5)+ '_' + fileName
+                    String attachmentLocation = "dbresource://afauditApp/attachment/${attachmentType}/${checklistId}/${fileName}"
+                    String attachmentUrl = ec.web.getWebappRootUrl(true, null) + "/apps/afauditApp/rest/attachment/${attachmentType}/${checklistId}/${fileName}"
+
+                    ResourceReference newRr = ec.resource.getLocationReference(attachmentLocation)
+                    InputStream fileStream = contentFile.getInputStream()
+                    newRr.putStream(fileStream)
+                    fileStream.close()
+
+                    ec.service.sync().name("create", "afaudit.Attachment").parameters([attachmentType: attachmentType, dataId: checklistId, attachmentLocation: attachmentLocation, attachmentUrl: attachmentUrl]).call()
+                }
+            ]]></script>
+        </actions>
+        <default-response url="."/>
+    </transition>
+    <transition name="downloadAttachment">
+        <actions>
+            <script>ec.web.sendResourceResponse(attachmentLocation)</script>
+        </actions>
+        <default-response type="none"/>
+    </transition>
+    <transition name="deleteAttachment">
+        <actions>
+            <entity-find-one entity-name="afaudit.Attachment" value-field="attachment">
+                <field-map field-name="attachmentId" from="attachmentId"/>
+            </entity-find-one>
+
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                org.moqui.context.ExecutionContext ec = context.ec
+                ResourceReference newRr = ec.resource.getLocationReference("${attachment.attachmentLocation}")
+                newRr.delete()
+            ]]></script>
+
+            <service-call name="delete#afaudit.Attachment" in-map="[attachmentId:attachmentId]"/>
+        </actions>
+        <default-response url="."/>
+    </transition>
+    <transition name="getReferenceId">
+        <service-call name="afaudit.afauditServices.get#ReferenceIds" in-map="[customerId:customerId, category:category]"/>
+
+        <default-response type="none"/>
+    </transition>
+
+    <actions>
+        <if condition="checklistId">
+            <entity-find-one entity-name="afaudit.Checklist" value-field="checklist"/>
+
+            <entity-find entity-name="afaudit.Attachment" list="attachmentList">
+                <econdition field-name="attachmentType" operator="in" value="Checklist-Checklist,Checklist-Report"/>
+                <econdition field-name="dataId" from="checklistId"/>
+            </entity-find>
+        <else>
+            <entity-make-value entity-name="afaudit.Checklist" value-field="checklist"/></else></if>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <link url="../FindChecklist" text="Back" icon="glyphicon glyphicon-step-backward"/>
+                <section name="SectionChecklistId" condition="checklistId">
+                    <widgets>
+                        <container-dialog id="UploadAttachmentDialog" button-text="Upload">
+                            <form-single name="UploadAttachment" transition="uploadAttachment">
+                                <field name="checklistId"><default-field><hidden/></default-field></field>
+                                <field name="attachmentType"><default-field title="Type">
+                                    <drop-down>
+                                        <option key="Checklist-Checklist" text="Checklist-Checklist"/>
+                                        <!--<option key="Checklist-Report" text="Checklist-Report"/>-->
+                                    </drop-down><label text="*" style="label-red"/></default-field></field>
+                                <field name="attachmentFile"><default-field title="File"><file/></default-field></field>
+                                <field name="submitButton"><default-field title="OK"><submit icon="glyphicon glyphicon-ok"/></default-field></field>
+                            </form-single>
+                        </container-dialog>
+                    </widgets>
+                </section>
+            </container>
+
+            <container>
+                <form-single name="EditChecklist" transition="updateChecklist" map="checklist">
+                    <field name="checklistId"><default-field title="ID"><display/></default-field></field>
+                    <field name="customerId">
+                        <conditional-field condition="checklistId">
+                            <display-entity entity-name="afaudit.Customer" key-field-name="customerId" text="CustomerIdTemplate"/></conditional-field>
+                        <default-field>
+                            <drop-down>
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer"/>
+                                </entity-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="serveTypeRefId">
+                        <conditional-field condition="checklistId">
+                            <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate" key-field-name="referenceId"/></conditional-field>
+                        <default-field>
+                            <drop-down>
+                                <dynamic-options transition="getReferenceId?category=ServeType" label-field="referenceIdTemplate" value-field="referenceId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="active"><default-field>
+                        <drop-down>
+                            <option key="1" text="active"/><option key="0" text="inactive"/>
+                        </drop-down><label text="*" style="label-red"/>
+                    </default-field></field>
+                    <field name="checklistVersion"><default-field><display/></default-field></field>
+                    <field name="remark"><default-field><text-area/></default-field></field>
+
+                    <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
+                </form-single>
+            </container>
+
+            <form-list name="ListAttachment" list="attachmentList">
+                <field name="attachmentId"><default-field title="ID">
+                    <link text="${attachmentId}" url="downloadAttachment" icon="glyphicon glyphicon-save" parameter-map="[attachmentLocation:attachmentLocation]"/>
+                </default-field></field>
+                <field name="attachmentType"><default-field title="Type"><display/></default-field></field>
+                <field name="attachmentLocation"><default-field title="Location"><display/></default-field></field>
+                <field name="delete"><default-field title="">
+                    <link url="deleteAttachment" text="Delete" confirmation="${ec.l10n.localize('Really Delete?')}" icon="glyphicon glyphicon-remove" parameter-map="[attachmentId:attachmentId]"/>
+                </default-field></field>
+            </form-list>
+        </container>
+
+    </widgets>
+</screen>

@@ -1,0 +1,34 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="serveLineStoreId" from="serveLineStoreId" required="true"/>
+
+    <transition name="begin" read-only="true">
+        <actions>
+            <service-call name="update#afaudit.ServeLineStore" in-map="[serveLineStoreId:serveLineStoreId, checklistStatus:30]"/>
+        </actions>
+        <default-response url="../checkpoints" url-type="plain" parameter-map="[serveLineStoreId:serveLineStoreId]"/>
+    </transition>
+    <actions>
+        <if condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')">
+        <else>
+            <entity-find-count entity-name="afaudit.ViewServeLineStore" count-field="count">
+                <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
+                <econdition field-name="auditorId" from="ec.user.userId"/>
+                <econdition field-name="checklistStatus" operator="in" value="20,30,35"/>
+            </entity-find-count>
+            <if condition="count == 0">
+                <message error="true">No permission</message><return/></if>
+        </else></if>
+
+        <entity-find-one entity-name="afaudit.ViewServeLineStore" value-field="viewServeLineStore">
+            <field-map field-name="serveLineStoreId" from="serveLineStoreId"/>
+        </entity-find-one>
+    </actions>
+
+    <widgets>
+        <render-mode>
+            <text type="html" location="component://afaudit/screen/afauditApp/task.html.ftl"/></render-mode>
+    </widgets>
+
+</screen>

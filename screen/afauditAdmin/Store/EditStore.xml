@@ -1,0 +1,91 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="storeId"/>
+
+    <transition name="updateStore">
+        <actions>
+            <if condition="!customerId || !regionRefId || !locationRefId || !storeName || !storeCode || !chineseName || !englishName || !shortName" >
+                <message error="true">Fields of Customer Id, RegionRef Id, Location Ref Id, Store Name, Store Code, Chinese Name, English Name, Short Name are required</message><return/>
+            </if>
+
+            <if condition="storeId">
+                <set field="map" from="context"/><script>map.remove("customerId"); map.remove("regionRefId"); map.remove("locationRefId")</script>
+                <service-call name="update#afaudit.Store" in-map="map"/>
+            <else>
+                <entity-find-one entity-name="afaudit.Store" value-field="store">
+                    <field-map field-name="customerId"/><field-map field-name="storeCode"/>
+                </entity-find-one>
+                <if condition="store">
+                    <message error="true">Fields of Customer Id, Store Code are existed</message><return/>
+                </if>
+                <service-call name="create#afaudit.Store" in-map="context" out-map="context"/></else></if>
+        </actions>
+
+        <default-response url="."/>
+    </transition>
+
+    <actions>
+        <if condition="storeId">
+            <entity-find-one entity-name="afaudit.Store" value-field="store"/>
+        <else>
+            <entity-make-value entity-name="afaudit.Store" value-field="store"/></else></if>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <link url="../FindStore" text="Back" icon="glyphicon glyphicon-step-backward"/>
+            </container>
+            <container>
+                <form-single name="EditStore" transition="updateStore" map="store">
+                    <field name="storeId"><default-field title="ID"><display/></default-field></field>
+                    <field name="customerId">
+                        <conditional-field condition="storeId">
+                            <display-entity entity-name="afaudit.Customer" key-field-name="customerId" text="CustomerIdTemplate"/></conditional-field>
+                        <default-field>
+                            <drop-down>
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer">
+                                        <select-field field-name="customerId"/><select-field field-name="shortName"/>
+                                        <select-field field-name="englishName"/><select-field field-name="chineseName"/>
+                                    </entity-find></entity-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="regionRefId">
+                        <conditional-field condition="storeId">
+                            <display-entity entity-name="afaudit.Reference" key-field-name="referenceId" text="ReferenceIdTemplate"/></conditional-field>
+                        <default-field>
+                            <drop-down>
+                                <entity-options text="ReferenceIdTemplate">
+                                    <entity-find entity-name="afaudit.Reference">
+                                        <econdition field-name="enterprise" value="COMMON"/>
+                                        <econdition field-name="category" value="Region"/></entity-find></entity-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="locationRefId">
+                        <conditional-field condition="storeId">
+                            <display-entity entity-name="afaudit.Reference" key-field-name="referenceId" text="ReferenceIdTemplate"/></conditional-field>
+                        <default-field>
+                            <drop-down>
+                                <entity-options text="ReferenceIdTemplate">
+                                    <entity-find entity-name="afaudit.Reference">
+                                        <econdition field-name="enterprise" value="COMMON"/>
+                                        <econdition field-name="category" value="Location"/></entity-find></entity-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="storeName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="storeCode"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="englishName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="chineseName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="shortName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="brand"><default-field><text-line/></default-field></field>
+                    <field name="contact"><default-field><text-line/></default-field></field>
+                    <field name="tel"><default-field><text-line/></default-field></field>
+                    <field name="email"><default-field><text-line/></default-field></field>
+                    <field name="address"><default-field><text-line/></default-field></field>
+                    <field name="remark"><default-field><text-area/></default-field></field>
+
+                    <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
+                </form-single>
+            </container>
+        </container>
+    </widgets>
+</screen>

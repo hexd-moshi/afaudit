@@ -1,0 +1,115 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="serveLineId"/>
+
+    <transition name="updateServeLine">
+        <actions>
+            <if condition="!serveId || !serveLineNo || !checklistId || !fromDate || !thruDate">
+                <message error="true">Fields of Serve Id, Serve Line No, Checklist Id, From Date, Thru Date are required</message><return/>
+            </if>
+
+            <if condition="serveLineId">
+                <set field="map" from="context"/><script>map.remove("serveId"); map.remove("checklistId")</script>
+                <service-call name="update#afaudit.ServeLine" in-map="map"/>
+            <else>
+                <entity-find-one entity-name="afaudit.ServeLine" value-field="serveLine">
+                    <field-map field-name="serveId"/><field-map field-name="serveLineNo"/>
+                </entity-find-one>
+                <if condition="serveLine">
+                    <message error="true">Fields of Serve Id, Serve Line No are existed</message><return/>
+                </if>
+                <service-call name="create#afaudit.ServeLine" in-map="context" out-map="context"/></else></if>
+        </actions>
+
+        <default-response url="."/>
+    </transition>
+    <transition name="getServeId">
+        <service-call name="afaudit.afauditServices.get#ServeIds" in-map="[customerId:customerId]"/>
+
+        <default-response type="none"/>
+    </transition>
+    <transition name="getChecklistId">
+        <service-call name="afaudit.afauditServices.get#ChecklistIds" in-map="[customerId:customerId, serveId:serveId]"/>
+
+        <default-response type="none"/>
+    </transition>
+
+    <actions>
+        <if condition="serveLineId">
+            <!--<entity-find-one entity-name="afaudit.ServeLine" value-field="serveLine"/>-->
+            <if condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')">
+            <else>
+                <entity-find-count entity-name="afaudit.ViewServeLine" count-field="count">
+                    <econdition field-name="serveLineId" from="serveLineId"/>
+                    <econdition field-name="kaId" from="ec.user.userId"/>
+                </entity-find-count>
+
+                <if condition="count==0">
+                    <message error="true">No permission</message><return/></if>
+            </else></if>
+            <entity-find-one entity-name="afaudit.ViewServeLine" value-field="viewServeLine">
+                <field-map field-name="serveLineId" from="serveLineId"/>
+            </entity-find-one>
+            <set field="customerId" from="viewServeLine.customerId"/>
+        <else>
+            <entity-make-value entity-name="afaudit.ServeLine" value-field="serveLine"/></else></if>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <link url="../FindServeLine" text="Back" icon="glyphicon glyphicon-step-backward"/>
+                <section name="SectionServeLineId" condition="serveLineId">
+                    <widgets>
+                        <link url="../../ServeLineStore/FindServeLineStore" text="Store" icon="glyphicon glyphicon-tasks" parameter-map="[serveLineId:serveLineId]"/>
+                    </widgets>
+                </section>
+            </container>
+            <container>
+                <form-single name="EditServeLine" transition="updateServeLine" map="viewServeLine">
+                    <field name="serveLineId"><default-field title="ID"><display/></default-field></field>
+                    <field name="customerId" from="customerId">
+                        <conditional-field condition="serveLineId">
+                            <display-entity entity-name="afaudit.Customer" text="CustomerIdTemplate"/></conditional-field>
+                        <conditional-field condition="ec.user.isInGroup('afaudit_KA')">
+                            <drop-down allow-empty="true">
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer">
+                                        <econdition field-name="kaId" from="ec.user.userId"/></entity-find></entity-options>
+                            </drop-down><label text="*" style="label-red"/></conditional-field>
+                        <default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer"></entity-find></entity-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="serveId">
+                        <conditional-field condition="serveLineId">
+                            <display-entity entity-name="afaudit.ViewServe" text="ServeIdTemplate" key-field-name="serveId"/></conditional-field>
+                        <default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getServeId" label-field="serveIdTemplate" value-field="serveId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="checklistId">
+                        <conditional-field condition="serveLineId">
+                            <display-entity entity-name="afaudit.ViewChecklist" key-field-name="checklistId" text="ChecklistIdTemplate"/></conditional-field>
+                        <default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getChecklistId" label-field="checklistIdTemplate" value-field="checklistId">
+                                    <depends-on field="customerId"/><depends-on field="serveId"/>
+                                </dynamic-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                    <field name="serveLineNo"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="fromDate"><default-field><date-time type="date"/><label text="*" style="label-red"/></default-field></field>
+                    <field name="thruDate"><default-field><date-time type="date"/><label text="*" style="label-red"/></default-field></field>
+                    <field name="remark"><default-field><text-area/></default-field></field>
+
+                    <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
+                </form-single>
+            </container>
+        </container>
+
+    </widgets>
+</screen>

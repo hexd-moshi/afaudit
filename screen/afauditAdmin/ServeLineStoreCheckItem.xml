@@ -1,0 +1,10 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd"
+        default-menu-title="Serve Line Store Check Item" default-menu-index="9" include-child-content="true" menu-image="glyphicon glyphicon-align-left" menu-image-type="icon">
+
+    <subscreens default-item="FindServeLineStoreCheckItem"/>
+
+    <widgets>
+        <subscreens-active/>
+    </widgets>
+</screen>

@@ -1,0 +1,171 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="customerId"/>
+
+    <transition name="findStore">
+        <default-response url="."/></transition>
+    <transition name="createStore">
+        <default-response url="../EditStore"/>
+    </transition>
+    <transition name="editStore">
+        <default-response url="../EditStore"/>
+    </transition>
+    <transition name="deleteStore">
+        <actions>
+            <service-call name="delete#afaudit.Store" in-map="[storeId:storeId]"/>
+        </actions>
+        <default-response url="."/>
+    </transition>
+    <transition name="importStore">
+        <actions>
+            <if condition="!customerId">
+                <message error="true">Fields of Customer Id is required</message><return/>
+            </if>
+
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                import org.moqui.util.StringUtilities
+                import org.apache.poi.hssf.usermodel.HSSFRow
+                import org.apache.poi.hssf.usermodel.HSSFSheet
+                import org.apache.poi.hssf.usermodel.HSSFWorkbook
+                import org.apache.poi.poifs.filesystem.POIFSFileSystem
+
+                org.moqui.context.ExecutionContext ec = context.ec
+                org.apache.commons.fileupload.FileItem contentFile = context.importFile
+                String fileName = contentFile.getName()
+
+                if(fileName.length() != 0){
+                    InputStream fileStream = contentFile.getInputStream()
+
+                    POIFSFileSystem fs = new POIFSFileSystem(fileStream)
+                    HSSFWorkbook wb = new HSSFWorkbook(fs)
+                    HSSFSheet sheet = wb.getSheetAt(0)
+
+                    //ec.entity.find("afaudit.Store").condition("customerId", customerId).deleteAll()
+
+                    HSSFRow row;
+	                String region; String location; String storeName; String storeCode; String chineseName; String englishName; String shortName;
+	                String brand; String contact; String tel; String email; String address; String remark;
+                    for(int rownum = sheet.getFirstRowNum()+1; rownum <= sheet.getLastRowNum(); rownum++){
+                        row = sheet.getRow(rownum);
+                        region = row.getCell(0).getStringCellValue();
+                        location = row.getCell(1).getStringCellValue();
+                        storeName = row.getCell(2).getStringCellValue();
+                        storeCode = row.getCell(3).getStringCellValue();
+                        chineseName = row.getCell(4).getStringCellValue();
+                        englishName = row.getCell(5).getStringCellValue();
+                        shortName = row.getCell(6).getStringCellValue();
+                        brand = row.getCell(7).getStringCellValue();
+                        contact = row.getCell(8).getStringCellValue();
+                        tel = row.getCell(9).getStringCellValue();
+                        email = row.getCell(10).getStringCellValue();
+                        address = row.getCell(11).getStringCellValue();
+                        remark = row.getCell(12).getStringCellValue();
+
+                        reference = ec.entity.find("afaudit.Reference").condition("enterprise", "COMMON").condition("category", "Region").condition("attributeValue", region).one()
+                        String regionRefId = reference.referenceId
+                        reference = ec.entity.find("afaudit.Reference").condition("enterprise", "COMMON").condition("category", "Location").condition("attributeValue", location).one()
+                        String locationRefId = reference.referenceId
+
+                        EntityValue store = ec.entity.find("afaudit.Store").condition("customerId", customerId).condition("storeCode", storeCode).one()
+                        if(!store){
+                            ec.service.sync().name("create", "afaudit.Store").parameters([customerId:customerId, regionRefId:regionRefId, locationRefId:locationRefId, storeName:storeName, storeCode:storeCode,chineseName:chineseName, englishName:englishName, shortName:shortName, brand:brand, contact:contact,tel:tel, email:email, address:address, remark:remark]).call()
+                        }
+                    }
+
+                    fileStream.close()
+                }
+            ]]></script>
+        </actions>
+        <default-response url="."/>
+    </transition>
+
+    <actions>
+        <entity-find entity-name="afaudit.Store" list="storeList">
+            <search-form-inputs default-order-by="customerId,regionRefId,locationRefId,storeId"/></entity-find>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <container-dialog id="FindStoreDialog" button-text="Find">
+                    <form-single name="FindStore" transition="findStore">
+                        <field name="storeId"><default-field title="ID"><text-find/></default-field></field>
+                        <field name="customerId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer"/>
+                                </entity-options>
+                            </drop-down></default-field></field>
+                        <field name="regionRefId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="ReferenceIdTemplate">
+                                    <entity-find entity-name="afaudit.Reference">
+                                        <econdition field-name="enterprise" value="COMMON"/>
+                                        <econdition field-name="category" value="Region"/></entity-find></entity-options>
+                            </drop-down></default-field></field>
+                        <field name="locationRefId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="ReferenceIdTemplate">
+                                    <entity-find entity-name="afaudit.Reference">
+                                        <econdition field-name="enterprise" value="COMMON"/>
+                                        <econdition field-name="category" value="Location"/></entity-find></entity-options>
+                            </drop-down></default-field></field>
+                        <field name="storeName"><default-field><text-find/></default-field></field>
+                        <field name="storeCode"><default-field><text-find/></default-field></field>
+                        <field name="chineseName"><default-field><text-find/></default-field></field>
+                        <field name="englishName"><default-field><text-find/></default-field></field>
+                        <field name="shortName"><default-field><text-find/></default-field></field>
+                        <field name="brand"><default-field><text-find/></default-field></field>
+                        <field name="contact"><default-field><text-find/></default-field></field>
+                        <field name="tel"><default-field><text-find/></default-field></field>
+                        <field name="email"><default-field><text-find/></default-field></field>
+                        <field name="address"><default-field><text-find/></default-field></field>
+                        <field name="remark"><default-field><text-find/></default-field></field>
+                        <field name="findButton"><default-field title="Find"><submit icon="glyphicon glyphicon-search"/></default-field></field>
+                    </form-single>
+                </container-dialog>
+                <link url="createStore" text="Create" link-type="hidden-form" icon="glyphicon glyphicon-plus"/>
+                <container-dialog id="ImportStoreDialog" button-text="Import">
+                    <form-single name="ImportStore" transition="importStore">
+                        <field name="customerId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer"/></entity-options>
+                            </drop-down><label text="*" style="label-red"/></default-field></field>
+                        <field name="importFile"><default-field><file/></default-field></field>
+                        <field name="submitButton"><default-field title="OK"><submit icon="glyphicon glyphicon-ok" confirmation="${ec.l10n.localize('Really Import?')}"/></default-field></field>
+                    </form-single>
+                    <section name="Template"><widgets>
+                        <label text=" ${ec.l10n.localize('Template file link')} : "/><link url="../templateStore.xls" text="templateStore.xls" target-window="_blank" link-type="anchor"/>
+                    </widgets></section>
+                </container-dialog>
+            </container>
+
+            <form-list name="ListStore" list="storeList" show-text-button="true">
+                <auto-fields-entity entity-name="afaudit.Store" field-type="display">
+                    <exclude field-name="lastUpdatedStamp"/><exclude field-name="remark"/></auto-fields-entity>
+                <field name="storeId"><header-field title="ID"/><default-field>
+                    <link text="${storeId}" url="editStore" link-type="anchor-button" icon="glyphicon glyphicon-chevron-right"/></default-field></field>
+                <field name="regionRefId"><default-field>
+                    <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate"/></default-field></field>
+                <field name="locationRefId"><default-field>
+                    <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate"/></default-field></field>
+                <field name="delete"><default-field title="">
+                    <link url="deleteStore" text="Delete" icon="glyphicon glyphicon-remove" confirmation="${ec.l10n.localize('Really Delete?')}" parameter-map="[storeId:storeId]"/>
+                </default-field></field>
+
+                <form-list-column><field-ref name="storeId"/></form-list-column>
+                <form-list-column><field-ref name="customerId"/></form-list-column>
+                <form-list-column><field-ref name="regionRefId"/><field-ref name="locationRefId"/></form-list-column>
+                <form-list-column><field-ref name="storeName"/><field-ref name="storeCode"/></form-list-column>
+                <form-list-column><field-ref name="chineseName"/><field-ref name="englishName"/></form-list-column>
+                <form-list-column><field-ref name="shortName"/><field-ref name="brand"/></form-list-column>
+                <form-list-column><field-ref name="contact"/><field-ref name="tel"/></form-list-column>
+                <form-list-column><field-ref name="email"/><field-ref name="address"/></form-list-column>
+                <form-list-column><field-ref name="delete"/></form-list-column>
+            </form-list>
+        </container>
+    </widgets>
+</screen>

@@ -1,0 +1,160 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="serveLineStoreId"/>
+
+    <transition name="findServeLineStoreCheckItem">
+        <default-response url="."/></transition>
+    <transition name="createServeLineStoreCheckItem">
+        <default-response url="../EditServeLineStoreCheckItem"/>
+    </transition>
+    <transition name="editServeLineStoreCheckItem">
+        <default-response url="../EditServeLineStoreCheckItem"/>
+    </transition>
+    <transition name="deleteServeLineStoreCheckItem">
+        <actions>
+            <entity-find-one entity-name="afaudit.ServeLineStore" value-field="serveLineStore">
+                <field-map field-name="serveLineStoreId"/></entity-find-one>
+            <if condition="serveLineStore.checklistStatus == 60">
+                <message error="true">Fields of Checklist status has been Finished!</message><return/>
+            </if>
+
+            <entity-find-count entity-name="afaudit.Attachment" count-field="count">
+                <econdition field-name="attachmentType" operator="in" value="ServeLineStoreCheckItem-Photo"/>
+                <econdition field-name="dataId" from="serveLineStoreCheckItemId"/>
+            </entity-find-count>
+            <if condition="count > 0">
+                <message error="true">There is attachment under it!</message><return/></if>
+
+            <service-call name="delete#afaudit.ServeLineStoreCheckItem" in-map="[serveLineStoreCheckItemId:serveLineStoreCheckItemId]"/>
+        </actions>
+        <default-response url="." parameter-map="[serveLineStoreId:'']"/>
+    </transition>
+    <transition name="getStoreId">
+        <service-call name="afaudit.afauditServices.get#StoreIds" in-map="[customerId : customerId]"/>
+
+        <default-response type="none"/>
+    </transition>
+    <transition name="getServeId">
+        <service-call name="afaudit.afauditServices.get#ServeIds" in-map="[customerId : customerId]"/>
+
+        <default-response type="none"/>
+    </transition>
+    <transition name="getServeLineId">
+        <service-call name="afaudit.afauditServices.get#ServeLineIds" in-map="[customerId:customerId, serveId:serveId]"/>
+
+        <default-response type="none"/>
+    </transition>
+    <transition name="getServeLineStoreId">
+        <service-call name="afaudit.afauditServices.get#ServeLineStoreIds" in-map="[storeId : storeId]"/>
+
+        <default-response type="none"/>
+    </transition>
+    <transition name="getCheckItemId">
+        <service-call name="afaudit.afauditServices.get#CheckItemIds" in-map="[customerId : customerId]"/>
+
+        <default-response type="none"/>
+    </transition>
+
+    <actions>
+        <if condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')">
+            <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="serveLineStoreCheckItemList">
+                <search-form-inputs default-order-by="serveLineStoreId,checkItemId,serveLineStoreCheckItemId"/></entity-find>
+        <else>
+            <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="serveLineStoreCheckItemList">
+                <search-form-inputs default-order-by="serveLineStoreId,checkItemId,serveLineStoreCheckItemId"/>
+                <econdition field-name="kaId" from="ec.user.userId"/></entity-find>
+        </else></if>
+    </actions>
+
+    <widgets>
+        <container style="project-afaudit">
+            <container>
+                <container-dialog id="FindServeLineStoreCheckItemDialog" button-text="Find">
+                    <form-single name="FindServeLineStoreCheckItem" transition="findServeLineStoreCheckItem">
+                        <field name="serveLineStoreCheckItemId"><default-field title="ID"><text-find/></default-field></field>
+                        <field name="customerId"><default-field>
+                            <drop-down allow-empty="true">
+                                <entity-options text="CustomerIdTemplate">
+                                    <entity-find entity-name="afaudit.Customer"/></entity-options>
+                            </drop-down></default-field></field>
+                        <field name="storeId"><default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getStoreId" label-field="storeIdTemplate" value-field="storeId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down></default-field></field>
+                        <field name="serveId"><default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getServeId" label-field="serveIdTemplate" value-field="serveId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down></default-field></field>
+                        <field name="serveLineId"><default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getServeLineId" label-field="serveLineIdTemplate" value-field="serveLineId">
+                                    <depends-on field="customerId"/>
+                                    <depends-on field="serveId"/>
+                                </dynamic-options>
+                            </drop-down></default-field></field>
+                        <field name="serveLineStoreId"><default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getServeLineStoreId" label-field="serveLineStoreIdTemplate" value-field="serveLineStoreId">
+                                    <depends-on field="storeId"/>
+                                </dynamic-options>
+                            </drop-down></default-field></field>
+                        <field name="checkItemId"><default-field>
+                            <drop-down allow-empty="true">
+                                <dynamic-options transition="getCheckItemId" label-field="checkItemIdTemplate" value-field="checkItemId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
+                            </drop-down></default-field></field>
+                        <field name="field01"><default-field title="Operation">
+                            <drop-down allow-empty="true">
+                                <option key="Self-Operation" text="Self-Operation"/><option key="Joint-Operation" text="Joint-Operation"/>
+                            </drop-down></default-field></field>
+                        <field name="field02"><default-field title="Provider"><text-find/></default-field></field>
+                        <field name="field03"><default-field title="Product Name"><text-find/></default-field></field>
+                        <field name="field04"><default-field title="Product No."><text-find/></default-field></field>
+                        <field name="field05"><default-field title="Day Audit"><text-find/></default-field></field>
+                        <field name="field06"><default-field title="Day Defect"><text-find/></default-field></field>
+                        <field name="findButton"><default-field title="Find"><submit icon="glyphicon glyphicon-search"/></default-field></field>
+                    </form-single>
+                </container-dialog>
+                <!--<link url="createServeLineStoreCheckItem" text="Create" link-type="hidden-form" icon="glyphicon glyphicon-plus"/>-->
+            </container>
+
+            <form-list name="ListServeLineStoreCheckItem" list="serveLineStoreCheckItemList" show-text-button="true" select-columns="true">
+                <auto-fields-entity entity-name="afaudit.ServeLineStoreCheckItem" field-type="display">
+                    <exclude field-name="field05"/><exclude field-name="field06"/><exclude field-name="field07"/><exclude field-name="field08"/><exclude
+                        field-name="field09"/><exclude field-name="field10"/><exclude field-name="lastUpdatedStamp"/>
+                </auto-fields-entity>
+                <field name="serveLineStoreCheckItemId"><header-field title="ID"/><default-field>
+                    <link text="${serveLineStoreCheckItemId}" url="editServeLineStoreCheckItem" link-type="anchor-button" icon="glyphicon glyphicon-chevron-right"/></default-field></field>
+                <field name="serveLineStoreId"><default-field>
+                    <display-entity entity-name="afaudit.ViewServeLineStore" key-field-name="serveLineStoreId" text="ServeLineStoreIdTemplate"/></default-field></field>
+                <field name="checkItemId"><default-field>
+                    <display-entity entity-name="afaudit.ViewCheckItem" key-field-name="checkItemId" text="CheckItemIdTemplate"/></default-field></field>
+                <field name="field01"><default-field title="Operation"><display/></default-field></field>
+                <field name="field02"><default-field title="Provider"><display/></default-field></field>
+                <field name="field03"><default-field title="Product Name"><display/></default-field></field>
+                <field name="field04"><default-field title="Product No."><display/></default-field></field>
+                <field name="field05"><default-field title="Day Audit"><display/></default-field></field>
+                <field name="field06"><default-field title="Day Defect"><display/></default-field></field>
+                <field name="delete" hide="checklistStatus == 60">
+                    <default-field title="">
+                        <link url="deleteServeLineStoreCheckItem" text="Delete" icon="glyphicon glyphicon-remove" confirmation="${ec.l10n.localize('Really Delete?')}" parameter-map="[serveLineStoreCheckItemId:serveLineStoreCheckItemId]"/></default-field></field>
+
+                <form-list-column><field-ref name="serveLineStoreCheckItemId"/></form-list-column>
+                <form-list-column><field-ref name="serveLineStoreId"/><field-ref name="checkItemId"/></form-list-column>
+                <form-list-column><field-ref name="defect"/><field-ref name="remark"/></form-list-column>
+                <form-list-column><field-ref name="defectRemark"/><field-ref name="actionRemark"/></form-list-column>
+                <form-list-column><field-ref name="field01"/><field-ref name="field02"/></form-list-column>
+                <form-list-column><field-ref name="field03"/><field-ref name="field04"/></form-list-column>
+                <form-list-column><field-ref name="field05"/><field-ref name="field06"/></form-list-column>
+                <form-list-column><field-ref name="delete"/></form-list-column>
+            </form-list>
+        </container>
+
+    </widgets>
+</screen>

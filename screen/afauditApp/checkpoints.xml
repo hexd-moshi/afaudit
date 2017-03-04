@@ -1,0 +1,56 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd">
+
+    <parameter name="serveLineStoreId" from="serveLineStoreId" required="true"/>
+    <parameter name="checkGroupRefId" from="checkGroupRefId"/>
+    <parameter name="checkTypeRefId" from="checkTypeRefId"/>
+
+    <actions>
+        <if condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')">
+        <else>
+            <entity-find-count entity-name="afaudit.ViewServeLineStore" count-field="count">
+                <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
+                <econdition field-name="auditorId" from="ec.user.userId"/>
+                <econdition field-name="checklistStatus" operator="in" value="20,30,35"/>
+            </entity-find-count>
+            <if condition="count == 0">
+                <message error="true">No permission</message><return/></if>
+        </else></if>
+
+        <entity-find-one entity-name="afaudit.ViewServeLineStore" value-field="viewServeLineStore">
+            <field-map field-name="serveLineStoreId" from="serveLineStoreId"/>
+        </entity-find-one>
+
+        <entity-find-one entity-name="afaudit.Reference" value-field="reference">
+            <field-map field-name="referenceId" from="viewServeLineStore.customerRefId"/>
+            <field-map field-name="category" value="Customer"/>
+        </entity-find-one>
+
+        <entity-find entity-name="afaudit.Reference" list="referenceCheckGroupList">
+            <econdition field-name="enterprise" from="reference.attribute"/>
+            <econdition field-name="category" value="CheckGroup"/>
+            <econdition field-name="remark" value="USED"/>
+        </entity-find>
+        <entity-find entity-name="afaudit.Reference" list="referenceCheckTypeList">
+            <econdition field-name="enterprise" from="reference.attribute"/>
+            <econdition field-name="category" value="CheckType"/>
+            <econdition field-name="remark" value="USED"/>
+        </entity-find>
+
+        <set field="checkGroupRefId" from="checkGroupRefId?:referenceCheckGroupList.referenceId[0]"/>
+        <set field="checkTypeRefId" from="checkTypeRefId?:referenceCheckTypeList.referenceId[0]"/>
+
+        <entity-find entity-name="afaudit.ViewServeLineStoreCheckItem" list="viewCheckItemList">
+            <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
+            <econdition field-name="checkGroupRefId" from="checkGroupRefId"/>
+            <econdition field-name="checkTypeRefId" from="checkTypeRefId"/>
+            <order-by field-name="+checkItemId"/>
+        </entity-find>
+    </actions>
+
+    <widgets>
+        <render-mode>
+            <text type="html" location="component://afaudit/screen/afauditApp/checkpoints.html.ftl"/></render-mode>
+    </widgets>
+
+</screen>

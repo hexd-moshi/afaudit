@@ -1,0 +1,9 @@
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd" menu-image="glyphicon glyphicon-briefcase" menu-image-type="icon">
+
+    <subscreens default-item="ServeLineStore"/>
+
+    <widgets>
+        <subscreens-panel id="id_admin" type="popup" title="AF Audit Admin"/>
+    </widgets>
+</screen>

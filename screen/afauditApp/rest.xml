@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd"
+        require-authentication="anonymous-view" track-artifact-hit="false" default-menu-include="false" standalone="true">
+
+    <transition name="attachment">
+        <path-parameter name="attachmentType"/>
+        <path-parameter name="dataId"/>
+        <path-parameter name="fileName"/>
+        <actions>
+            <!--http://localhost:8080/apps/afauditApp/rest/attachment/ServeLineStoreCheckItem-Photo/100000/p4ExW_1.png-->
+            <!--dbresource://afauditApp/attachment/ServeLineStoreCheckItem-Photo/100000/p4ExW_1.png"-->
+            <script>ec.web.sendResourceResponse("dbresource://afauditApp/attachment/${attachmentType}/${dataId}/${fileName}", true)</script>
+        </actions>
+        <default-response type="none"/>
+    </transition>
+
+    <widgets>
+
+    </widgets>
+</screen>

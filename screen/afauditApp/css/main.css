@@ -1,0 +1,32 @@
+.page {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.page__title{
+    text-align: center;
+    margin-top: 60px;
+    margin-bottom: 30px;
+}
+.weui-label{
+    width: 7em;
+}
+.weui-btn_primary {
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    /*background-color: #f60;*/
+    /*border-color: #f60;*/
+}
+.weui-btn_primary:not(.weui-btn_disabled):active {
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    /*background-color: #f60;*/
+    /*border-color: #f60;*/
+}
+.weui-textarea {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.weui-btn_small {
+    width: 80px;
+}
+.weui-btn_list {
+    margin-top: 10px; margin-bottom: 10px; margin-right: 0;
+}
