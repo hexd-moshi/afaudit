@@ -1,6 +1,11 @@
 Release Notes
 
 -------------------------------------------------
+1.0.25-alpha
+
+1. Use checkLevel field for check item
+2. Add Disney checklist
+-------------------------------------------------
 1.0.24-alpha
 
 1. Add AF Audit Web for Customer

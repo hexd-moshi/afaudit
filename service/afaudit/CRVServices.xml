@@ -109,14 +109,14 @@
                                     row.getCell(defectCol).setCellValue(val1 + map.get("defectRemark") + operation)
                                 }
 
-                                if(map.get("dayAudit").equals("Y")){
+                                if(map.get("field05").equals("Y")){
                                     row.getCell(dayAuditCol).setCellValue("Y")
 
                                     int tmp = 0
                                     if(row.getCell(dayDefectCol).getStringCellValue().length()>0){
-                                        tmp = Integer.parseInt(row.getCell(dayDefectCol).getStringCellValue()) + Integer.parseInt(map.get("dayDefect"))
+                                        tmp = Integer.parseInt(row.getCell(dayDefectCol).getStringCellValue()) + Integer.parseInt(map.get("field06"))
                                     }else{
-                                        tmp = Integer.parseInt(map.get("dayDefect"))
+                                        tmp = Integer.parseInt(map.get("field06"))
                                     }
                                     row.getCell(dayDefectCol).setCellValue(String.valueOf(tmp))
                                 }
@@ -145,9 +145,9 @@
                             }
                         }
 
-                        if(map.get("productName") || map.get("productNo")){
-                            sheet.getRow(beginRow).getCell(beginCol).setCellValue(map.get("productName"))
-                            sheet.getRow(beginRow + 1).getCell(beginCol).setCellValue(map.get("productNo"))
+                        if(map.get("field03") || map.get("field04")){
+                            sheet.getRow(beginRow).getCell(beginCol).setCellValue(map.get("field03"))
+                            sheet.getRow(beginRow + 1).getCell(beginCol).setCellValue(map.get("field04"))
                             sheet.getRow(beginRow + 3).getCell(beginCol).setCellValue(map.get("defect")==0 ? "符合": "不符合")
                             sheet.getRow(beginRow + 4).getCell(beginCol).setCellValue(map.get("defectRemark"))
 

@@ -71,10 +71,10 @@
                         if(map.get("defectRemark")){row.createCell(7).setCellValue(map.get("defectRemark") + operation)}else{row.createCell(7)}
                         if(map.get("actionRemark")){row.createCell(8).setCellValue(map.get("actionRemark") + operation)}else{row.createCell(8)}
 
-                        row.createCell(9).setCellValue(map.get("dayAudit"))
-                        row.createCell(10).setCellValue(map.get("dayDefect"))
-                        row.createCell(11).setCellValue(map.get("productName"))
-                        row.createCell(12).setCellValue(map.get("productNo"))
+                        row.createCell(9).setCellValue(map.get("field05"))
+                        row.createCell(10).setCellValue(map.get("field06"))
+                        row.createCell(11).setCellValue(map.get("field03"))
+                        row.createCell(12).setCellValue(map.get("field04"))
 
                         HashMap mapAttachment; beginCol = 13;
                         Iterator itAttachment = checkItemAttachmentList.iterator()
@@ -121,20 +121,20 @@
                             row.getCell(8).setCellValue(val2 + map.get("actionRemark") + operation)
                         }
                         String val3 = row.getCell(9)?row.getCell(9).getStringCellValue():""; if(val3){val3 = val3 + ";\r\n"}
-                        if(map.get("dayAudit")){
-                            row.getCell(9).setCellValue(val3 + map.get("dayAudit"))
+                        if(map.get("field05")){
+                            row.getCell(9).setCellValue(val3 + map.get("field05"))
                         }
                         String val4 = row.getCell(10)?row.getCell(10).getStringCellValue():""; if(val4){val4 = val4 + ";\r\n"}
-                        if(map.get("dayDefect")){
-                            row.getCell(10).setCellValue(val4 + map.get("dayDefect"))
+                        if(map.get("field06")){
+                            row.getCell(10).setCellValue(val4 + map.get("field06"))
                         }
                         String val5 = row.getCell(11)?row.getCell(11).getStringCellValue():""; if(val5){val5 = val5 + ";\r\n"}
-                        if(map.get("productName")){
-                            row.getCell(11).setCellValue(val5 + map.get("productName"))
+                        if(map.get("field03")){
+                            row.getCell(11).setCellValue(val5 + map.get("field03"))
                         }
                         String val6 = row.getCell(12)?row.getCell(12).getStringCellValue():""; if(val6){val6 = val6 + ";\r\n"}
-                        if(map.get("productNo")){
-                            row.getCell(12).setCellValue(val6 + map.get("productNo"))
+                        if(map.get("field04")){
+                            row.getCell(12).setCellValue(val6 + map.get("field04"))
                         }
                     }
                 }

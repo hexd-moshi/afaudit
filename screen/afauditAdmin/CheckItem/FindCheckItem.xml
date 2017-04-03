@@ -48,12 +48,13 @@
                     String enterprise = reference.attribute
 
                     HSSFRow row;
-	                String checkGroup; String checkType; String itemNo; String checkPoint;
+	                String checkGroup; String checkType; String itemNo; String checkLevel; String checkPoint;
                     for(int rownum = sheet.getFirstRowNum()+1; rownum <= sheet.getLastRowNum(); rownum++){
                         row = sheet.getRow(rownum);
                         checkGroup = row.getCell(0).getStringCellValue();
                         checkType = row.getCell(1).getStringCellValue();
                         itemNo = row.getCell(2).getStringCellValue();
+                        checkLevel = row.getCell(3).getStringCellValue();
                         checkPoint = row.getCell(4).getStringCellValue();
                         remark = row.getCell(5).getStringCellValue();
 
@@ -61,10 +62,12 @@
                         String checkGroupRefId = reference.referenceId
                         reference = ec.entity.find("afaudit.Reference").condition("enterprise", enterprise).condition("category", "CheckType").condition("attributeValue", checkType).one()
                         String checkTypeRefId = reference.referenceId
+                        reference = ec.entity.find("afaudit.Reference").condition("enterprise", enterprise).condition("category", "CheckLevel").condition("attributeValue", checkLevel).one()
+                        String checkLevelRefId = reference.referenceId
 
                         EntityValue checkItem = ec.entity.find("afaudit.CheckItem").condition("checklistId", checklistId).condition("checkGroupRefId", checkGroupRefId).condition("itemNo", itemNo).one()
                         if(!checkItem){
-                            ec.service.sync().name("create", "afaudit.CheckItem").parameters([checklistId:checklistId, checkGroupRefId:checkGroupRefId, checkTypeRefId:checkTypeRefId, itemNo:itemNo, checkPoint:checkPoint, remark:remark]).call()
+                            ec.service.sync().name("create", "afaudit.CheckItem").parameters([checklistId:checklistId, checkGroupRefId:checkGroupRefId, checkTypeRefId:checkTypeRefId, itemNo:itemNo, checkLevelRefId:checkLevelRefId, checkPoint:checkPoint, remark:remark]).call()
                         }
                     }
 

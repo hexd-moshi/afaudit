@@ -157,6 +157,60 @@
                         </div>
                     </div>
                 </#if>
+                <#if referenceDisplayFields.attributeValue.indexOf(",field07,")!=-1>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('Sub-location')}:</label></div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" name="field07">
+                                <#if checkItem?has_content>
+                                    <option value="HOH" <#if checkItem.field07 == "HOH">selected</#if>>HOH</option>
+                                    <option value="FOH" <#if checkItem.field07 == "FOH">selected</#if>>FOH</option>
+                                    <option value="ALL" <#if checkItem.field07 == "ALL">selected</#if>>ALL</option>
+                                <#else>
+                                    <option value="ALL" selected>ALL</option>
+                                    <option value="HOH">HOH</option>
+                                    <option value="FOH">FOH</option>
+                                </#if>
+                            </select>
+                        </div>
+                    </div>
+                </#if>
+                <#if referenceDisplayFields.attributeValue.indexOf(",field08,")!=-1>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('In/Out/N/A')}:</label></div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" name="field08">
+                                <#if checkItem?has_content>
+                                    <option value="In" <#if checkItem.field08 == "In">selected</#if>>In</option>
+                                    <option value="Out" <#if checkItem.field08 == "Out">selected</#if>>Out</option>
+                                    <option value="N/A" <#if checkItem.field08 == "N/A">selected</#if>>N/A</option>
+                                <#else>
+                                    <option value="In" selected>In</option>
+                                    <option value="Out">Out</option>
+                                    <option value="N/A">N/A</option>
+                                </#if>
+                            </select>
+                        </div>
+                    </div>
+                </#if>
+                <#if referenceDisplayFields.attributeValue.indexOf(",field09,")!=-1>
+                    <#if viewCheckItem.checkLevel == "5">
+                        <div class="weui-cell">
+                            <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('COS')}:</label></div>
+                            <div class="weui-cell__bd">
+                                <select class="weui-select" name="field09">
+                                    <#if checkItem?has_content>
+                                        <option value="N" <#if checkItem.field09 == "N">selected</#if>>N</option>
+                                        <option value="Y" <#if checkItem.field09 == "Y">selected</#if>>Y</option>
+                                    <#else>
+                                        <option value="N" selected>N</option>
+                                        <option value="Y">Y</option>
+                                    </#if>
+                                </select>
+                            </div>
+                        </div>
+                    </#if>
+                </#if>
             </div>
             <div class="weui-btn-area">
                 <a href="javascript:formSave.submit();" class="weui-btn weui-btn_primary">${ec.l10n.localize('Save')}</a>
