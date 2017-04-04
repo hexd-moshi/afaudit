@@ -82,7 +82,7 @@
                                         CreationHelper helper = wb.getCreationHelper();
                                         Drawing drawing = sheet.createDrawingPatriarch();
                                         ClientAnchor anchor = helper.createClientAnchor();
-                                        anchor.setCol1(photoCol);
+                                        anchor.setCol1(photoCol++);
                                         anchor.setRow1(rownum);
                                         Picture pict = drawing.createPicture(anchor, pictureIdx);
                                         pict.resize();

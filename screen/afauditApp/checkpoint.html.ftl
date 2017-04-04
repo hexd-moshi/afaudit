@@ -185,8 +185,8 @@
                                     <option value="Out" <#if checkItem.field08 == "Out">selected</#if>>Out</option>
                                     <option value="N/A" <#if checkItem.field08 == "N/A">selected</#if>>N/A</option>
                                 <#else>
-                                    <option value="In" selected>In</option>
-                                    <option value="Out">Out</option>
+                                    <option value="In">In</option>
+                                    <option value="Out" selected>Out</option>
                                     <option value="N/A">N/A</option>
                                 </#if>
                             </select>

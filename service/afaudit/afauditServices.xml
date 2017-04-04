@@ -43,6 +43,26 @@
 
                 sheet = wb.getSheet("Summary")
 
+                if(viewServeLineStore.get("customer")=="CRV"){
+                    sheet.getRow(0).getCell(9).setCellValue("备注1 时间")
+                    sheet.getRow(0).getCell(10).setCellValue("备注2 次数")
+                    sheet.getRow(0).getCell(11).setCellValue("品名")
+                    sheet.getRow(0).getCell(12).setCellValue("货号")
+                    sheet.getRow(0).getCell(13).setCellValue("Not used")
+                    sheet.getRow(0).getCell(14).setCellValue("Not used")
+                    sheet.getRow(0).getCell(15).setCellValue("Not used")
+                    sheet.getRow(0).getCell(16).setCellValue("Not used")
+                }else if(viewServeLineStore.get("customer")=="Disney"){
+                    sheet.getRow(0).getCell(9).setCellValue("Not used")
+                    sheet.getRow(0).getCell(10).setCellValue("Not used")
+                    sheet.getRow(0).getCell(11).setCellValue("Not used")
+                    sheet.getRow(0).getCell(12).setCellValue("Not used")
+                    sheet.getRow(0).getCell(13).setCellValue("Sub-location")
+                    sheet.getRow(0).getCell(14).setCellValue("In/Out/N/A")
+                    sheet.getRow(0).getCell(15).setCellValue("COS")
+                    sheet.getRow(0).getCell(16).setCellValue("Not used")
+                }
+
                 beginRow = 1;
                 Iterator it = viewAuditCheckItemList.iterator()
                 while(it.hasNext()){
@@ -75,8 +95,12 @@
                         row.createCell(10).setCellValue(map.get("field06"))
                         row.createCell(11).setCellValue(map.get("field03"))
                         row.createCell(12).setCellValue(map.get("field04"))
+                        row.createCell(13).setCellValue(map.get("field07"))
+                        row.createCell(14).setCellValue(map.get("field08"))
+                        row.createCell(15).setCellValue(map.get("field09"))
+                        row.createCell(16).setCellValue(map.get("field10"))
 
-                        HashMap mapAttachment; beginCol = 13;
+                        HashMap mapAttachment; beginCol = 17;
                         Iterator itAttachment = checkItemAttachmentList.iterator()
                         while(itAttachment.hasNext()){
                             mapAttachment = itAttachment.next()
