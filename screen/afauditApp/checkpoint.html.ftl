@@ -211,6 +211,22 @@
                         </div>
                     </#if>
                 </#if>
+                <#if referenceDisplayFields.attributeValue.indexOf(",field10,")!=-1>
+                    <div class="weui-cell">
+                        <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('R')}:</label></div>
+                        <div class="weui-cell__bd">
+                            <select class="weui-select" name="field10">
+                                <#if checkItem?has_content>
+                                    <option value="N" <#if checkItem.field10 == "N">selected</#if>>N</option>
+                                    <option value="Y" <#if checkItem.field10 == "Y">selected</#if>>Y</option>
+                                <#else>
+                                    <option value="N" selected>N</option>
+                                    <option value="Y">Y</option>
+                                </#if>
+                            </select>
+                        </div>
+                    </div>
+                </#if>
             </div>
             <div class="weui-btn-area">
                 <a href="javascript:formSave.submit();" class="weui-btn weui-btn_primary">${ec.l10n.localize('Save')}</a>

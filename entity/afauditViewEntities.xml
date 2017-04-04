@@ -246,6 +246,7 @@
         <alias name="field07"  entity-alias="ServeLineStoreCheckItem" field="field07"><description>Disney:Sub-location</description></alias>
         <alias name="field08"  entity-alias="ServeLineStoreCheckItem" field="field08"><description>Disney:In/Out/N/A</description></alias>
         <alias name="field09"  entity-alias="ServeLineStoreCheckItem" field="field09"><description>Disney:COS</description></alias>
+        <alias name="field10"  entity-alias="ServeLineStoreCheckItem" field="field10"><description>Disney:R</description></alias>
     </view-entity>
 
     <view-entity entity-name="ViewServeLineStoreAttachment" package="afaudit">

@@ -4,6 +4,6 @@
     <subscreens default-item="ServeLineStore"/>
 
     <widgets>
-        <subscreens-panel id="id_admin" type="popup" title="AF Audit Admin"/>
+        <subscreens-panel id="id_admin" type="popup" title="Audit Admin"/>
     </widgets>
 </screen>

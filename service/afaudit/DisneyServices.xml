@@ -27,6 +27,10 @@
                 import org.apache.poi.ss.usermodel.CreationHelper;
                 import org.apache.poi.ss.usermodel.Drawing;
                 import org.apache.poi.ss.usermodel.Picture;
+                import org.apache.poi.ss.usermodel.CellStyle;
+                import org.apache.poi.ss.usermodel.IndexedColors;
+                import org.apache.poi.ss.usermodel.FillPatternType;
+                import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
                 org.moqui.context.ExecutionContext ec = context.ec
 
@@ -39,14 +43,30 @@
                 HashMap map; XSSFSheet sheet; XSSFRow row;
                 int beginRow; int beginCol; int itemNoCol; int subLocationCol; int inCol; int outCol; int naCol; int cosCol; int rCol; int defectRemarkCol; int photoCol;
                 int score;
-
-                sheet = wb.getSheet("评级标准")
-                sheet.getRow(5).getCell(4).setCellValue(viewServeLineStore.auditDate)
-                sheet.getRow(6).getCell(4).setCellValue(viewServeLineStore.location)
-                sheet.getRow(7).getCell(4).setCellValue(viewServeLineStore.auditor)
-                sheet.getRow(8).getCell(4).setCellValue(viewServeLineStore.storeManager)
+                int sumOut; int sumNA; int sumScore;
+                int countHighFOH; int countMidFOH; int countLowFOH; int countRFOH;
+                int countHighHOH; int countMidHOH; int countLowHOH; int countRHOH;
+                int countHigh; int countMid; int countLow; int countR;
+                String result;
+                CellStyle style;
 
                 sheet = wb.getSheet("操作指导")
+
+                CellStyle styleRed = wb.createCellStyle();
+                styleRed.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                styleRed.setFillForegroundColor(IndexedColors.RED.getIndex());
+                styleRed.setAlignment(HorizontalAlignment.CENTER);
+
+                CellStyle styleGreen = wb.createCellStyle();
+                styleGreen.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                styleGreen.setFillForegroundColor(IndexedColors.GREEN.getIndex());
+                styleGreen.setAlignment(HorizontalAlignment.CENTER);
+
+                CellStyle styleYellow = wb.createCellStyle();
+                styleYellow.setFillPattern(CellStyle.SOLID_FOREGROUND);
+                styleYellow.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
+                styleYellow.setAlignment(HorizontalAlignment.CENTER);
+
                 Iterator it = viewAuditCheckItemList.iterator()
                 while(it.hasNext()){
                     map = it.next()
@@ -59,11 +79,43 @@
                                 row.getCell(subLocationCol).setCellValue(map.get("field07"));
 
                                 score = row.getCell(scoreCol).getNumericCellValue()
-                                if(map.get("field08")=="In"){row.getCell(inCol).setCellValue(score)}
-                                else if(map.get("field08")=="Out"){row.getCell(outCol).setCellValue(score)}
-                                else if(map.get("field08")=="N/A"){row.getCell(naCol).setCellValue(score)}
+                                if(map.get("field08")=="In"){
+                                    row.getCell(inCol).setCellValue(score)
+                                }else if(map.get("field08")=="Out"){
+                                    row.getCell(outCol).setCellValue(score);
+                                    sumOut = sumOut + score;
+
+                                    if(score==5){
+                                        countHigh=countHigh+1;
+                                        if(map.get("field07")=="FOH"){countHighFOH = countHighFOH + 1;
+                                        }else if(map.get("field07")=="HOH"){countHighHOH = countHighHOH + 1;
+                                        }else if(map.get("field07")=="ALL"){countHighFOH = countHighFOH + 1;countHighHOH = countHighHOH + 1;}
+                                    }else if(score==3){
+                                        countMid=countMid+1
+                                        if(map.get("field07")=="FOH"){countMidFOH = countMidFOH + 1;
+                                        }else if(map.get("field07")=="HOH"){countMidHOH = countMidHOH + 1;
+                                        }else if(map.get("field07")=="ALL"){countMidFOH = countMidFOH + 1;countMidHOH = countMidHOH + 1;}
+                                    }else if(score==1){
+                                        countLow=countLow+1
+                                        if(map.get("field07")=="FOH"){countLowFOH = countLowFOH + 1;
+                                        }else if(map.get("field07")=="HOH"){countLowHOH = countLowHOH + 1;
+                                        }else if(map.get("field07")=="ALL"){countLowFOH = countLowFOH + 1;countLowHOH = countLowHOH + 1;}
+                                    }
+                                }else if(map.get("field08")=="N/A"){
+                                    row.getCell(naCol).setCellValue(score);
+                                    sumNA = sumNA + score;
+                                }
 
                                 row.getCell(cosCol).setCellValue(map.get("field09"))
+                                if(map.get("field10")=="Y"){
+                                    row.getCell(rCol).setCellValue("R")
+                                    row.getCell(rCol).setCellStyle(styleRed);
+
+                                    countR = countR + 1;
+                                    if(map.get("field07")=="FOH"){countRFOH = countRFOH + 1;
+                                    }else if(map.get("field07")=="HOH"){countRHOH = countRHOH + 1;
+                                    }else if(map.get("field07")=="ALL"){countRFOH = countRFOH + 1;countRHOH = countRHOH + 1;}
+                                }
                                 row.getCell(defectRemarkCol).setCellValue(map.get("defectRemark"))
 
                                 HashMap mapAttachment;
@@ -94,6 +146,46 @@
                         }
                     }
                 }
+                for(int rownum = beginRow; rownum <= sheet.getLastRowNum(); rownum++){
+                    row = sheet.getRow(rownum);
+                    if(row.getCell(itemNoCol)!=null){
+                        if(row.getCell(itemNoCol).getStringCellValue().length() > 0){
+                            sumScore = sumScore + row.getCell(scoreCol).getNumericCellValue()
+                        }
+                    }
+                }
+                sheet.setForceFormulaRecalculation(true);
+
+                sheet = wb.getSheet("评级标准")
+                sheet.getRow(5).getCell(4).setCellValue(viewServeLineStore.auditDate)
+                sheet.getRow(6).getCell(4).setCellValue(viewServeLineStore.location)
+                sheet.getRow(7).getCell(4).setCellValue(viewServeLineStore.auditor)
+                sheet.getRow(8).getCell(4).setCellValue(viewServeLineStore.storeManager)
+
+                if (countHigh >= 3 || countR >= 2){result = "不合格Red"; style=styleRed;}
+                else if(countHigh == 0 && countMid <= 2 && countLow <= 3 && countR == 0){result = "优秀Green"; style=styleGreen;}
+                else {result = "合格Yellow"; style=styleYellow;}
+                sheet.getRow(9).getCell(4).setCellValue(result)
+                sheet.getRow(9).getCell(4).setCellStyle(style);
+                sheet.getRow(10).getCell(6).setCellValue((sumScore-sumOut-sumNA)/(sumScore-sumNA))
+
+                if (countHighFOH >= 3 || countRFOH >= 2){result = "不合格Red"; style=styleRed;}
+                else if(countHighFOH == 0 && countMidFOH <= 2 && countLowFOH <= 3 && countRFOH == 0){result = "优秀Green"; style=styleGreen;}
+                else {result = "合格Yellow"; style=styleYellow;}
+                sheet.getRow(12).getCell(1).setCellValue(result)
+                sheet.getRow(12).getCell(1).setCellStyle(style);
+
+                if (countHighHOH >= 3 || countRHOH >= 2){result = "不合格Red"; style=styleRed;}
+                else if(countHighHOH == 0 && countMidHOH <= 2 && countLowHOH <= 3 && countRHOH == 0){result = "优秀Green"; style=styleGreen;}
+                else {result = "合格Yellow"; style=styleYellow;}
+                sheet.getRow(12).getCell(6).setCellValue(result)
+                sheet.getRow(12).getCell(6).setCellStyle(style);
+
+                sheet.getRow(13).getCell(1).setCellValue(countHighFOH)
+                sheet.getRow(13).getCell(3).setCellValue(countRFOH)
+                sheet.getRow(13).getCell(6).setCellValue(countHighHOH)
+                sheet.getRow(13).getCell(8).setCellValue(countRHOH)
+
                 sheet.setForceFormulaRecalculation(true);
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();

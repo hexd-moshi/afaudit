@@ -60,7 +60,7 @@
                     sheet.getRow(0).getCell(13).setCellValue("Sub-location")
                     sheet.getRow(0).getCell(14).setCellValue("In/Out/N/A")
                     sheet.getRow(0).getCell(15).setCellValue("COS")
-                    sheet.getRow(0).getCell(16).setCellValue("Not used")
+                    sheet.getRow(0).getCell(16).setCellValue("R")
                 }
 
                 beginRow = 1;

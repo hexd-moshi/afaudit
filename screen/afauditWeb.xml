@@ -1,6 +1,6 @@
 <screen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd"
-        default-menu-title="AF Audit Web" include-child-content="true" menu-image="glyphicon glyphicon-globe" menu-image-type="icon">
+        default-menu-title="Audit Web" include-child-content="true" menu-image="glyphicon glyphicon-globe" menu-image-type="icon">
 
     <transition name="downloadAttachment">
         <actions>
