@@ -211,6 +211,9 @@
         <member-entity entity-alias="ReferenceCheckType" entity-name="afaudit.Reference" join-from-alias="CheckItem">
             <key-map field-name="checkTypeRefId" related="referenceId"/>
         </member-entity>
+        <member-entity entity-alias="ReferenceCheckLevel" entity-name="afaudit.Reference" join-from-alias="CheckItem">
+            <key-map field-name="checkLevelRefId" related="referenceId"/>
+        </member-entity>
 
         <alias name="customerId" entity-alias="Customer"/>
         <alias name="kaId" entity-alias="Customer"/>
@@ -230,6 +233,7 @@
         <alias name="checkItemId" entity-alias="CheckItem"/>
         <alias name="checkGroup" entity-alias="ReferenceCheckGroup" field="attributeValue"/>
         <alias name="checkType" entity-alias="ReferenceCheckType" field="attributeValue"/>
+        <alias name="checkLevel" entity-alias="ReferenceCheckLevel" field="attributeValue"/>
         <alias name="itemNo" entity-alias="CheckItem"/>
         <alias name="checkPoint" entity-alias="CheckItem"/>
         <alias name="serveLineStoreCheckItemId" entity-alias="ServeLineStoreCheckItem"/>

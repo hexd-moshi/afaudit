@@ -15,6 +15,10 @@
                 <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
                 <order-by field-name="dataId"/>
             </entity-find>
+            <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="allViewAuditCheckItemList">
+                <econdition field-name="serveId" from="viewAuditCheckItem.serveId"/>
+                <order-by field-name="fromDate"/>
+            </entity-find>
 
             <script><![CDATA[
                 import org.moqui.resource.ResourceReference
@@ -49,6 +53,7 @@
                 int countHigh; int countMid; int countLow; int countR;
                 String result;
                 CellStyle style;
+                String serveLineId;
 
                 sheet = wb.getSheet("操作指导")
 
@@ -101,21 +106,23 @@
                                         }else if(map.get("field07")=="HOH"){countLowHOH = countLowHOH + 1;
                                         }else if(map.get("field07")=="ALL"){countLowFOH = countLowFOH + 1;countLowHOH = countLowHOH + 1;}
                                     }
+
+                                    row.getCell(cosCol).setCellValue(map.get("field09"))
+
+                                    if(map.get("field10")=="Y"){
+                                        row.getCell(rCol).setCellValue("R")
+                                        row.getCell(rCol).setCellStyle(styleRed);
+
+                                        countR = countR + 1;
+                                        if(map.get("field07")=="FOH"){countRFOH = countRFOH + 1;
+                                        }else if(map.get("field07")=="HOH"){countRHOH = countRHOH + 1;
+                                        }else if(map.get("field07")=="ALL"){countRFOH = countRFOH + 1;countRHOH = countRHOH + 1;}
+                                    }
                                 }else if(map.get("field08")=="N/A"){
                                     row.getCell(naCol).setCellValue(score);
                                     sumNA = sumNA + score;
                                 }
 
-                                row.getCell(cosCol).setCellValue(map.get("field09"))
-                                if(map.get("field10")=="Y"){
-                                    row.getCell(rCol).setCellValue("R")
-                                    row.getCell(rCol).setCellStyle(styleRed);
-
-                                    countR = countR + 1;
-                                    if(map.get("field07")=="FOH"){countRFOH = countRFOH + 1;
-                                    }else if(map.get("field07")=="HOH"){countRHOH = countRHOH + 1;
-                                    }else if(map.get("field07")=="ALL"){countRFOH = countRFOH + 1;countRHOH = countRHOH + 1;}
-                                }
                                 row.getCell(defectRemarkCol).setCellValue(map.get("defectRemark"))
 
                                 HashMap mapAttachment;
@@ -185,6 +192,46 @@
                 sheet.getRow(13).getCell(3).setCellValue(countRFOH)
                 sheet.getRow(13).getCell(6).setCellValue(countHighHOH)
                 sheet.getRow(13).getCell(8).setCellValue(countRHOH)
+
+                beginCol = 1;
+                countHigh = 0; countMid = 0; countLow = 0; countR = 0; sumOut = 0; sumNA = 0; serveLineId="-1";
+                it = allViewAuditCheckItemList.iterator()
+                while(it.hasNext()){
+                    map = it.next()
+
+                    if(serveLineId != map.get("serveLineId")){
+                        if(serveLineId != "-1"){
+                            if (countHigh >= 3 || countR >= 2){style=styleRed;}
+                            else if(countHigh == 0 && countMid <= 2 && countLow <= 3 && countR == 0){style=styleGreen;}
+                            else {style=styleYellow;}
+                            sheet.getRow(18).getCell(beginCol).setCellValue((sumScore-sumOut-sumNA)/(sumScore-sumNA))
+                            //sheet.getRow(18).getCell(beginCol).setCellStyle(style);
+                            beginCol = beginCol + 1;
+                            countHigh = 0; countMid = 0; countLow = 0; countR = 0; sumOut = 0; sumNA = 0;
+                        }
+                        serveLineId = map.get("serveLineId")
+                    }
+
+                    score = Integer.valueOf(map.get("checkLevel"))
+                    if(map.get("field08")=="Out"){
+                        sumOut = sumOut + score;
+
+                        if(score==5){countHigh=countHigh+1;}
+                        else if(score==3){countMid=countMid+1}
+                        else if(score==1){countLow=countLow+1}
+
+                        if(map.get("field10")=="Y"){
+                            countR = countR + 1;
+                        }
+                    }else if(map.get("field08")=="N/A"){
+                        sumNA = sumNA + score;
+                    }
+                }
+                if (countHigh >= 3 || countR >= 2){style=styleRed;}
+                else if(countHigh == 0 && countMid <= 2 && countLow <= 3 && countR == 0){style=styleGreen;}
+                else {style=styleYellow;}
+                sheet.getRow(18).getCell(beginCol).setCellValue((sumScore-sumOut-sumNA)/(sumScore-sumNA))
+                //sheet.getRow(18).getCell(beginCol).setCellStyle(style)
 
                 sheet.setForceFormulaRecalculation(true);
 
