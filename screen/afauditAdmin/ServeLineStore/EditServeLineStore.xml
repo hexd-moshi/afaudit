@@ -140,16 +140,16 @@
                 </entity-find>
 
                 <service-call name="afaudit.ELEServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditCheckItem:viewAuditCheckItem,
-            viewServeLineStore:viewServeLineStore, viewAuditCheckItemList:viewAuditCheckItemList, attachment:attachment]"/>
+                viewServeLineStore:viewServeLineStore, viewAuditCheckItemList:viewAuditCheckItemList, attachment:attachment]"/>
             </else-if>
-                <else-if condition="reference.attribute=='Disney'">
-                    <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditCheckItemList">
-                        <econdition field-name="serveLineStoreId" from="serveLineStore.serveLineStoreId"/>
-                        <order-by field-name="checkGroup,itemNo,auditDate,serveLineStoreCheckItemId"/>
-                    </entity-find>
+            <else-if condition="reference.attribute=='Disney'">
+                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditCheckItemList">
+                    <econdition field-name="serveLineStoreId" from="serveLineStore.serveLineStoreId"/>
+                    <order-by field-name="checkGroup,itemNo,auditDate,serveLineStoreCheckItemId"/>
+                </entity-find>
 
-                    <service-call name="afaudit.DisneyServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditCheckItem:viewAuditCheckItem,
-            viewServeLineStore:viewServeLineStore, viewAuditCheckItemList:viewAuditCheckItemList, attachment:attachment]"/>
+                <service-call name="afaudit.DisneyServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditCheckItem:viewAuditCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditCheckItemList:viewAuditCheckItemList, attachment:attachment]"/>
             </else-if></if>
         </actions>
         <default-response url="."/>

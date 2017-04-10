@@ -76,7 +76,7 @@
                 while(it.hasNext()){
                     map = it.next()
 
-                    beginRow = 4; itemNoCol = 0; subLocationCol = 3; inCol = 4; outCol = 5; naCol = 6; cosCol = 8; rCol = 9; scoreCol = 10; defectRemarkCol = 11; photoCol = 12;
+                    beginRow = 4; itemNoCol = 0; subLocationCol = 3; inCol = 4; outCol = 5; naCol = 6; cosCol = 8; rCol = 9; scoreCol = 10; defectRemarkCol = 11; photoCol = 12; actionRemarkCol = 15;
                     for(int rownum = beginRow; rownum <= sheet.getLastRowNum(); rownum++){
                         row = sheet.getRow(rownum);
                         if(row.getCell(itemNoCol) != null){
@@ -124,6 +124,7 @@
                                 }
 
                                 row.getCell(defectRemarkCol).setCellValue(map.get("defectRemark"))
+                                row.getCell(actionRemarkCol).setCellValue(map.get("actionRemark"))
 
                                 HashMap mapAttachment;
                                 Iterator itAttachment = checkItemAttachmentList.iterator()

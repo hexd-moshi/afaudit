@@ -73,7 +73,7 @@
                 </div>
                 <div class="weui-cell">
                     <div class="weui-cell__bd"><p>${ec.l10n.localize('Operation')}:</p></div>
-                    <div class="weui-cell__ft">${ec.l10n.localize('${checkItem.field01}')}</div>
+                    <div class="weui-cell__ft">${ec.l10n.localize('${checkItem.field01!}')}</div>
                 </div>
                 <div class="weui-cell">
                     <div class="weui-cell__bd"><p>${ec.l10n.localize('Provider')}:</p></div>
@@ -94,6 +94,22 @@
                 <div class="weui-cell">
                     <div class="weui-cell__bd"><p>${ec.l10n.localize('Product No.')}:</p></div>
                     <div class="weui-cell__ft">${checkItem.field04!}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd"><p>${ec.l10n.localize('sub-location')}:</p></div>
+                    <div class="weui-cell__ft">${checkItem.field07!}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd"><p>${ec.l10n.localize('In/Out/N/A')}:</p></div>
+                    <div class="weui-cell__ft">${checkItem.field08!}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd"><p>${ec.l10n.localize('COS')}:</p></div>
+                    <div class="weui-cell__ft">${checkItem.field09!}</div>
+                </div>
+                <div class="weui-cell">
+                    <div class="weui-cell__bd"><p>${ec.l10n.localize('R')}:</p></div>
+                    <div class="weui-cell__ft">${checkItem.field10!}</div>
                 </div>
             </div>
             <div class="weui-cell">
