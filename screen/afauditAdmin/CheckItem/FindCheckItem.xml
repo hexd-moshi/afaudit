@@ -29,6 +29,7 @@
                 import org.apache.poi.hssf.usermodel.HSSFSheet
                 import org.apache.poi.hssf.usermodel.HSSFWorkbook
                 import org.apache.poi.poifs.filesystem.POIFSFileSystem
+                import org.apache.poi.ss.usermodel.CellType
 
                 org.moqui.context.ExecutionContext ec = context.ec
                 org.apache.commons.fileupload.FileItem contentFile = context.importFile
@@ -51,11 +52,14 @@
 	                String checkGroup; String checkType; String itemNo; String checkLevel; String checkPoint;
                     for(int rownum = sheet.getFirstRowNum()+1; rownum <= sheet.getLastRowNum(); rownum++){
                         row = sheet.getRow(rownum);
+
                         checkGroup = row.getCell(0).getStringCellValue();
                         checkType = row.getCell(1).getStringCellValue();
-                        itemNo = row.getCell(2).getStringCellValue();
+                        //itemNo = (row.getCell(2).getCellTypeEnum() == CellType.NUMERIC) ? row.getCell(2).getNumericCellValue() : row.getCell(2).getStringCellValue();
+                        itemNo =  row.getCell(2).getStringCellValue();
                         checkLevel = row.getCell(3).getStringCellValue();
                         checkPoint = row.getCell(4).getStringCellValue();
+                        if(checkPoint.length()>255){checkPoint = checkPoint.substring(0,255)}
                         remark = row.getCell(5).getStringCellValue();
 
                         reference = ec.entity.find("afaudit.Reference").condition("enterprise", enterprise).condition("category", "CheckGroup").condition("attributeValue", checkGroup).one()
