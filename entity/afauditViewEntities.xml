@@ -183,6 +183,7 @@
         <alias name="checkType" entity-alias="ReferenceCheckType" field="attributeValue"/>
         <alias name="checkLevel" entity-alias="ReferenceCheckLevel" field="attributeValue"/>
         <alias name="serveType" entity-alias="ReferenceServeType" field="attributeValue"/>
+        <alias name="remark" entity-alias="CheckItem" field="remark"/>
     </view-entity>
 
     <view-entity entity-name="ViewAuditedCheckItem" package="afaudit">
