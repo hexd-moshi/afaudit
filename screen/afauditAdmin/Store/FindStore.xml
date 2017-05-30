@@ -44,6 +44,10 @@
 
                     //ec.entity.find("afaudit.Store").condition("customerId", customerId).deleteAll()
 
+                    customer = ec.entity.find("afaudit.Customer").condition("customerId", customerId).one();
+                    reference = ec.entity.find("afaudit.Reference").condition("referenceId", customer.customerRefId).one();
+                    enterprise = reference.attribute;
+
                     HSSFRow row;
 	                String region; String location; String storeName; String storeCode; String chineseName; String englishName; String shortName;
 	                String brand; String contact; String tel; String email; String address; String remark;
@@ -63,9 +67,9 @@
                         address = row.getCell(11).getStringCellValue();
                         remark = row.getCell(12).getStringCellValue();
 
-                        reference = ec.entity.find("afaudit.Reference").condition("enterprise", "COMMON").condition("category", "Region").condition("attributeValue", region).one()
+                        reference = ec.entity.find("afaudit.Reference").condition("enterprise", enterprise).condition("category", "Region").condition("attributeValue", region).one()
                         String regionRefId = reference.referenceId
-                        reference = ec.entity.find("afaudit.Reference").condition("enterprise", "COMMON").condition("category", "Location").condition("attributeValue", location).one()
+                        reference = ec.entity.find("afaudit.Reference").condition("enterprise", enterprise).condition("category", "Location").condition("attributeValue", location).one()
                         String locationRefId = reference.referenceId
 
                         EntityValue store = ec.entity.find("afaudit.Store").condition("customerId", customerId).condition("storeCode", storeCode).one()
@@ -79,6 +83,11 @@
             ]]></script>
         </actions>
         <default-response url="."/>
+    </transition>
+    <transition name="getReferenceId">
+        <service-call name="afaudit.afauditServices.get#ReferenceIds" in-map="[customerId:customerId, category:category]"/>
+
+        <default-response type="none"/>
     </transition>
 
     <actions>
@@ -100,17 +109,15 @@
                             </drop-down></default-field></field>
                         <field name="regionRefId"><default-field>
                             <drop-down allow-empty="true">
-                                <entity-options text="ReferenceIdTemplate">
-                                    <entity-find entity-name="afaudit.Reference">
-                                        <econdition field-name="enterprise" value="COMMON"/>
-                                        <econdition field-name="category" value="Region"/></entity-find></entity-options>
+                                <dynamic-options transition="getReferenceId?category=Region" label-field="referenceIdTemplate" value-field="referenceId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
                             </drop-down></default-field></field>
                         <field name="locationRefId"><default-field>
                             <drop-down allow-empty="true">
-                                <entity-options text="ReferenceIdTemplate">
-                                    <entity-find entity-name="afaudit.Reference">
-                                        <econdition field-name="enterprise" value="COMMON"/>
-                                        <econdition field-name="category" value="Location"/></entity-find></entity-options>
+                                <dynamic-options transition="getReferenceId?category=Location" label-field="referenceIdTemplate" value-field="referenceId">
+                                    <depends-on field="customerId"/>
+                                </dynamic-options>
                             </drop-down></default-field></field>
                         <field name="storeName"><default-field><text-find/></default-field></field>
                         <field name="storeCode"><default-field><text-find/></default-field></field>
