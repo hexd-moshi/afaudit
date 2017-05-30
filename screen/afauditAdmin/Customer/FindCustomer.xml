@@ -37,13 +37,13 @@
                         <field name="shortName"><default-field><text-find/></default-field></field>
                         <field name="englishName"><default-field><text-find/></default-field></field>
                         <field name="chineseName"><default-field><text-find/></default-field></field>
-                        <field name="locationRefId"><default-field>
-                            <drop-down allow-empty="true">
-                                <entity-options text="ReferenceIdTemplate">
-                                    <entity-find entity-name="afaudit.Reference">
-                                        <econdition field-name="enterprise" value="COMMON"/>
-                                        <econdition field-name="category" value="Location"/></entity-find></entity-options>
-                            </drop-down></default-field></field>
+                        <!--<field name="locationRefId"><default-field>-->
+                            <!--<drop-down allow-empty="true">-->
+                                <!--<entity-options text="ReferenceIdTemplate">-->
+                                    <!--<entity-find entity-name="afaudit.Reference">-->
+                                        <!--<econdition field-name="enterprise" value="COMMON"/>-->
+                                        <!--<econdition field-name="category" value="Location"/></entity-find></entity-options>-->
+                            <!--</drop-down></default-field></field>-->
                         <field name="contact"><default-field><text-find/></default-field></field>
                         <field name="kaId"><default-field>
                             <drop-down allow-empty="true">
@@ -70,8 +70,8 @@
                 </default-field></field>
                 <field name="customerRefId"><default-field>
                     <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate"/></default-field></field>
-                <field name="locationRefId"><default-field>
-                    <display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate"/></default-field></field>
+                <!--<field name="locationRefId"><default-field>-->
+                    <!--<display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate"/></default-field></field>-->
                 <field name="delete"><default-field title="">
                     <link url="deleteCustomer" text="Delete" icon="glyphicon glyphicon-remove" confirmation="${ec.l10n.localize('Really Delete?')}" parameter-map="[customerId:customerId]"/>
                 </default-field></field>
@@ -79,7 +79,7 @@
                 <form-list-column><field-ref name="customerId"/></form-list-column>
                 <form-list-column><field-ref name="customerRefId"/><field-ref name="shortName"/></form-list-column>
                 <form-list-column><field-ref name="englishName"/><field-ref name="chineseName"/></form-list-column>
-                <form-list-column><field-ref name="locationRefId"/></form-list-column>
+                <!--<form-list-column><field-ref name="locationRefId"/></form-list-column>-->
                 <form-list-column><field-ref name="kaId"/><field-ref name="contact"/></form-list-column>
                 <form-list-column><field-ref name="tel"/><field-ref name="email"/></form-list-column>
                 <form-list-column><field-ref name="address"/><field-ref name="remark"/></form-list-column>

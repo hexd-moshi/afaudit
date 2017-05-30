@@ -68,13 +68,13 @@
                                 <entity-find entity-name="afaudit.ViewUserAccount">
                                     <econdition field-name="userGroupId" value="afaudit_KA"/><order-by field-name="username"/></entity-find></entity-options>
                         </drop-down><label text="*" style="label-red"/></default-field></field>
-                    <field name="locationRefId"><default-field>
-                        <drop-down allow-empty="true">
-                            <entity-options text="ReferenceIdTemplate">
-                                <entity-find entity-name="afaudit.Reference">
-                                    <econdition field-name="enterprise" value="COMMON"/>
-                                    <econdition field-name="category" value="Location"/></entity-find></entity-options>
-                        </drop-down></default-field></field>
+                    <!--<field name="locationRefId"><default-field>-->
+                        <!--<drop-down allow-empty="true">-->
+                            <!--<entity-options text="ReferenceIdTemplate">-->
+                                <!--<entity-find entity-name="afaudit.Reference">-->
+                                    <!--<econdition field-name="enterprise" value="COMMON"/>-->
+                                    <!--<econdition field-name="category" value="Location"/></entity-find></entity-options>-->
+                        <!--</drop-down></default-field></field>-->
                     <field name="contact"><default-field><text-line/></default-field></field>
                     <field name="tel"><default-field><text-line/></default-field></field>
                     <field name="email"><default-field><text-line/></default-field></field>
