@@ -180,14 +180,24 @@
                         <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('In/Out/N/A')}:</label></div>
                         <div class="weui-cell__bd">
                             <select class="weui-select" name="field08">
-                                <#if checkItem?has_content>
-                                    <option value="In" <#if checkItem.field08 == "In">selected</#if>>In</option>
-                                    <option value="Out" <#if checkItem.field08 == "Out">selected</#if>>Out</option>
-                                    <option value="N/A" <#if checkItem.field08 == "N/A">selected</#if>>N/A</option>
+                                <#if referenceCustomer.attribute == "Metro">
+                                    <#if checkItem?has_content>
+                                        <option value="Out" <#if checkItem.field08 == "Out">selected</#if>>Out</option>
+                                        <option value="N/A" <#if checkItem.field08 == "N/A">selected</#if>>N/A</option>
+                                    <#else>
+                                        <option value="Out" selected>Out</option>
+                                        <option value="N/A">N/A</option>
+                                    </#if>
                                 <#else>
-                                    <option value="In">In</option>
-                                    <option value="Out" selected>Out</option>
-                                    <option value="N/A">N/A</option>
+                                    <#if checkItem?has_content>
+                                        <option value="In" <#if checkItem.field08 == "In">selected</#if>>In</option>
+                                        <option value="Out" <#if checkItem.field08 == "Out">selected</#if>>Out</option>
+                                        <option value="N/A" <#if checkItem.field08 == "N/A">selected</#if>>N/A</option>
+                                    <#else>
+                                        <option value="In">In</option>
+                                        <option value="Out" selected>Out</option>
+                                        <option value="N/A">N/A</option>
+                                    </#if>
                                 </#if>
                             </select>
                         </div>
