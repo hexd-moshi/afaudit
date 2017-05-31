@@ -177,18 +177,10 @@
                 </#if>
                 <#if referenceDisplayFields.attributeValue.indexOf(",field08,")!=-1>
                     <div class="weui-cell">
-                        <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('In/Out/N/A')}:</label></div>
-                        <div class="weui-cell__bd">
-                            <select class="weui-select" name="field08">
-                                <#if referenceCustomer.attribute == "Metro">
-                                    <#if checkItem?has_content>
-                                        <option value="Out" <#if checkItem.field08 == "Out">selected</#if>>Out</option>
-                                        <option value="N/A" <#if checkItem.field08 == "N/A">selected</#if>>N/A</option>
-                                    <#else>
-                                        <option value="Out" selected>Out</option>
-                                        <option value="N/A">N/A</option>
-                                    </#if>
-                                <#else>
+                        <#if referenceCustomer.attribute == "Disney">
+                            <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('In/Out/N/A')}:</label></div>
+                            <div class="weui-cell__bd">
+                                <select class="weui-select" name="field08">
                                     <#if checkItem?has_content>
                                         <option value="In" <#if checkItem.field08 == "In">selected</#if>>In</option>
                                         <option value="Out" <#if checkItem.field08 == "Out">selected</#if>>Out</option>
@@ -198,9 +190,22 @@
                                         <option value="Out" selected>Out</option>
                                         <option value="N/A">N/A</option>
                                     </#if>
-                                </#if>
-                            </select>
-                        </div>
+                                </select>
+                            </div>
+                        <#elseif referenceCustomer.attribute == "Metro">
+                            <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('X/N/A')}:</label></div>
+                            <div class="weui-cell__bd">
+                                <select class="weui-select" name="field08">
+                                    <#if checkItem?has_content>
+                                        <option value="X" <#if checkItem.field08 == "X">selected</#if>>X</option>
+                                        <option value="N/A" <#if checkItem.field08 == "N/A">selected</#if>>N/A</option>
+                                    <#else>
+                                        <option value="X" selected>X</option>
+                                        <option value="N/A">N/A</option>
+                                    </#if>
+                                </select>
+                            </div>
+                        </#if>
                     </div>
                 </#if>
                 <#if referenceDisplayFields.attributeValue.indexOf(",field09,")!=-1>
