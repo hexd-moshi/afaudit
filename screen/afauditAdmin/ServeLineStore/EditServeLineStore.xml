@@ -94,10 +94,10 @@
             <if condition="attachment">
                 <message error="true">Checklist has been exist! It must be delete before create again!</message><return/></if>
             <!--find data list-->
-            <entity-find-one entity-name="afaudit.ViewAuditedCheckItem" value-field="viewAuditCheckItem">
+            <entity-find-one entity-name="afaudit.ViewAuditedCheckItem" value-field="viewAuditedCheckItem">
                 <field-map field-name="serveLineStoreId"/>
             </entity-find-one>
-            <if condition="!viewAuditCheckItem">
+            <if condition="!viewAuditedCheckItem">
                 <message error="true">Checklist has no data!</message><return/>
             </if>
             <entity-find-one entity-name="afaudit.ViewServeLineStore" value-field="viewServeLineStore">
@@ -115,52 +115,62 @@
             <entity-find-one entity-name="afaudit.Reference" value-field="reference">
                 <field-map field-name="referenceId" from="viewServeLineStore.customerRefId"/></entity-find-one>
             <if condition="reference.attribute=='RTM'">
-                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditCheckItemList">
+                <!--find all history data in this serve-->
+                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditedCheckItemList">
                     <econdition field-name="serveId" from="viewServeLineStore.serveId"/>
                     <econdition field-name="storeId" from="viewServeLineStore.storeId"/>
                     <econdition field-name="auditDate" operator="less-equals" from="viewServeLineStore.auditDate"/>
                     <order-by field-name="checkGroup,itemNo,auditDate,serveLineStoreCheckItemId"/>
                 </entity-find>
 
-                <service-call name="afaudit.RTMServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditCheckItem:viewAuditCheckItem,
-                viewServeLineStore:viewServeLineStore, viewAuditCheckItemList:viewAuditCheckItemList, attachment:attachment]"/>
+                <service-call name="afaudit.RTMServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment]"/>
             <else-if condition="reference.attribute=='CRV'">
-                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditCheckItemList">
+                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditedCheckItemList">
                     <econdition field-name="serveLineStoreId" from="serveLineStore.serveLineStoreId"/>
                     <order-by field-name="checkGroup,itemNo,auditDate,serveLineStoreCheckItemId"/>
                 </entity-find>
 
-                <service-call name="afaudit.CRVServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditCheckItem:viewAuditCheckItem,
-                viewServeLineStore:viewServeLineStore, viewAuditCheckItemList:viewAuditCheckItemList, attachment:attachment]"/>
+                <service-call name="afaudit.CRVServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment]"/>
             </else-if>
             <else-if condition="reference.attribute=='ELE'">
-                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditCheckItemList">
+                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditedCheckItemList">
                     <econdition field-name="serveLineStoreId" from="serveLineStore.serveLineStoreId"/>
                     <order-by field-name="checkGroup,itemNo,auditDate,serveLineStoreCheckItemId"/>
                 </entity-find>
 
-                <service-call name="afaudit.ELEServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditCheckItem:viewAuditCheckItem,
-                viewServeLineStore:viewServeLineStore, viewAuditCheckItemList:viewAuditCheckItemList, attachment:attachment]"/>
+                <service-call name="afaudit.ELEServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment]"/>
             </else-if>
             <else-if condition="reference.attribute=='Disney'">
-                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditCheckItemList">
+                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditedCheckItemList">
                     <econdition field-name="serveLineStoreId" from="serveLineStore.serveLineStoreId"/>
                     <order-by field-name="checkGroup,itemNo,auditDate,serveLineStoreCheckItemId"/>
                 </entity-find>
 
-                <service-call name="afaudit.DisneyServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditCheckItem:viewAuditCheckItem,
-                viewServeLineStore:viewServeLineStore, viewAuditCheckItemList:viewAuditCheckItemList, attachment:attachment]"/>
+                <service-call name="afaudit.DisneyServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment]"/>
             </else-if>
             <else-if condition="reference.attribute=='Metro'">
-                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditCheckItemList">
+                <!--find all history data in this serve-->
+                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditedCheckItemList">
                     <econdition field-name="serveId" from="viewServeLineStore.serveId"/>
                     <econdition field-name="storeId" from="viewServeLineStore.storeId"/>
                     <econdition field-name="auditDate" operator="less-equals" from="viewServeLineStore.auditDate"/>
                     <order-by field-name="checkGroup,itemNo,auditDate,serveLineStoreCheckItemId"/>
                 </entity-find>
 
-                <service-call name="afaudit.MetroServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditCheckItem:viewAuditCheckItem,
-                viewServeLineStore:viewServeLineStore, viewAuditCheckItemList:viewAuditCheckItemList, attachment:attachment]"/>
+                <entity-find entity-name="afaudit.ViewRoundInServe" list="viewRoundInServeList">
+                    <econditions combine="or">
+                        <econdition field-name="storeId" from="viewServeLineStore.storeId"/>
+                        <econdition field-name="storeId" or-null="true"/>
+                    </econditions>
+                    <order-by field-name="fromDate"/>
+                    <order-by field-name="auditDate"/>
+                </entity-find>
+                <service-call name="afaudit.MetroServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment, viewRoundInServeList:viewRoundInServeList]"/>
             </else-if></if>
         </actions>
         <default-response url="."/>
@@ -178,18 +188,18 @@
             <if condition="attachment">
                 <message error="true">Summary has been exist! It must be delete before create again!</message><return/></if>
             <!--find data list-->
-            <entity-find-one entity-name="afaudit.ViewAuditedCheckItem" value-field="viewAuditCheckItem">
+            <entity-find-one entity-name="afaudit.ViewAuditedCheckItem" value-field="viewAuditedCheckItem">
                 <field-map field-name="serveLineStoreId"/>
             </entity-find-one>
-            <if condition="!viewAuditCheckItem">
+            <if condition="!viewAuditedCheckItem">
                 <message error="true">Checklist has no data!</message><return/>
             </if>
             <entity-find-one entity-name="afaudit.ViewServeLineStore" value-field="viewServeLineStore">
                 <field-map field-name="serveLineStoreId"/>
             </entity-find-one>
-            <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditCheckItemList">
+            <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditedCheckItemList">
                 <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
-                <econdition field-name="fromDate" operator="less-equals" from="viewAuditCheckItem.fromDate"/>
+                <econdition field-name="fromDate" operator="less-equals" from="viewAuditedCheckItem.fromDate"/>
                 <order-by field-name="checkGroup,itemNo,fromDate"/>
             </entity-find>
             <entity-find entity-name="afaudit.Attachment" list="attachmentList">
@@ -202,7 +212,7 @@
             </entity-find>
             <!--update Summary template and output-->
             <service-call name="afaudit.afauditServices.fill#Summary" in-map="[serveLineStoreId:serveLineStoreId, viewServeLineStore:viewServeLineStore,
-                viewAuditCheckItemList:viewAuditCheckItemList, attachmentList:attachmentList, checkItemAttachmentList:checkItemAttachmentList]"/>
+                viewAuditedCheckItemList:viewAuditedCheckItemList, attachmentList:attachmentList, checkItemAttachmentList:checkItemAttachmentList]"/>
         </actions>
         <default-response url="."/>
     </transition>
