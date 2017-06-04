@@ -4,9 +4,9 @@
     <service verb="fill" noun="Checklist">
         <in-parameters>
             <parameter name="serveLineStoreId" required="true"/>
-            <parameter name="viewAuditCheckItem" type="Map" required="true"/>
+            <parameter name="viewAuditedCheckItem" type="Map" required="true"/>
             <parameter name="viewServeLineStore" type="Map" required="true"/>
-            <parameter name="viewAuditCheckItemList" type="List" required="true"/>
+            <parameter name="viewAuditedCheckItemList" type="List" required="true"/>
             <parameter name="attachment" type="Map" required="true"/>
         </in-parameters>
 
@@ -45,7 +45,7 @@
                 int beginRow; int beginCol; int itemNoCol; int selfCol; int jointCol; int providerCol; int defectCol;
                 String operation; String checkGroup;
 
-                Iterator it = viewAuditCheckItemList.iterator()
+                Iterator it = viewAuditedCheckItemList.iterator()
                 while(it.hasNext()){
                     map = it.next()
 

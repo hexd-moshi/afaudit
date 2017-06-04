@@ -5,7 +5,7 @@
         <in-parameters>
             <parameter name="serveLineStoreId"/>
             <parameter name="viewServeLineStore" type="Map"/>
-            <parameter name="viewAuditCheckItemList" type="List"/>
+            <parameter name="viewAuditedCheckItemList" type="List"/>
             <parameter name="attachmentList" type="List"/>
             <parameter name="checkItemAttachmentList" type="List"/>
         </in-parameters>
@@ -64,7 +64,7 @@
                 }
 
                 beginRow = 1;
-                Iterator it = viewAuditCheckItemList.iterator()
+                Iterator it = viewAuditedCheckItemList.iterator()
                 while(it.hasNext()){
                     map = it.next()
 

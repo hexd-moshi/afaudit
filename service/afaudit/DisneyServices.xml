@@ -4,9 +4,9 @@
     <service verb="fill" noun="Checklist">
         <in-parameters>
             <parameter name="serveLineStoreId" required="true"/>
-            <parameter name="viewAuditCheckItem" type="Map" required="true"/>
+            <parameter name="viewAuditedCheckItem" type="Map" required="true"/>
             <parameter name="viewServeLineStore" type="Map" required="true"/>
-            <parameter name="viewAuditCheckItemList" type="List" required="true"/>
+            <parameter name="viewAuditedCheckItemList" type="List" required="true"/>
             <parameter name="attachment" type="Map" required="true"/>
         </in-parameters>
 
@@ -15,8 +15,8 @@
                 <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
                 <order-by field-name="dataId"/>
             </entity-find>
-            <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="allViewAuditCheckItemList">
-                <econdition field-name="serveId" from="viewAuditCheckItem.serveId"/>
+            <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="allViewAuditedCheckItemList">
+                <econdition field-name="serveId" from="viewAuditedCheckItem.serveId"/>
                 <order-by field-name="fromDate"/>
             </entity-find>
 
@@ -72,7 +72,7 @@
                 styleYellow.setFillForegroundColor(IndexedColors.YELLOW.getIndex());
                 styleYellow.setAlignment(HorizontalAlignment.CENTER);
 
-                Iterator it = viewAuditCheckItemList.iterator()
+                Iterator it = viewAuditedCheckItemList.iterator()
                 while(it.hasNext()){
                     map = it.next()
 
@@ -196,7 +196,7 @@
 
                 beginCol = 1;
                 countHigh = 0; countMid = 0; countLow = 0; countR = 0; sumOut = 0; sumNA = 0; serveLineId="-1";
-                it = allViewAuditCheckItemList.iterator()
+                it = allViewAuditedCheckItemList.iterator()
                 while(it.hasNext()){
                     map = it.next()
 
