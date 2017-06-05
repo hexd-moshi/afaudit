@@ -254,6 +254,7 @@
         <alias name="checkLevel" entity-alias="ReferenceCheckLevel" field="attributeValue"/>
         <alias name="itemNo" entity-alias="CheckItem"/>
         <alias name="checkPoint" entity-alias="CheckItem"/>
+        <alias name="itemNoRemark" entity-alias="CheckItem" field="remark"/>
         <alias name="serveLineStoreCheckItemId" entity-alias="ServeLineStoreCheckItem"/>
         <alias name="defect" entity-alias="ServeLineStoreCheckItem"/>
         <alias name="defectRemark" entity-alias="ServeLineStoreCheckItem"/>

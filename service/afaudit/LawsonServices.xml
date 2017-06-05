@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/service-definition-2.0.xsd">
+
+    <service verb="fill" noun="Checklist">
+        <in-parameters>
+            <parameter name="serveLineStoreId" required="true"/>
+            <parameter name="viewAuditedCheckItem" type="Map" required="true"/>
+            <parameter name="viewServeLineStore" type="Map" required="true"/>
+            <parameter name="viewAuditedCheckItemList" type="List" required="true"/>
+            <parameter name="attachment" type="Map" required="true"/>
+        </in-parameters>
+
+        <actions>
+            <entity-find entity-name="afaudit.ViewCheckItemAttachment" list="checkItemAttachmentList">
+                <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
+                <order-by field-name="dataId"/>
+            </entity-find>
+
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                import org.moqui.util.StringUtilities
+                import org.apache.poi.hssf.usermodel.HSSFRow
+                import org.apache.poi.hssf.usermodel.HSSFSheet
+                import org.apache.poi.hssf.usermodel.HSSFWorkbook
+                import org.apache.poi.poifs.filesystem.POIFSFileSystem
+                import org.apache.poi.ss.usermodel.ClientAnchor;
+                import org.apache.poi.ss.usermodel.CreationHelper;
+                import org.apache.poi.ss.usermodel.Drawing;
+                import org.apache.poi.ss.usermodel.Picture;
+
+                org.moqui.context.ExecutionContext ec = context.ec
+
+                ResourceReference newRr = ec.resource.getLocationReference(attachment.attachmentLocation)
+                InputStream resourceInputStream = newRr.openStream()
+
+                POIFSFileSystem fs = new POIFSFileSystem(resourceInputStream)
+                HSSFWorkbook wb = new HSSFWorkbook(fs)
+
+                HashMap map; Iterator it; HSSFSheet sheet; HSSFRow row;
+                int beginRow; int beginCol; int itemNoCol; int actionCol;
+
+                sheet = wb.getSheet("品管部用")
+                sheet.getRow(9).getCell(4).setCellValue(viewServeLineStore.location)
+                sheet.getRow(9).getCell(13).setCellValue(viewServeLineStore.region)
+                sheet.getRow(10).getCell(4).setCellValue(viewServeLineStore.storeCode)
+                sheet.getRow(10).getCell(13).setCellValue(viewServeLineStore.storeName)
+                sheet.getRow(11).getCell(4).setCellValue(viewServeLineStore.auditDate.getYear() + 1900)
+                sheet.getRow(11).getCell(7).setCellValue(viewServeLineStore.auditDate.getMonth() + 1)
+                sheet.getRow(11).getCell(9).setCellValue(viewServeLineStore.auditDate.getDate())
+                sheet.getRow(11).getCell(18).setCellValue(viewServeLineStore.auditor)
+                sheet.getRow(3).getCell(28).setCellValue(viewServeLineStore.storeManager)
+                sheet.getRow(37).getCell(25).setCellValue(viewServeLineStore.comment)
+
+                it = viewAuditedCheckItemList.iterator()
+                while(it.hasNext()){
+                    map = it.next()
+
+                    sheet = wb.getSheet("品管部用")
+                    sheet.getRow(Integer.valueOf(map.get("itemNo"))-1).getCell(55).setCellValue(1)
+                    sheet.setForceFormulaRecalculation(true);
+
+                    sheet = wb.getSheet("照片报告")
+                    beginRow = Integer.valueOf(map.get("itemNo"))
+                    sheet.getRow(beginRow).createCell(2).setCellValue("TRUE")
+                    sheet.getRow(beginRow).createCell(3)
+                    sheet.getRow(beginRow).createCell(4).setCellValue(map.get("defectRemark"))
+
+                    itAttachment = checkItemAttachmentList.iterator()
+                    while(itAttachment.hasNext()){
+                        HashMap mapAttachment = itAttachment.next()
+
+                        if(mapAttachment.get("serveLineStoreCheckItemId")==map.get("serveLineStoreCheckItemId")){
+                            newRr = ec.resource.getLocationReference(mapAttachment.get("attachmentLocation"))
+                            InputStream is = newRr.openStream()
+
+                            byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
+                            int pictureIdx = wb.addPicture(bytes, HSSFWorkbook.PICTURE_TYPE_JPEG);
+                            is.close();
+
+                            CreationHelper helper = wb.getCreationHelper();
+                            Drawing drawing = sheet.createDrawingPatriarch();
+                            ClientAnchor anchor = helper.createClientAnchor();
+                            anchor.setCol1(3);
+                            anchor.setRow1(beginRow);
+                            Picture pict = drawing.createPicture(anchor, pictureIdx);
+                            pict.resize();
+                        }
+                    }
+                }
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                wb.write(bos)
+                resourceInputStream.close()
+                ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+                String fileName = "Checklist_" + viewServeLineStore.shortName + "_" + viewServeLineStore.storeName + "_" + viewServeLineStore.auditDate + "(" + serveLineStoreId + ")" + ".xls"
+                String attachmentType = "ServeLineStore-Checklist"
+                String attachmentLocation = "dbresource://afauditApp/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+                String attachmentUrl = ec.web.getWebappRootUrl(true, null) + "/apps/afauditApp/rest/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+
+                newRr = ec.resource.getLocationReference(attachmentLocation)
+                newRr.putStream(bis)
+                bos.close()
+                bis.close()
+
+                ec.service.sync().name("create", "afaudit.Attachment").parameters([attachmentType: attachmentType, dataId: serveLineStoreId, attachmentLocation: attachmentLocation, attachmentUrl: attachmentUrl]).call()
+
+            ]]></script>
+        </actions>
+    </service>
+</services>

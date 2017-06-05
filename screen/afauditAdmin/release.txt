@@ -1,6 +1,15 @@
 Release Notes
 
 -------------------------------------------------
+1.0.27-alpha
+
+1. Add Lawson checklist
+-------------------------------------------------
+1.0.26-alpha
+
+1. Add new view ViewRoundInServe
+2. Add Metro checklist
+-------------------------------------------------
 1.0.25-alpha
 
 1. Use checkLevel field for check item

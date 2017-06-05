@@ -171,6 +171,15 @@
                 </entity-find>
                 <service-call name="afaudit.MetroServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
                 viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment, viewRoundInServeList:viewRoundInServeList]"/>
+            </else-if>
+            <else-if condition="reference.attribute=='Lawson'">
+                <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditedCheckItemList">
+                    <econdition field-name="serveLineStoreId" from="serveLineStore.serveLineStoreId"/>
+                    <order-by field-name="checkGroup,itemNo,auditDate,serveLineStoreCheckItemId"/>
+                </entity-find>
+
+                <service-call name="afaudit.LawsonServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment]"/>
             </else-if></if>
         </actions>
         <default-response url="."/>
