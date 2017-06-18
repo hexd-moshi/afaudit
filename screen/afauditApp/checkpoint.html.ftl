@@ -265,11 +265,11 @@
         </div>
         <#if serveLineStoreCheckItemId?has_content>
             <form action="checkpoint/uploadPhoto" name="formUpload" method="post" enctype="multipart/form-data">
-                <input type="hidden" name="moquiSessionToken" value="${ec.web.sessionToken}"/>
-                <input type="hidden" name="serveLineStoreId" value="${viewCheckItem.serveLineStoreId}">
-                <input type="hidden" name="checkItemId" value="${viewCheckItem.checkItemId}">
-                <input type="hidden" name="serveLineStoreCheckItemId" value="${serveLineStoreCheckItemId!}">
-                <input type="hidden" name="fromScreen" value="${fromScreen}">
+                <#--<input type="hidden" name="moquiSessionToken" value="${ec.web.sessionToken}"/>-->
+                <#--<input type="hidden" name="serveLineStoreId" value="${viewCheckItem.serveLineStoreId}">-->
+                <#--<input type="hidden" name="checkItemId" value="${viewCheckItem.checkItemId}">-->
+                <#--<input type="hidden" name="serveLineStoreCheckItemId" value="${serveLineStoreCheckItemId!}">-->
+                <#--<input type="hidden" name="fromScreen" value="${fromScreen}">-->
                 <div class="weui-cells weui-cells_form">
                     <div class="weui-cell">
                         <div class="weui-cell__bd">
@@ -299,6 +299,7 @@
 
 <script src="./js/weui.min.js"></script>
 <script src="./js/jquery-3.1.1.min.js"></script>
+<script src="./js/lrz/lrz.all.bundle.js"></script>
 
 <script type="text/javascript">
     $(function(){
@@ -323,12 +324,34 @@
 //                $uploaderFiles.append($(tmpl.replace('#url#', src)));
 //            }
 
-            if (document.getElementById("uploaderInput").files[0].size > 256*1024){
-                document.getElementById("id_message").innerHTML = "More than 256K !!!";
-                return;
-            }
+//            if (document.getElementById("uploaderInput").files[0].size > 512*1024){
+//                document.getElementById("id_message").innerHTML = "More than 512K !!!";
+//                return;
+//            }
+//
+//            formUpload.submit();
 
-            formUpload.submit();
+            lrz(this.files[0], {width: 300})
+                .then(function (rst) {
+                    console.log(rst);
+                    $.ajax({
+                        url: 'checkpoint/uploadPhoto?moquiSessionToken=${ec.web.sessionToken}&serveLineStoreId=${viewCheckItem.serveLineStoreId}&checkItemId=${viewCheckItem.checkItemId}&serveLineStoreCheckItemId=${serveLineStoreCheckItemId!}&fromScreen=${fromScreen}',
+                        data: rst.formData,
+                        processData: false,
+                        contentType: false,
+                        type: 'POST',
+                        success: function (data) {
+                            formSave.submit();
+                        }
+                    });
+                })
+
+                .catch(function (err) {
+                    console.log(err);
+                })
+
+                .always(function () {
+                });
         });
         $uploaderFiles.on("click", "li", function(){
             $galleryImg.attr("style", this.getAttribute("style"));

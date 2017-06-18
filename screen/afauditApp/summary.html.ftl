@@ -109,6 +109,7 @@
 
 <script src="./js/weui.min.js"></script>
 <script src="./js/jquery-3.1.1.min.js"></script>
+<script src="./js/lrz/lrz.all.bundle.js"></script>
 
 <script type="text/javascript">
     $(function(){
@@ -133,12 +134,34 @@
 //                $uploaderFiles.append($(tmpl.replace('#url#', src)));
 //            }
 
-            if (document.getElementById("uploaderInput").files[0].size > 256*1024){
-                document.getElementById("id_message").innerHTML = "More than 256K !!!";
-                return;
-            }
+//            if (document.getElementById("uploaderInput").files[0].size > 512*1024){
+//                document.getElementById("id_message").innerHTML = "More than 512K !!!";
+//                return;
+//            }
 
-            formUpload.submit();
+//            formUpload.submit();
+
+            lrz(this.files[0], {width: 800})
+                    .then(function (rst) {
+                        console.log(rst);
+                        $.ajax({
+                            url: 'summary/uploadPhoto?moquiSessionToken=${ec.web.sessionToken}&serveLineStoreId=${serveLineStoreId}',
+                            data: rst.formData,
+                            processData: false,
+                            contentType: false,
+                            type: 'POST',
+                            success: function (data) {
+                                formSave.submit();
+                            }
+                        });
+                    })
+
+                    .catch(function (err) {
+                        console.log(err);
+                    })
+
+                    .always(function () {
+                    });
         });
         $uploaderFiles.on("click", "li", function(){
             $galleryImg.attr("style", this.getAttribute("style"));

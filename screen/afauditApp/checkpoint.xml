@@ -23,18 +23,18 @@
             <parameter name="serveLineStoreCheckItemId" from="serveLineStoreCheckItemId"/>
         </default-response>
     </transition>
-    <transition name="uploadPhoto">
+    <transition name="uploadPhoto" read-only="true">
         <actions>
             <script><![CDATA[
                 import org.moqui.resource.ResourceReference
                 import org.moqui.util.StringUtilities
 
                 org.moqui.context.ExecutionContext ec = context.ec
-                org.apache.commons.fileupload.FileItem contentFile = context.uploaderInput
+                org.apache.commons.fileupload.FileItem contentFile = context.file
                 String fileName = contentFile.getName()
 
-                if((fileName.length() == 0) || (contentFile.getSize() > (256 * 1024))){
-                    ec.logger.warn("File name is empty or File size limit exceeded 256K")
+                if((fileName.length() == 0) || (contentFile.getSize() > (512 * 1024))){
+                    ec.logger.warn("File name is empty or File size limit exceeded 512K")
                     return
                 }
 
