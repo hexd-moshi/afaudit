@@ -4,7 +4,7 @@ Release Notes
 1.0.28-alpha
 
 1. Add Lrz js library to compress photo size before upload
-2. 
+2. Compress photo size before upload directly
 -------------------------------------------------
 1.0.27-alpha
 
