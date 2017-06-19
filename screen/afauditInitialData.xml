@@ -7,31 +7,44 @@
             <entity-find entity-name="afaudit.ServeLineStoreCheckItem" list="list"/>
             <entity-delete-by-condition entity-name="afaudit.ServeLineStoreCheckItem">
                 <econdition field-name="serveLineStoreCheckItemId" from="list.serveLineStoreCheckItemId"/></entity-delete-by-condition>
+
             <entity-find entity-name="afaudit.ServeLineStore" list="list"/>
             <entity-delete-by-condition entity-name="afaudit.ServeLineStore">
                 <econdition field-name="serveLineStoreId" from="list.serveLineStoreId"/></entity-delete-by-condition>
+
             <entity-find entity-name="afaudit.ServeLine" list="list"/>
             <entity-delete-by-condition entity-name="afaudit.ServeLine">
                 <econdition field-name="serveLineId" from="list.serveLineId"/></entity-delete-by-condition>
+
             <entity-find entity-name="afaudit.Serve" list="list"/>
             <entity-delete-by-condition entity-name="afaudit.Serve">
                 <econdition field-name="serveId" from="list.serveId"/></entity-delete-by-condition>
+
             <entity-find entity-name="afaudit.Store" list="list"/>
             <entity-delete-by-condition entity-name="afaudit.Store">
                 <econdition field-name="storeId" from="list.storeId"/></entity-delete-by-condition>
+
             <entity-find entity-name="afaudit.CheckItem" list="list"/>
             <entity-delete-by-condition entity-name="afaudit.CheckItem">
                 <econdition field-name="checkItemId" from="list.checkItemId"/></entity-delete-by-condition>
+
             <entity-find entity-name="afaudit.Checklist" list="list"/>
             <entity-delete-by-condition entity-name="afaudit.Checklist">
                 <econdition field-name="checklistId" from="list.checklistId"/></entity-delete-by-condition>
+
             <entity-find entity-name="afaudit.User" list="list"/>
             <entity-delete-by-condition entity-name="afaudit.User">
                 <econdition field-name="userId" from="list.userId"/></entity-delete-by-condition>
+            
             <entity-find entity-name="afaudit.Customer" list="list"/>
             <entity-delete-by-condition entity-name="afaudit.Customer">
                 <econdition field-name="customerId" from="list.customerId"/></entity-delete-by-condition>
 
+            <entity-find entity-name="afaudit.Reference" list="list">
+                <econdition field-name="enterprise" operator="not-equals" value="COMMON"/></entity-find>
+            <entity-delete-by-condition entity-name="afaudit.Reference">
+                <econdition field-name="referenceId" from="list.referenceId"/></entity-delete-by-condition>
+            
             <entity-find entity-name="afaudit.Attachment" list="list"/>
             <iterate list="list" entry="attachment">
                 <script><![CDATA[
@@ -49,40 +62,40 @@
     </transition>
     <transition name="initialTestingData">
         <actions>
-            <!--Reference-->
-            <entity-find-one entity-name="afaudit.Reference" value-field="reference">
-                <field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="Location"/><field-map field-name="attribute" value="ShangHai"/></entity-find-one>
-            <set field="locationRefId" from="reference.referenceId"/>
-            <entity-find-one entity-name="afaudit.Reference" value-field="reference">
-                <field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="BU"/><field-map field-name="attribute" value="AF"/></entity-find-one>
-            <set field="buRefId" from="reference.referenceId"/>
-            <entity-find-one entity-name="afaudit.Reference" value-field="reference">
-                <field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="Customer"/><field-map field-name="attribute" value="RTM"/></entity-find-one>
-            <set field="customerRefId" from="reference.referenceId"/>
-            <entity-find-one entity-name="afaudit.Reference" value-field="reference">
-                <field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="Team"/><field-map field-name="attribute" value="CRM"/></entity-find-one>
-            <set field="teamRefId" from="reference.referenceId"/>
-            <entity-find-one entity-name="afaudit.Reference" value-field="reference">
-                <field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="Region"/><field-map field-name="attribute" value="East-China"/></entity-find-one>
-            <set field="regionRefId" from="reference.referenceId"/>
-            <entity-find-one entity-name="afaudit.Reference" value-field="reference">
-                <field-map field-name="enterprise" value="RTM"/><field-map field-name="category" value="ServeType"/><field-map field-name="attribute" value="FP"/></entity-find-one>
-            <set field="serveTypeRefId" from="reference.referenceId"/>
-            <!--User-->
-            <service-call name="create#afaudit.User" in-map="[userId:'EX_DONNY_HO', locationRefId:locationRefId, buRefId:buRefId, customerRefId:customerRefId, teamRefId:teamRefId, remark:'', positionId:'111']"/>
-            <!--Customer-->
-            <service-call name="create#afaudit.Customer" in-map="[customerRefId:customerRefId, shortName:'RTM', englishName:'RT-mart', chineseName:'大润发', locationRefId:locationRefId, contact:'XXX', kaId:'ka1']" out-map="context"/>
-            <!--Checklist-->
-            <service-call name="create#afaudit.Checklist" in-map="[customerId:customerId, serveTypeRefId:serveTypeRefId, active:'1', checklistVersion:'1', remark:'RTM-FP']" out-map="context"/>
-            <!--Store-->
-            <service-call name="create#afaudit.Store" in-map="[customerId:customerId, regionRefId:regionRefId, locationRefId:locationRefId, storeName:'XX店', storeCode:'XXX', chineseName:'RTM_XX', englishName:'RTM_XX', shortName:'XX店', brand:'RTM', contact:'XXX']" out-map="context"/>
-            <!--Serve-->
-            <service-call name="create#afaudit.Serve" in-map="[serveNo:'RTM-FP-2016', customerId:customerId, serveTypeRefId:serveTypeRefId, orderType:'1']" out-map="context"/>
-            <!--ServeLine, ServeLineStore-->
-            <service-call name="create#afaudit.ServeLine" in-map="[serveId:serveId, serveLineNo:'RTM-FP-2016-01', checklistId:checklistId, fromDate:'2016-01-01', thruDate:'2016-01-30']" out-map="context"/>
-            <service-call name="create#afaudit.ServeLineStore" in-map="[checklistStatus:'20', serveLineId:serveLineId, storeId:storeId, auditDate:'2016-01-11', auditorId:'auditor1', storeManager:'XXX', auditType:'1', reviewerId:'reviewer1', kaId:'ka1']"/>
-            <service-call name="create#afaudit.ServeLine" in-map="[serveId:serveId, serveLineNo:'RTM-FP-2016-02', checklistId:checklistId, fromDate:'2016-02-01', thruDate:'2016-02-28']" out-map="context"/>
-            <service-call name="create#afaudit.ServeLineStore" in-map="[checklistStatus:'20', serveLineId:serveLineId, storeId:storeId, auditDate:'2016-02-11', auditorId:'auditor1', storeManager:'XXX', auditType:'1', reviewerId:'reviewer1', kaId:'ka1']"/>
+            <!--&lt;!&ndash;Reference&ndash;&gt;-->
+            <!--<entity-find-one entity-name="afaudit.Reference" value-field="reference">-->
+                <!--<field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="Location"/><field-map field-name="attribute" value="ShangHai"/></entity-find-one>-->
+            <!--<set field="locationRefId" from="reference.referenceId"/>-->
+            <!--<entity-find-one entity-name="afaudit.Reference" value-field="reference">-->
+                <!--<field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="BU"/><field-map field-name="attribute" value="AF"/></entity-find-one>-->
+            <!--<set field="buRefId" from="reference.referenceId"/>-->
+            <!--<entity-find-one entity-name="afaudit.Reference" value-field="reference">-->
+                <!--<field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="Customer"/><field-map field-name="attribute" value="RTM"/></entity-find-one>-->
+            <!--<set field="customerRefId" from="reference.referenceId"/>-->
+            <!--<entity-find-one entity-name="afaudit.Reference" value-field="reference">-->
+                <!--<field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="Team"/><field-map field-name="attribute" value="CRM"/></entity-find-one>-->
+            <!--<set field="teamRefId" from="reference.referenceId"/>-->
+            <!--<entity-find-one entity-name="afaudit.Reference" value-field="reference">-->
+                <!--<field-map field-name="enterprise" value="COMMON"/><field-map field-name="category" value="Region"/><field-map field-name="attribute" value="East-China"/></entity-find-one>-->
+            <!--<set field="regionRefId" from="reference.referenceId"/>-->
+            <!--<entity-find-one entity-name="afaudit.Reference" value-field="reference">-->
+                <!--<field-map field-name="enterprise" value="RTM"/><field-map field-name="category" value="ServeType"/><field-map field-name="attribute" value="FP"/></entity-find-one>-->
+            <!--<set field="serveTypeRefId" from="reference.referenceId"/>-->
+            <!--&lt;!&ndash;User&ndash;&gt;-->
+            <!--<service-call name="create#afaudit.User" in-map="[userId:'EX_DONNY_HO', locationRefId:locationRefId, buRefId:buRefId, customerRefId:customerRefId, teamRefId:teamRefId, remark:'', positionId:'111']"/>-->
+            <!--&lt;!&ndash;Customer&ndash;&gt;-->
+            <!--<service-call name="create#afaudit.Customer" in-map="[customerRefId:customerRefId, shortName:'RTM', englishName:'RT-mart', chineseName:'大润发', locationRefId:locationRefId, contact:'XXX', kaId:'ka1']" out-map="context"/>-->
+            <!--&lt;!&ndash;Checklist&ndash;&gt;-->
+            <!--<service-call name="create#afaudit.Checklist" in-map="[customerId:customerId, serveTypeRefId:serveTypeRefId, active:'1', checklistVersion:'1', remark:'RTM-FP']" out-map="context"/>-->
+            <!--&lt;!&ndash;Store&ndash;&gt;-->
+            <!--<service-call name="create#afaudit.Store" in-map="[customerId:customerId, regionRefId:regionRefId, locationRefId:locationRefId, storeName:'XX店', storeCode:'XXX', chineseName:'RTM_XX', englishName:'RTM_XX', shortName:'XX店', brand:'RTM', contact:'XXX']" out-map="context"/>-->
+            <!--&lt;!&ndash;Serve&ndash;&gt;-->
+            <!--<service-call name="create#afaudit.Serve" in-map="[serveNo:'RTM-FP-2016', customerId:customerId, serveTypeRefId:serveTypeRefId, orderType:'1']" out-map="context"/>-->
+            <!--&lt;!&ndash;ServeLine, ServeLineStore&ndash;&gt;-->
+            <!--<service-call name="create#afaudit.ServeLine" in-map="[serveId:serveId, serveLineNo:'RTM-FP-2016-01', checklistId:checklistId, fromDate:'2016-01-01', thruDate:'2016-01-30']" out-map="context"/>-->
+            <!--<service-call name="create#afaudit.ServeLineStore" in-map="[checklistStatus:'20', serveLineId:serveLineId, storeId:storeId, auditDate:'2016-01-11', auditorId:'auditor1', storeManager:'XXX', auditType:'1', reviewerId:'reviewer1', kaId:'ka1']"/>-->
+            <!--<service-call name="create#afaudit.ServeLine" in-map="[serveId:serveId, serveLineNo:'RTM-FP-2016-02', checklistId:checklistId, fromDate:'2016-02-01', thruDate:'2016-02-28']" out-map="context"/>-->
+            <!--<service-call name="create#afaudit.ServeLineStore" in-map="[checklistStatus:'20', serveLineId:serveLineId, storeId:storeId, auditDate:'2016-02-11', auditorId:'auditor1', storeManager:'XXX', auditType:'1', reviewerId:'reviewer1', kaId:'ka1']"/>-->
 
         </actions>
         <default-response url="."/>
