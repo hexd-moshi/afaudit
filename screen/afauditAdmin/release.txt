@@ -1,6 +1,10 @@
 Release Notes
 
 -------------------------------------------------
+1.0.29-alpha
+
+1. Upload Summary report in ServeLineStore function
+-------------------------------------------------
 1.0.28-alpha
 
 1. Add Lrz js library to compress photo size before upload

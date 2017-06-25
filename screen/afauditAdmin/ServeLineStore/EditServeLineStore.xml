@@ -240,13 +240,13 @@
             <entity-find-one entity-name="afaudit.ServeLineStore" value-field="serveLineStore"/>
             <if condition="serveLineStore.checklistStatus == 60">
                 <message error="true">Fields of Checklist status has been Finished!</message><return/></if>
-            <!--delete existed Checklist report-->
+            <!--delete existed Attachment-->
             <entity-find-one entity-name="afaudit.Attachment" value-field="attachment">
-                <field-map field-name="attachmentType" value="ServeLineStore-Checklist"/>
+                <field-map field-name="attachmentType" from="attachmentType"/>
                 <field-map field-name="dataId" from="serveLineStoreId"/>
             </entity-find-one>
             <if condition="attachment">
-                <message error="true">Checklist has been exist! It must be delete before upload!</message><return/></if>
+                <message error="true">${attachmentType} has been exist! It must be delete before upload!</message><return/></if>
 
             <script><![CDATA[
                 import org.moqui.resource.ResourceReference
@@ -357,6 +357,7 @@
                                     <drop-down>
                                         <!--<option key="ServeLineStore-AuditConfirm" text="ServeLineStore-AuditConfirm"/>-->
                                         <option key="ServeLineStore-Checklist" text="ServeLineStore-Checklist"/>
+                                        <option key="ServeLineStore-Summary" text="ServeLineStore-Summary"/>
                                     </drop-down></default-field></field>
                                 <field name="attachmentFile"><default-field title="File"><file/></default-field></field>
                                 <field name="submitButton"><default-field title="OK"><submit icon="glyphicon glyphicon-ok"/></default-field></field>
