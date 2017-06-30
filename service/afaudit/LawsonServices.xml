@@ -87,6 +87,13 @@
                         }
                     }
                 }
+                sheet = wb.getSheet("品管部用")
+                if(viewServeLineStore.region == "华中区"){
+                    sheet.getRow(60).getCell(55).setCellValue("中百罗森(武汉)店铺卫生·安全调查报告书")
+                }else{
+                    sheet.getRow(60).getCell(55).setCellValue("上海罗森店铺卫生·安全调查报告书")
+                }
+                sheet.setForceFormulaRecalculation(true);
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 wb.write(bos)

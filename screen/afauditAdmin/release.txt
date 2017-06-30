@@ -1,6 +1,11 @@
 Release Notes
 
 -------------------------------------------------
+1.0.30-alpha
+
+1. Fix checkListVersion bug
+2. Support Lawson checklist for Shanghai and Wuhan title
+-------------------------------------------------
 1.0.29-alpha
 
 1. Upload Summary report in ServeLineStore function
