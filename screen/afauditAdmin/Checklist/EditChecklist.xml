@@ -13,12 +13,14 @@
                 <set field="map" from="context"/><script>map.remove("customerId"); map.remove("serveTypeRefId")</script>
                 <service-call name="update#afaudit.Checklist" in-map="map"/>
             <else>
-                <entity-find-one entity-name="afaudit.Checklist" value-field="checklist">
-                    <field-map field-name="customerId"/><field-map field-name="serveTypeRefId"/>
-                </entity-find-one>
+                <entity-find entity-name="afaudit.Checklist" list="checklist">
+                    <econdition field-name="customerId"/><econdition field-name="serveTypeRefId"/>
+                    <select-field field-name="checklistVersion"/>
+                    <order-by field-name="checklistVersion-"/>
+                </entity-find>
                 <set field="checklistVersion" value="1"/>
                 <if condition="checklist">
-                    <set field="checklistVersion" from="checklist.checklistVersion + 1"/>
+                    <set field="checklistVersion" from="checklist.checklistVersion[0] + 1"/>
                 </if>
                 <service-call name="create#afaudit.Checklist" in-map="context" out-map="context"/></else></if>
         </actions>
