@@ -1,6 +1,10 @@
 Release Notes
 
 -------------------------------------------------
+1.0.31-alpha
+
+1. Auto set attached photo's height and width
+-------------------------------------------------
 1.0.30-alpha
 
 1. Fix checkListVersion bug

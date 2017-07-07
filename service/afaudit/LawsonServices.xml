@@ -70,6 +70,9 @@
                         HashMap mapAttachment = itAttachment.next()
 
                         if(mapAttachment.get("serveLineStoreCheckItemId")==map.get("serveLineStoreCheckItemId")){
+                            sheet.getRow(beginRow).setHeightInPoints(180 * 0.75);
+                            sheet.setColumnWidth(3, 10000);
+
                             newRr = ec.resource.getLocationReference(mapAttachment.get("attachmentLocation"))
                             InputStream is = newRr.openStream()
 
