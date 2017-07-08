@@ -161,7 +161,7 @@
                 </container-dialog>
             </container>
 
-            <form-list name="ListCheckItem" list="checkItemList" show-text-button="true">
+            <form-list name="ListCheckItem" list="checkItemList" show-text-button="true" show-csv-button="true" select-columns="true">
                 <auto-fields-entity entity-name="afaudit.CheckItem" field-type="display">
                     <exclude field-name="lastUpdatedStamp"/></auto-fields-entity>
                 <field name="checkItemId"><header-field title="ID"/><default-field>

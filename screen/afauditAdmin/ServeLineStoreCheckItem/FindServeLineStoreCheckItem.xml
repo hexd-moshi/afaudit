@@ -124,7 +124,7 @@
                 <!--<link url="createServeLineStoreCheckItem" text="Create" link-type="hidden-form" icon="glyphicon glyphicon-plus"/>-->
             </container>
 
-            <form-list name="ListServeLineStoreCheckItem" list="serveLineStoreCheckItemList" show-text-button="true" select-columns="true">
+            <form-list name="ListServeLineStoreCheckItem" list="serveLineStoreCheckItemList" show-text-button="true" show-csv-button="true" select-columns="true" >
                 <auto-fields-entity entity-name="afaudit.ServeLineStoreCheckItem" field-type="display">
                     <exclude field-name="field05"/><exclude field-name="field06"/><exclude field-name="field07"/><exclude field-name="field08"/><exclude
                         field-name="field09"/><exclude field-name="field10"/><exclude field-name="lastUpdatedStamp"/>

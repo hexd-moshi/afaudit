@@ -114,7 +114,7 @@
                 </container-dialog>
             </container>
 
-            <form-list name="ListReference" list="referenceList" show-text-button="true">
+            <form-list name="ListReference" list="referenceList" show-text-button="true" show-csv-button="true" select-columns="true">
                 <auto-fields-entity entity-name="afaudit.Reference" field-type="display">
                     <exclude field-name="lastUpdatedStamp"/></auto-fields-entity>
                 <field name="referenceId"><header-field title="ID"/><default-field>

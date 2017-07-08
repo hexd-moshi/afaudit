@@ -60,7 +60,7 @@
                 <link url="createCustomer" text="Create" link-type="hidden-form" icon="glyphicon glyphicon-plus"/>
             </container>
 
-            <form-list name="ListCustomer" list="customerList" show-text-button="true">
+            <form-list name="ListCustomer" list="customerList" show-text-button="true" show-csv-button="true" select-columns="true">
                 <auto-fields-entity entity-name="afaudit.Customer" field-type="display">
                     <exclude field-name="lastUpdatedStamp"/></auto-fields-entity>
                 <field name="customerId"><header-field title="ID"/><default-field>

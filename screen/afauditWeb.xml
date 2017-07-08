@@ -55,7 +55,7 @@
                 </container-dialog>
             </container>
 
-            <form-list name="ListServeLineStore" list="serveLineStoreList" show-text-button="true">
+            <form-list name="ListServeLineStore" list="serveLineStoreList" show-text-button="true" show-csv-button="true" select-columns="true">
                 <row-actions>
                     <entity-find-one entity-name="afaudit.ViewServeLineStoreAttachment" value-field="attachment">
                         <field-map field-name="serveLineStoreId" from="serveLineStoreId"/>

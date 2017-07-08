@@ -200,7 +200,7 @@
                 </container-dialog>
             </container>
 
-            <form-list name="ListServeLineStore" list="serveLineStoreList" show-text-button="true">
+            <form-list name="ListServeLineStore" list="serveLineStoreList" show-text-button="true" show-csv-button="true" select-columns="true">
                 <auto-fields-entity entity-name="afaudit.ServeLineStore" field-type="display">
                     <exclude field-name="lastUpdatedStamp"/></auto-fields-entity>
                 <field name="serveLineStoreId"><header-field title="ID"/><default-field>

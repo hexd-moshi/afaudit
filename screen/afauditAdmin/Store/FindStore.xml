@@ -150,7 +150,7 @@
                 </container-dialog>
             </container>
 
-            <form-list name="ListStore" list="storeList" show-text-button="true">
+            <form-list name="ListStore" list="storeList" show-text-button="true" show-csv-button="true">
                 <auto-fields-entity entity-name="afaudit.Store" field-type="display">
                     <exclude field-name="lastUpdatedStamp"/><exclude field-name="remark"/></auto-fields-entity>
                 <field name="storeId"><header-field title="ID"/><default-field>

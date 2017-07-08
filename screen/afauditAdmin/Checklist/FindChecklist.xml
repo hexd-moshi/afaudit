@@ -64,7 +64,7 @@
                 <link url="createChecklist" text="Create" link-type="hidden-form" icon="glyphicon glyphicon-plus"/>
             </container>
 
-            <form-list name="ListChecklist" list="checklistList" show-text-button="true">
+            <form-list name="ListChecklist" list="checklistList" show-text-button="true" show-csv-button="true" select-columns="true">
                 <auto-fields-entity entity-name="afaudit.Checklist" field-type="display">
                     <exclude field-name="lastUpdatedStamp"/></auto-fields-entity>
                 <field name="checklistId"><header-field title="ID"/><default-field>
