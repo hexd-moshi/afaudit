@@ -1,6 +1,10 @@
 Release Notes
 
 -------------------------------------------------
+1.0.32-alpha
+
+1. Improve Summary report format, to auto set attached photo's height
+-------------------------------------------------
 1.0.31-alpha
 
 1. Auto set attached photo's height and width

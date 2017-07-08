@@ -61,8 +61,16 @@
                     sheet.getRow(0).getCell(14).setCellValue("In/Out/N/A")
                     sheet.getRow(0).getCell(15).setCellValue("COS")
                     sheet.getRow(0).getCell(16).setCellValue("R")
+                }else if(viewServeLineStore.get("customer")=="Lawson"){
+                    def arys = [4,5,6,8,9,10,11,12,13,14,15,16] as int[]
+                    for(ary in arys){
+                        sheet.getRow(0).getCell(ary).setCellValue("")
+                        sheet.setColumnWidth(ary, 0)
+                    }
                 }
 
+                def aryCol = [9,10,11,12,13,14,15,16] as int[]
+                def aryField = ["field03","field04","field05","field06","field07","field08","field09","field10"] as String[]
                 beginRow = 1;
                 Iterator it = viewAuditedCheckItemList.iterator()
                 while(it.hasNext()){
@@ -91,14 +99,9 @@
                         if(map.get("defectRemark")){row.createCell(7).setCellValue(map.get("defectRemark") + operation)}else{row.createCell(7)}
                         if(map.get("actionRemark")){row.createCell(8).setCellValue(map.get("actionRemark") + operation)}else{row.createCell(8)}
 
-                        row.createCell(9).setCellValue(map.get("field05"))
-                        row.createCell(10).setCellValue(map.get("field06"))
-                        row.createCell(11).setCellValue(map.get("field03"))
-                        row.createCell(12).setCellValue(map.get("field04"))
-                        row.createCell(13).setCellValue(map.get("field07"))
-                        row.createCell(14).setCellValue(map.get("field08"))
-                        row.createCell(15).setCellValue(map.get("field09"))
-                        row.createCell(16).setCellValue(map.get("field10"))
+                        for(int i=0; i<aryCol.length; i++){
+                            row.createCell(aryCol[i]).setCellValue(map.get(aryField[i]))
+                        }
 
                         HashMap mapAttachment; beginCol = 17;
                         Iterator itAttachment = checkItemAttachmentList.iterator()
@@ -106,6 +109,7 @@
                             mapAttachment = itAttachment.next()
 
                             if(mapAttachment.get("checkGroup")==checkGroup && mapAttachment.get("itemNo")==itemNo){
+                                row.setHeightInPoints(180 * 0.75);
                                 ResourceReference newRr = ec.resource.getLocationReference(mapAttachment.get("attachmentLocation"))
                                 InputStream is = newRr.openStream()
 
@@ -144,21 +148,12 @@
                         if(map.get("actionRemark")){
                             row.getCell(8).setCellValue(val2 + map.get("actionRemark") + operation)
                         }
-                        String val3 = row.getCell(9)?row.getCell(9).getStringCellValue():""; if(val3){val3 = val3 + ";\r\n"}
-                        if(map.get("field05")){
-                            row.getCell(9).setCellValue(val3 + map.get("field05"))
-                        }
-                        String val4 = row.getCell(10)?row.getCell(10).getStringCellValue():""; if(val4){val4 = val4 + ";\r\n"}
-                        if(map.get("field06")){
-                            row.getCell(10).setCellValue(val4 + map.get("field06"))
-                        }
-                        String val5 = row.getCell(11)?row.getCell(11).getStringCellValue():""; if(val5){val5 = val5 + ";\r\n"}
-                        if(map.get("field03")){
-                            row.getCell(11).setCellValue(val5 + map.get("field03"))
-                        }
-                        String val6 = row.getCell(12)?row.getCell(12).getStringCellValue():""; if(val6){val6 = val6 + ";\r\n"}
-                        if(map.get("field04")){
-                            row.getCell(12).setCellValue(val6 + map.get("field04"))
+
+                        for(int i=0; i<aryCol.length; i++){
+                            String val3 = row.getCell(aryCol[i])?row.getCell(aryCol[i]).getStringCellValue():""; if(val3){val3 = val3 + ";\r\n"}
+                            if(map.get(aryField[i])){
+                                row.getCell(aryCol[i]).setCellValue(val3 + map.get(aryField[i]))
+                            }
                         }
                     }
                 }
@@ -166,12 +161,14 @@
                 beginRow++
                 row = sheet.createRow(beginRow++)
                 row.createCell(0).setCellValue("审核建议")
-                row.createCell(1).setCellValue("确认单照片")
-
-                row = sheet.createRow(beginRow)
+                row = sheet.createRow(beginRow++)
                 row.createCell(0).setCellValue(viewServeLineStore.get("comment"))
 
-                beginCol = 1;
+                beginRow++
+                row = sheet.createRow(beginRow++)
+                row.createCell(0).setCellValue("确认单照片")
+                row = sheet.createRow(beginRow)
+                beginCol = 0;
                 it = attachmentList.iterator()
                 while(it.hasNext()){
                     map = it.next()

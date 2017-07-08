@@ -57,12 +57,10 @@
 
                     sheet = wb.getSheet("品管部用")
                     sheet.getRow(Integer.valueOf(map.get("itemNo"))-1).getCell(55).setCellValue(1)
-                    sheet.setForceFormulaRecalculation(true);
 
                     sheet = wb.getSheet("照片报告")
                     beginRow = Integer.valueOf(map.get("itemNo"))
-                    sheet.getRow(beginRow).createCell(2).setCellValue("TRUE")
-                    sheet.getRow(beginRow).createCell(3)
+                    sheet.setColumnWidth(3, 10000);
                     sheet.getRow(beginRow).createCell(4).setCellValue(map.get("defectRemark"))
 
                     itAttachment = checkItemAttachmentList.iterator()
@@ -71,7 +69,6 @@
 
                         if(mapAttachment.get("serveLineStoreCheckItemId")==map.get("serveLineStoreCheckItemId")){
                             sheet.getRow(beginRow).setHeightInPoints(180 * 0.75);
-                            sheet.setColumnWidth(3, 10000);
 
                             newRr = ec.resource.getLocationReference(mapAttachment.get("attachmentLocation"))
                             InputStream is = newRr.openStream()
