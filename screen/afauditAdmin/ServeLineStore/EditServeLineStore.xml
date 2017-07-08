@@ -253,8 +253,13 @@
 
                 org.moqui.context.ExecutionContext ec = context.ec
                 org.apache.commons.fileupload.FileItem contentFile = context.attachmentFile
-                String fileName = contentFile.getName()
 
+                if(contentFile.getSize() > (5 * 1024 * 1024)){
+                    ec.message.addError("File size limit exceeded 5 M!");
+                    return;
+                }
+
+                String fileName = contentFile.getName()
                 if(fileName.length() != 0){
                     String attachmentLocation = "dbresource://afauditApp/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
                     String attachmentUrl = ec.web.getWebappRootUrl(true, null) + "/apps/afauditApp/rest/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"

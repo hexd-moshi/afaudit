@@ -1,6 +1,10 @@
 Release Notes
 
 -------------------------------------------------
+1.0.33-alpha
+
+1. Upload Checklist and Summary file size limit in 5 M
+-------------------------------------------------
 1.0.32-alpha
 
 1. Improve Summary report format, to auto set attached photo's height
