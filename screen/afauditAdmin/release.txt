@@ -1,6 +1,10 @@
 Release Notes
 
 -------------------------------------------------
+1.0.34-alpha
+
+1. Plan function in ServeLineStore
+-------------------------------------------------
 1.0.33-alpha
 
 1. Upload Checklist and Summary file size limit in 5 M
