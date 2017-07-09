@@ -62,6 +62,7 @@
                     beginRow = Integer.valueOf(map.get("itemNo"))
                     sheet.setColumnWidth(3, 10000);
                     sheet.getRow(beginRow).createCell(4).setCellValue(map.get("defectRemark"))
+                    sheet.setForceFormulaRecalculation(true);
 
                     itAttachment = checkItemAttachmentList.iterator()
                     while(itAttachment.hasNext()){
