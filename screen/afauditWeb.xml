@@ -2,6 +2,8 @@
         xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/xml-screen-2.0.xsd"
         default-menu-title="Audit Web" include-child-content="true" menu-image="glyphicon glyphicon-globe" menu-image-type="icon">
 
+    <transition name="findServeLineStore">
+        <default-response url="."/></transition>
     <transition name="downloadAttachment">
         <actions>
             <script>ec.web.sendResourceResponse(attachmentLocation)</script>

@@ -1,6 +1,10 @@
 Release Notes
 
 -------------------------------------------------
+1.0.35-alpha
+
+1. Fix find function bug in afauditWeb
+-------------------------------------------------
 1.0.34-alpha
 
 1. Plan function in ServeLineStore
