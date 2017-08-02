@@ -1,6 +1,10 @@
 Release Notes
 
 -------------------------------------------------
+1.0.36-alpha
+
+1. Only check serveLineId and storeId when to do Batch in ServeLineStore
+-------------------------------------------------
 1.0.35-alpha
 
 1. Fix find function bug in afauditWeb
