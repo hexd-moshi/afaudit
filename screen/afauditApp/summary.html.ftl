@@ -141,7 +141,8 @@
 
 //            formUpload.submit();
 
-            lrz(this.files[0], {width: 300, quality: 1})
+//            lrz(this.files[0], {width: 300, quality: 1})
+            lrz(this.files[0], {quality: 0.5})
                     .then(function (rst) {
                         console.log(rst);
                         $.ajax({
