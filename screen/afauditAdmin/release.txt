@@ -1,6 +1,10 @@
 Release Notes
 
 -------------------------------------------------
+1.0.38-beta
+
+1. Resize photo to fit the export Excel in one cell
+-------------------------------------------------
 1.0.37-beta
 
 1. Enhance the image resolution when to take photo

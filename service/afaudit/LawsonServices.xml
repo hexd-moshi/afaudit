@@ -84,7 +84,7 @@
                             anchor.setCol1(3);
                             anchor.setRow1(beginRow);
                             Picture pict = drawing.createPicture(anchor, pictureIdx);
-                            pict.resize();
+                            pict.resize(1);
                         }
                     }
                 }
