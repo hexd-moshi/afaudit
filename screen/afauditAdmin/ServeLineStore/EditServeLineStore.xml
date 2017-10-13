@@ -479,13 +479,13 @@
                             <display text="${checklistStatus==10?'Created':(checklistStatus==20?'Planned':checklistStatus==30?'Auditing':checklistStatus==35?'Auditing_Reject':checklistStatus==40?'Audited':checklistStatus==50?'Reviewed':checklistStatus==60?'Finished':'')} [${checklistStatus}]"/>
                         </default-field>
                     </field>
-                    <field name="storeManager"><default-field><text-line/></default-field></field>
-                    <field name="comment"><default-field><text-area/></default-field></field>
+                    <field name="storeManager"><default-field><text-line size="50"/></default-field></field>
+                    <field name="comment"><default-field><text-area cols="100"/></default-field></field>
                     <!--<field name="keyPoint"><default-field><text-area/></default-field></field>-->
                     <!--<field name="remark"><default-field><text-area/></default-field></field>-->
                     <field name="rejectRemark">
                         <conditional-field condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')||ec.user.isInGroup('afaudit_KA')||ec.user.isInGroup('afaudit_REVIEWER')">
-                            <text-area/></conditional-field>
+                            <text-area cols="100"/></conditional-field>
                         <default-field><display/></default-field></field>
                     <field name="updateButton"><default-field>
                         <submit text="Update" icon="glyphicon glyphicon-floppy-disk"/></default-field></field>

@@ -45,7 +45,7 @@
                     <field name="enterprise"><default-field>
                         <drop-down>
                             <option key="COMMON" text="COMMON"/>
-                            <entity-options key="${attribute}" text="${attribute}-${attributeValue}">
+                            <entity-options key="${attribute}" text="${attribute} | ${attributeValue}">
                                 <entity-find entity-name="afaudit.Reference">
                                     <econdition field-name="enterprise" value="COMMON"/><econdition field-name="category" value="Customer"/></entity-find>
                             </entity-options>
@@ -56,9 +56,9 @@
                             <option key="Region" text="Region"/><option key="Location" text="Location"/><option key="ServeType" text="ServeType"/>
                             <option key="CheckGroup" text="CheckGroup"/><option key="CheckType" text="CheckType"/><option key="CheckLevel" text="CheckLevel"/>
                         </drop-down><label text="*" style="label-red"/></default-field></field>
-                    <field name="attribute"><default-field title="Attribute"><text-line/><label text="*" style="label-red"/></default-field></field>
-                    <field name="attributeValue"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
-                    <field name="remark"><default-field><text-area/></default-field></field>
+                    <field name="attribute"><default-field title="Attribute"><text-line size="100"/><label text="*" style="label-red"/></default-field></field>
+                    <field name="attributeValue"><default-field><text-line size="100"/><label text="*" style="label-red"/></default-field></field>
+                    <field name="remark"><default-field><text-area cols="100"/></default-field></field>
 
                     <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
                 </form-single>

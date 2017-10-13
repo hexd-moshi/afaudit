@@ -152,7 +152,7 @@
                         </drop-down><label text="*" style="label-red"/>
                     </default-field></field>
                     <field name="checklistVersion"><default-field><display/></default-field></field>
-                    <field name="remark"><default-field><text-area/></default-field></field>
+                    <field name="remark"><default-field><text-area cols="100"/></default-field></field>
 
                     <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
                 </form-single>

@@ -197,19 +197,19 @@
                                     <depends-on field="customerId"/>
                                 </dynamic-options>
                             </drop-down><label text="*" style="label-red"/></default-field></field>
-                    <field name="defect"><default-field><text-line/></default-field></field>
-                    <field name="defectRemark"><default-field><text-area/></default-field></field>
-                    <field name="actionRemark"><default-field><text-area/></default-field></field>
-                    <field name="remark"><default-field><text-area/></default-field></field>
+                    <field name="defect"><default-field><text-line size="50"/></default-field></field>
+                    <field name="defectRemark"><default-field><text-area cols="100"/></default-field></field>
+                    <field name="actionRemark"><default-field><text-area cols="100"/></default-field></field>
+                    <field name="remark"><default-field><text-area cols="100"/></default-field></field>
                     <field name="field01"><default-field title="Operation">
                         <drop-down>
                             <option key="Self-Operation" text="Self-Operation"/><option key="Joint-Operation" text="Joint-Operation"/>
                         </drop-down></default-field></field>
-                    <field name="field02"><default-field title="Provider"><text-line/></default-field></field>
-                    <field name="field03"><default-field title="Product Name"><text-line/></default-field></field>
-                    <field name="field04"><default-field title="Product No."><text-line/></default-field></field>
-                    <field name="field05"><default-field title="Day Audit"><text-line/></default-field></field>
-                    <field name="field06"><default-field title="Day Defect"><text-line/></default-field></field>
+                    <field name="field02"><default-field title="Provider"><text-line size="100"/></default-field></field>
+                    <field name="field03"><default-field title="Product Name"><text-line size="100"/></default-field></field>
+                    <field name="field04"><default-field title="Product No."><text-line size="100"/></default-field></field>
+                    <field name="field05"><default-field title="Day Audit"><text-line size="100"/></default-field></field>
+                    <field name="field06"><default-field title="Day Defect"><text-line size="100"/></default-field></field>
                     <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
                 </form-single>
             </container>

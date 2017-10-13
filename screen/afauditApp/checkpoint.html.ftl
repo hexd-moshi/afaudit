@@ -332,7 +332,7 @@
 //            formUpload.submit();
 
 //            lrz(this.files[0], {height: 180, quality: 1})
-            lrz(this.files[0], {quality: 0.3})
+            lrz(this.files[0], {quality: 0.2})
                 .then(function (rst) {
                     console.log(rst);
                     $.ajax({

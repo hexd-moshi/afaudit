@@ -59,9 +59,9 @@
                             <drop-down>
                                 <list-options list="customerRefList" text="ReferenceIdTemplate"/>
                             </drop-down><label text="*" style="label-red"/></default-field></field>
-                    <field name="shortName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
-                    <field name="englishName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
-                    <field name="chineseName"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="shortName"><default-field><text-line size="50"/><label text="*" style="label-red"/></default-field></field>
+                    <field name="englishName"><default-field><text-line size="50"/><label text="*" style="label-red"/></default-field></field>
+                    <field name="chineseName"><default-field><text-line size="50"/><label text="*" style="label-red"/></default-field></field>
                     <field name="kaId"><default-field>
                         <drop-down allow-empty="true">
                             <entity-options text="UsernameTemplate">
@@ -75,11 +75,11 @@
                                     <!--<econdition field-name="enterprise" value="COMMON"/>-->
                                     <!--<econdition field-name="category" value="Location"/></entity-find></entity-options>-->
                         <!--</drop-down></default-field></field>-->
-                    <field name="contact"><default-field><text-line/></default-field></field>
-                    <field name="tel"><default-field><text-line/></default-field></field>
-                    <field name="email"><default-field><text-line/></default-field></field>
-                    <field name="address"><default-field><text-line/></default-field></field>
-                    <field name="remark"><default-field><text-area/></default-field></field>
+                    <field name="contact"><default-field><text-line size="50"/></default-field></field>
+                    <field name="tel"><default-field><text-line size="50"/></default-field></field>
+                    <field name="email"><default-field><text-line size="50"/></default-field></field>
+                    <field name="address"><default-field><text-line size="100"/></default-field></field>
+                    <field name="remark"><default-field><text-area cols="100"/></default-field></field>
 
                     <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
                 </form-single>

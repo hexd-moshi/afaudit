@@ -101,10 +101,10 @@
                                     <depends-on field="customerId"/><depends-on field="serveId"/>
                                 </dynamic-options>
                             </drop-down><label text="*" style="label-red"/></default-field></field>
-                    <field name="serveLineNo"><default-field><text-line/><label text="*" style="label-red"/></default-field></field>
+                    <field name="serveLineNo"><default-field><text-line size="50"/><label text="*" style="label-red"/></default-field></field>
                     <field name="fromDate"><default-field><date-time type="date"/><label text="*" style="label-red"/></default-field></field>
                     <field name="thruDate"><default-field><date-time type="date"/><label text="*" style="label-red"/></default-field></field>
-                    <field name="remark"><default-field><text-area/></default-field></field>
+                    <field name="remark"><default-field><text-area cols="100"/></default-field></field>
 
                     <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
                 </form-single>

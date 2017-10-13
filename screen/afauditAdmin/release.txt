@@ -1,9 +1,13 @@
 Release Notes
 
 -------------------------------------------------
+1.0.39-beta
+
+1. Set the size of text input box
+-------------------------------------------------
 1.0.38-beta
 
-1. Resize photo to fit the export Excel in one cell
+1. Resize photo to fit the export Excel in one cell for Lawson checklist template
 -------------------------------------------------
 1.0.37-beta
 
