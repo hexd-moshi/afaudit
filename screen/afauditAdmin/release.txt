@@ -5,6 +5,7 @@ Release Notes
 
 1. In RTMServices, to force summary sheet to do setForceFormulaRecalculation
 2. In afauditServices, for fillSummary service, to update for customer Lawson
+3. Update Summary template
 -------------------------------------------------
 1.0.39-beta
 
