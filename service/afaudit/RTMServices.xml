@@ -111,6 +111,8 @@
                     sheet.setForceFormulaRecalculation(true);
                 }
 
+                sheet = wb.getSheet("汇总表");
+                sheet.setForceFormulaRecalculation(true);
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 wb.write(bos)

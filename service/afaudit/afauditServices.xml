@@ -96,6 +96,8 @@
                             row.createCell(6).setCellValue(map.get("provider"))
                         }
 
+                        if(viewServeLineStore.get("customer")=="Lawson"){operation=""}
+
                         if(map.get("defectRemark")){row.createCell(7).setCellValue(map.get("defectRemark") + operation)}else{row.createCell(7)}
                         if(map.get("actionRemark")){row.createCell(8).setCellValue(map.get("actionRemark") + operation)}else{row.createCell(8)}
 
@@ -140,6 +142,9 @@
                         if(map.get("provider")){
                             row.getCell(6).setCellValue(val0 + map.get("provider"))
                         }
+
+                        if(viewServeLineStore.get("customer")=="Lawson"){operation=""}
+
                         String val1 = row.getCell(7)?row.getCell(7).getStringCellValue():""; if(val1){val1 = val1 + ";\r\n"}
                         if(map.get("defectRemark")){
                             row.getCell(7).setCellValue(val1 + map.get("defectRemark") + operation)
