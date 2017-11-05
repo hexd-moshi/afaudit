@@ -125,7 +125,7 @@
                                 anchor.setCol1(beginCol++);
                                 anchor.setRow1(beginRow);
                                 Picture pict = drawing.createPicture(anchor, pictureIdx);
-                                pict.resize();
+                                pict.resize(1);
                             }
                         }
                         beginRow++
@@ -173,6 +173,7 @@
                 row = sheet.createRow(beginRow++)
                 row.createCell(0).setCellValue("确认单照片")
                 row = sheet.createRow(beginRow)
+                row.setHeightInPoints(180 * 0.75);
                 beginCol = 0;
                 it = attachmentList.iterator()
                 while(it.hasNext()){
@@ -191,7 +192,7 @@
                     anchor.setCol1(beginCol++);
                     anchor.setRow1(beginRow);
                     Picture pict = drawing.createPicture(anchor, pictureIdx);
-                    pict.resize();
+                    pict.resize(4);
                 }
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
