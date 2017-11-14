@@ -1,6 +1,10 @@
 Release Notes
 
 -------------------------------------------------
+1.0.41-beta
+
+1. In MetroServices, to fulfill new checklist template
+-------------------------------------------------
 1.0.40-beta
 
 1. In RTMServices, to force summary sheet to do setForceFormulaRecalculation

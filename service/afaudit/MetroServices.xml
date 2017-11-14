@@ -73,6 +73,8 @@
                 while(itAttachment.hasNext()){
                     HashMap mapAttachment =  itAttachment.next()
 
+                    sheet.setColumnWidth(beginCol, 8000);
+
                     newRr = ec.resource.getLocationReference(mapAttachment.get("attachmentLocation"))
                     InputStream is = newRr.openStream()
 
@@ -86,10 +88,10 @@
                     anchor.setCol1(beginCol++);
                     anchor.setRow1(5);
                     Picture pict = drawing.createPicture(anchor, pictureIdx);
-                    pict.resize();
+                    pict.resize(1);
                 }
 
-                beginXRow = 8; beginNARow = 11;
+                beginXRow = 8; beginNARow = 10;
                 it = viewAuditedCheckItemList.iterator()
                 while(it.hasNext()){
                     map = it.next()
@@ -124,6 +126,9 @@
                             mapAttachment = itAttachment.next()
 
                             if(mapAttachment.get("serveLineStoreCheckItemId")==map.get("serveLineStoreCheckItemId")){
+                                sheet.setColumnWidth(beginCol, 8000);
+                                sheet.getRow(beginXRow).setHeightInPoints(180 * 0.75);
+
                                 newRr = ec.resource.getLocationReference(mapAttachment.get("attachmentLocation"))
                                 InputStream is = newRr.openStream()
 
@@ -137,17 +142,17 @@
                                 anchor.setCol1(beginCol++);
                                 anchor.setRow1(beginXRow);
                                 Picture pict = drawing.createPicture(anchor, pictureIdx);
-                                pict.resize();
+                                pict.resize(1);
                             }
                         }
 
                         beginXRow++;
-                        beginNARow++;
                     }else if(map.get("field08") == "N/A"){
-                        sheet.shiftRows(beginNARow, sheet.getLastRowNum(), 1);
+                        //sheet.shiftRows(beginNARow, sheet.getLastRowNum(), 1);
                         row = sheet.createRow(beginNARow);
-                        beginNARow++;
                     }
+                    beginNARow++;
+
                     row.createCell(0).setCellValue(map.get("checkGroup"))
                     row.createCell(1).setCellValue(map.get("itemNo"))
                     row.createCell(2).setCellValue(map.get("checkLevel"))
