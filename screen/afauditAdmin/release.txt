@@ -1,6 +1,12 @@
 Release Notes
 
 -------------------------------------------------
+1.0.42-beta
+
+1. In FindReference, to limit CheckGroup in import content
+2. In MetroServices, to support multiple checklist version
+3. In EditServeLineStore, to fix ViewRoundInServe search condition
+-------------------------------------------------
 1.0.41-beta
 
 1. In MetroServices, to fulfill new checklist template

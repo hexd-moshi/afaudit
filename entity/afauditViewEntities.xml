@@ -77,6 +77,12 @@
         <member-entity entity-alias="ReferenceCustomer" entity-name="afaudit.Reference" join-from-alias="Customer">
             <key-map field-name="customerRefId" related="referenceId"/>
         </member-entity>
+        <member-entity entity-alias="Checklist" entity-name="afaudit.Checklist" join-from-alias="ServeLine">
+            <key-map field-name="checklistId"/>
+        </member-entity>
+        <member-entity entity-alias="ReferenceServeType" entity-name="afaudit.Reference" join-from-alias="Checklist">
+            <key-map field-name="serveTypeRefId" related="referenceId"/>
+        </member-entity>
         <alias-all entity-alias="ServeLineStore"/>
         <alias entity-alias="ServeLine" name="serveLineNo" field="serveLineNo"/>
         <alias entity-alias="ServeLine" name="checklistId" field="checklistId"/>
@@ -95,6 +101,8 @@
         <alias entity-alias="Customer" name="customerKaId" field="kaId"/>
         <alias entity-alias="Customer" name="shortName" field="shortName"/>
         <alias entity-alias="ReferenceCustomer" name="customer" field="attribute"/>
+        <alias entity-alias="Checklist" name="checklistVersion" field="checklistVersion"/>
+        <alias entity-alias="ReferenceServeType" name="serveType" field="attribute"/>
     </view-entity>
 
     <view-entity entity-name="ViewRoundInServe" package="afaudit">
@@ -105,6 +113,7 @@
         <member-entity entity-alias="ServeLineStore" entity-name="afaudit.ServeLineStore" join-from-alias="ServeLine" join-optional="true">
             <key-map field-name="serveLineId"/>
         </member-entity>
+        <alias entity-alias="Serve" name="serveId" field="serveId"/>
         <alias entity-alias="Serve" name="serveNo" field="serveNo"/>
         <alias entity-alias="ServeLine" name="serveLineNo" field="serveLineNo"/>
         <alias entity-alias="ServeLine" name="fromDate" field="fromDate"/>

@@ -162,6 +162,7 @@
                 </entity-find>
 
                 <entity-find entity-name="afaudit.ViewRoundInServe" list="viewRoundInServeList">
+                    <econdition field-name="serveId" from="viewServeLineStore.serveId"/>
                     <econditions combine="or">
                         <econdition field-name="storeId" from="viewServeLineStore.storeId"/>
                         <econdition field-name="storeId" or-null="true"/>

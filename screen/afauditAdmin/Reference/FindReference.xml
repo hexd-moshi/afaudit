@@ -44,6 +44,7 @@
 
                     HSSFRow row;
 	                String category; String attribute; String attributeValue; String remark;
+	                String categories = "BU,Team,DisplayFields,Region,Location,ServeType,CheckGroup,CheckType,CheckLevel,";
                     for(int rownum = sheet.getFirstRowNum()+1; rownum <= sheet.getLastRowNum(); rownum++){
                         row = sheet.getRow(rownum);
                         category = row.getCell(0).getStringCellValue();
@@ -51,9 +52,11 @@
                         attributeValue = row.getCell(2).getStringCellValue();
                         remark = row.getCell(3).getStringCellValue();
 
-                        EntityValue reference = ec.entity.find("afaudit.Reference").condition("enterprise", enterprise).condition("category", category).condition("attribute", attribute).one()
-                        if(!reference){
-                            ec.service.sync().name("create", "afaudit.Reference").parameters([enterprise:enterprise, category:category, attribute:attribute, attributeValue:attributeValue, remark:remark]).call()
+                        if(categories.indexOf(category + ",") >= 0){
+                            EntityValue reference = ec.entity.find("afaudit.Reference").condition("enterprise", enterprise).condition("category", category).condition("attribute", attribute).one()
+                            if(!reference){
+                                ec.service.sync().name("create", "afaudit.Reference").parameters([enterprise:enterprise, category:category, attribute:attribute, attributeValue:attributeValue, remark:remark]).call()
+                            }
                         }
                     }
 
