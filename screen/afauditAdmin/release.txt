@@ -1,6 +1,11 @@
 Release Notes
 
 -------------------------------------------------
+1.0.43-beta
+
+1. In FindCheckItem, to deal with itemNo and checkLevel in string or numeric case
+2. In EditStore, to fix dynamic options of Region and Location
+-------------------------------------------------
 1.0.42-beta
 
 1. In FindReference, to limit CheckGroup in import content
