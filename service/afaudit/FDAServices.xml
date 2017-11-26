@@ -89,6 +89,7 @@
                 it = viewAuditedCheckItemList.iterator()
                 while(it.hasNext()){
                     map = it.next()
+                    if(map.get("defect") == 0){continue;}
 
                     row = sheet.getRow(beginRow);
                     row.getCell(0).setCellValue(beginRow - 1);
