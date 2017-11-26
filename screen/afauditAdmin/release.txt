@@ -1,6 +1,12 @@
 Release Notes
 
 -------------------------------------------------
+1.0.44-beta
+
+1. Add FDAServices, for new template FDA
+2. Update EditServeLineStore, for new template FDA
+3. Update afauditViewEntities, to add more field in view ViewServeLineStore
+-------------------------------------------------
 1.0.43-beta
 
 1. In FindCheckItem, to deal with itemNo and checkLevel in string or numeric case

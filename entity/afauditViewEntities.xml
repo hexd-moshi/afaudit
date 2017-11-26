@@ -91,6 +91,10 @@
         <alias entity-alias="ReferenceLocation" name="location" field="attributeValue"/>
         <alias entity-alias="Store" name="storeName" field="storeName"/>
         <alias entity-alias="Store" name="storeCode" field="storeCode"/>
+        <alias entity-alias="Store" name="address" field="address"/>
+        <alias entity-alias="Store" name="contact" field="contact"/>
+        <alias entity-alias="Store" name="tel" field="tel"/>
+        <alias entity-alias="Store" name="remark" field="remark"/>
         <alias entity-alias="UserAccountAuditor" name="auditor" field="username"/>
         <alias entity-alias="UserAccountReviewer" name="reviewer" field="username"/>
         <alias entity-alias="UserAccountKa" name="ka" field="username"/>

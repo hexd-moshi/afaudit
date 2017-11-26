@@ -181,6 +181,10 @@
 
                 <service-call name="afaudit.LawsonServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
                 viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment]"/>
+            </else-if>
+            <else-if condition="reference.attribute=='FDA'">
+                <service-call name="afaudit.FDAServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, attachment:attachment]"/>
             </else-if></if>
         </actions>
         <default-response url="."/>
