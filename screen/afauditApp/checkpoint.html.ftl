@@ -205,6 +205,21 @@
                                     </#if>
                                 </select>
                             </div>
+                        <#elseif referenceCustomer.attribute == "FDA">
+                            <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('S/M/L')}:</label></div>
+                            <div class="weui-cell__bd">
+                                <select class="weui-select" name="field08">
+                                    <#if checkItem?has_content>
+                                        <option value="Short" <#if checkItem.field08 == "Short">selected</#if>>Short</option>
+                                        <option value="Middle" <#if checkItem.field08 == "Middle">selected</#if>>Middle</option>
+                                        <option value="Long" <#if checkItem.field08 == "Long">selected</#if>>Long</option>
+                                    <#else>
+                                        <option value="Short" selected>Short</option>
+                                        <option value="Middle">Middle</option>
+                                        <option value="Long">Long</option>
+                                    </#if>
+                                </select>
+                            </div>
                         </#if>
                     </div>
                 </#if>

@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <moqui-conf xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/moqui-conf-2.0.xsd">
 
+    <tools>
+        <tool-factory class="org.moqui.impl.tools.JackrabbitRunToolFactory" disabled="true"/>
+    </tools>
+    <repository-list>
+        <!-- No JCR repo by default, but here are some examples: -->
+        <!-- requires 'org.apache.jackrabbit:jackrabbit-jcr-rmi' in the classpath:-->
+        <!--<repository name="main" workspace="default" username="admin" password="admin">-->
+            <!--<init-param name="org.apache.jackrabbit.repository.uri" value="http://localhost:8081/rmi"/></repository>-->
+    </repository-list>
+
     <!--<default-property name="entity_ds_db_conf" value="mysql"/>-->
     <!--<default-property name="entity_ds_host" value="192.168.93.129"/>-->
     <!--<default-property name="entity_ds_port" value="3306"/>-->

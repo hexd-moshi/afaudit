@@ -12,7 +12,7 @@
         <actions>
             <entity-find entity-name="afaudit.ViewAuditedCheckItem" list="viewAuditedCheckItemList">
                 <econdition field-name="serveLineStoreId" from="serveLineStoreId"/>
-                <order-by field-name="checkGroup,serveLineStoreCheckItemId"/>
+                <order-by field-name="checkLevel,checkItemId"/>
             </entity-find>
 
             <entity-find entity-name="afaudit.ViewCheckItemAttachment" list="checkItemAttachmentList">
@@ -71,7 +71,7 @@
                 while(it.hasNext()){
                     map = it.next()
 
-                    beginRow = 2; itemNoCol = 1; defectCol = 4; remarkCol = 5;
+                    beginRow = 2; itemNoCol = 1; defectCol = 5; remarkCol = 6;
                     for(int rownum = beginRow; rownum <= 56; rownum++){
                         row = sheet.getRow(rownum);
 
@@ -85,21 +85,29 @@
                 sheet.setForceFormulaRecalculation(true);
 
                 sheet = wb.getSheet("不符合项")
-                beginRow = 2;
+                beginRow = 0; beginRowHigh = 3; beginRowLow = 4;
                 it = viewAuditedCheckItemList.iterator()
                 while(it.hasNext()){
                     map = it.next()
                     if(map.get("defect") == 0){continue;}
 
-                    row = sheet.getRow(beginRow);
-                    row.getCell(0).setCellValue(beginRow - 1);
-                    row.getCell(1).setCellValue(map.get("itemNo"));
-                    row.getCell(2).setCellValue(map.get("checkLevel"));
-                    row.getCell(3).setCellValue(map.get("checkPoint"));
-                    row.getCell(5).setCellValue(map.get("defectRemark"));
-                    row.getCell(6).setCellValue(map.get("actionRemark"));
+                    if(map.get("checkLevel") == "15"){
+                        sheet.shiftRows(beginRowHigh, sheet.getLastRowNum(), 1);
+                        beginRow = beginRowHigh;
+                    }else{
+                        beginRow = beginRowLow;
+                    }
 
-                    beginCol = 4
+                    row = sheet.createRow(beginRow);
+                    row.createCell(0).setCellValue(beginRow - (map.get("checkLevel") == "15" ? 2:3));
+                    row.createCell(1).setCellValue(map.get("itemNo"));
+                    row.createCell(2).setCellValue(map.get("checkPoint"));
+                    row.createCell(3).setCellValue(map.get("checkLevel"));
+                    row.createCell(4).setCellValue(map.get("defectRemark"));
+                    row.createCell(6).setCellValue(map.get("actionRemark"));
+                    row.createCell(7).setCellValue(map.get("field08"));
+
+                    beginCol = 5
                     itAttachment = checkItemAttachmentList.iterator()
                     while(itAttachment.hasNext()){
                         mapAttachment = itAttachment.next()
@@ -123,12 +131,13 @@
                             Picture pict = drawing.createPicture(anchor, pictureIdx);
                             pict.resize(1);
 
-                            if(beginCol == 4){beginCol = beginCol + 2}
+                            if(beginCol == 5){beginCol = beginCol + 2}
                             beginCol++;
                         }
                     }
 
-                    beginRow++;
+                    beginRowHigh++;
+                    beginRowLow++;
                 }
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();

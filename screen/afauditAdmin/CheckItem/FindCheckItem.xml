@@ -55,8 +55,9 @@
 
                         checkGroup = row.getCell(0).getStringCellValue();
                         checkType = row.getCell(1).getStringCellValue();
-                        itemNo = (row.getCell(2).getCellTypeEnum() == CellType.NUMERIC) ? (int)row.getCell(2).getNumericCellValue() : row.getCell(2).getStringCellValue();
-                        checkLevel = (row.getCell(3).getCellTypeEnum() == CellType.NUMERIC) ? (int)row.getCell(3).getNumericCellValue() : row.getCell(3).getStringCellValue();
+                        itemNo = (row.getCell(2).getCellType() == CellType.NUMERIC) ? (int)row.getCell(2).getNumericCellValue() : row.getCell(2).getRichStringCellValue().getString();
+                        checkLevel = (row.getCell(3).getCellType() == CellType.NUMERIC) ? (int)row.getCell(3).getNumericCellValue() : row.getCell(3).getRichStringCellValue().getString();
+
                         checkPoint = row.getCell(4).getStringCellValue();
                         if(checkPoint.length()>255){checkPoint = checkPoint.substring(0,255)}
                         remark = row.getCell(5).getStringCellValue();

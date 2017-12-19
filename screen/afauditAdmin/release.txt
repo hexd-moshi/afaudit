@@ -1,6 +1,13 @@
 Release Notes
 
 -------------------------------------------------
+1.0.45-beta
+
+1. Update checkpoint.html.ftl, for new FDA format to check item level
+2. Update FDAServices.xml, for new FDA format to check item level
+3. Update MoquiConf.xml, to support Jackrabbit
+4. Update FindCheckItem.xml, to fix CellType
+-------------------------------------------------
 1.0.44-beta
 
 1. Add FDAServices, for new template FDA
