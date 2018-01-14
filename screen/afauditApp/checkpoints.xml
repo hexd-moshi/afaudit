@@ -23,6 +23,7 @@
 
         <entity-find-one entity-name="afaudit.Reference" value-field="reference">
             <field-map field-name="referenceId" from="viewServeLineStore.customerRefId"/>
+            <field-map field-name="enterprise" value="COMMON"/>
             <field-map field-name="category" value="Customer"/>
         </entity-find-one>
 

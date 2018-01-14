@@ -58,7 +58,7 @@
             <entity-find entity-name="afaudit.Store" list="storeList">
                 <econdition field-name="customerId" from="customerId"/>
             </entity-find>
-            <entity-find-one entity-name="afaudit.Customer" value-field="customer">
+            <entity-find-one entity-name="afaudit.ViewCustomer" value-field="customer">
                 <field-map field-name="customerId"/>
             </entity-find-one>
 
@@ -70,8 +70,11 @@
                 </entity-find-one>
 
                 <if condition="!serveLineStore">
+                    <if condition="customer.customer == 'BreakTalk'">
+                        <set field="remark" value="隶属总部（如有）=无;\n贸易商名称（如有）=无;\n两者关系（如有）=无;\n工厂联系人职责和职位=;\n可供产品种类=;\n是否是新厂商=是;\n已供应产品种类=;\n审核时生产的产品=;\n已供应品的年最大可供货量(吨)=目前还未合作;\n年总产能(吨)=;\n已供应品的年供货量(吨)=目前还未合作;\n年已供品产能(吨)=目前还未合作;\n已供应的产量占比%=目前还未合作;\n已供应的产能占比%=目前还未合作;\n生产区域面积=;\n仓库面积=;\n原料和成品冷冻库容积=;\n原料和成品冷藏库容积=;\n工厂总人数（男/女）=;\n品保/品控人员数=;\nQS/SC号码=;\nQS/SC号码有效期=;\nISO22000证书=;\nISO22000证书有效期=;\nHACCP证书=;\nHACCP证书有效期=;\n对应顶新事业群=;\n产品类别=;\n"/>
+                    </if>
                     <service-call name="create#afaudit.ServeLineStore"
-                                  in-map="[checklistStatus:10, serveLineId:serveLineId, storeId:store.storeId, auditType:1, auditDate:serveLine.fromDate, kaId:customer.kaId]"/>
+                                  in-map="[checklistStatus:10, serveLineId:serveLineId, storeId:store.storeId, auditType:1, auditDate:serveLine.fromDate, kaId:customer.kaId, remark:remark]"/>
                 </if>
             </iterate>
         </actions>

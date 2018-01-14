@@ -11,7 +11,7 @@
     </transition>
     <transition name="audited" read-only="true">
         <actions>
-            <service-call name="update#afaudit.ServeLineStore" in-map="[serveLineStoreId:serveLineStoreId, checklistStatus:40, auditDate:ec.user.nowTimestamp]"/>
+            <service-call name="update#afaudit.ServeLineStore" in-map="[serveLineStoreId:serveLineStoreId, checklistStatus:40, auditDate:ec.user.nowTimestamp, auditEnd:ec.user.nowTimestamp]"/>
         </actions>
         <default-response url="../tasks" url-type="plain"/>
     </transition>

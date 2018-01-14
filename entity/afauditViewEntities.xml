@@ -2,6 +2,15 @@
 
 <entities xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/entity-definition-2.0.xsd">
 
+    <view-entity entity-name="ViewCustomer" package="afaudit">
+        <member-entity entity-alias="Customer" entity-name="afaudit.Customer"/>
+        <member-entity entity-alias="Reference" entity-name="afaudit.Reference" join-from-alias="Customer">
+            <key-map field-name="customerRefId" related="referenceId"/>
+        </member-entity>
+        <alias-all entity-alias="Customer"/>
+        <alias entity-alias="Reference" name="customer" field="attribute"/>
+    </view-entity>
+
     <view-entity entity-name="ViewUserAccount" package="afaudit">
         <member-entity entity-alias="UserAccount" entity-name="moqui.security.UserAccount"/>
         <member-entity entity-alias="UserGroupMember" entity-name="moqui.security.UserGroupMember" join-from-alias="UserAccount">
@@ -91,10 +100,12 @@
         <alias entity-alias="ReferenceLocation" name="location" field="attributeValue"/>
         <alias entity-alias="Store" name="storeName" field="storeName"/>
         <alias entity-alias="Store" name="storeCode" field="storeCode"/>
+        <alias entity-alias="Store" name="chineseName" field="chineseName"/>
         <alias entity-alias="Store" name="address" field="address"/>
         <alias entity-alias="Store" name="contact" field="contact"/>
         <alias entity-alias="Store" name="tel" field="tel"/>
-        <alias entity-alias="Store" name="remark" field="remark"/>
+        <alias entity-alias="Store" name="email" field="email"/>
+        <alias entity-alias="Store" name="storeRemark" field="remark"/>
         <alias entity-alias="UserAccountAuditor" name="auditor" field="username"/>
         <alias entity-alias="UserAccountReviewer" name="reviewer" field="username"/>
         <alias entity-alias="UserAccountKa" name="ka" field="username"/>

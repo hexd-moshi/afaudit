@@ -5,7 +5,7 @@
 
     <transition name="begin" read-only="true">
         <actions>
-            <service-call name="update#afaudit.ServeLineStore" in-map="[serveLineStoreId:serveLineStoreId, checklistStatus:30]"/>
+            <service-call name="update#afaudit.ServeLineStore" in-map="[serveLineStoreId:serveLineStoreId, checklistStatus:30, auditBegin:ec.user.nowTimestamp]"/>
         </actions>
         <default-response url="../checkpoints" url-type="plain" parameter-map="[serveLineStoreId:serveLineStoreId]"/>
     </transition>

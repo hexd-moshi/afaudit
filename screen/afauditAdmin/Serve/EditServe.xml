@@ -79,7 +79,7 @@
                                     <depends-on field="customerId"/>
                                 </dynamic-options>
                             </drop-down><label text="*" style="label-red"/></default-field></field>
-                    <field name="serveNo"><default-field><text-line size="50"/><label text="*" style="label-red"/></default-field></field>
+                    <field name="serveNo"><default-field><text-line size="50"/><label text="*" style="label-red"/><label text="(Example: Lawson-Hygiene-2017-V1)"/></default-field></field>
                     <field name="orderType"><default-field>
                         <drop-down>
                             <option key="1" text="Auditing"/><option key="2" text="Sampling"/>

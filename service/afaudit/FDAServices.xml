@@ -44,7 +44,7 @@
                 int beginRow; int beginCol; int itemNoCol; int defectCol; int remarkCol;
                 HashMap mapAttachment; Iterator itAttachment;
 
-                String[] strs = viewServeLineStore.remark.split(";");
+                String[] strs = viewServeLineStore.storeRemark.split(";");
                 Map<String, String> mapRemark = new HashMap<String, String>();
                 for(String s:strs){
                     String[] ms = s.split("=");

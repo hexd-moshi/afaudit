@@ -24,21 +24,28 @@
                     <set field="reviewDate" from="serveLineStore.reviewDate"/>
                     <set field="kaId" from="serveLineStore.kaId"/>
                     <set field="finishDate" from="serveLineStore.finishDate"/>
+                    <set field="planEnd" from="serveLineStore.planEnd"/>
+                    <set field="auditEnd" from="serveLineStore.auditEnd"/>
+                    <set field="reviewEnd" from="serveLineStore.reviewEnd"/>
+                    <set field="finishEnd" from="serveLineStore.finishEnd"/>
                 </if>
 
                 <if condition="checklistStatus != '10' &amp;&amp; (!auditorId || !auditDate || !reviewerId || !kaId)">
                     <message error="true">Fields of Auditor Id, Audit Date, Reviewer Id, KA Id are required</message><return/></if>
+                <if condition="checklistStatus == '20'">
+                    <if condition="!planEnd"><set field="planEnd" from="ec.user.nowTimestamp"/></if></if>
                 <if condition="checklistStatus == '40'">
                     <if condition="ec.user.isInGroup('afaudit_ADMIN') || ec.user.isInGroup('ADMIN')">
                         <else-if condition="auditorId == ec.user.userId"><set field="auditDate" from="ec.user.nowTimestamp"/></else-if>
                         <else-if condition="auditorId != ec.user.userId &amp;&amp; reviewerId != ec.user.userId"><message error="true">This audit operation is not planned to you!</message><return/></else-if>
                     </if>
-                    <if condition="!auditDate"><set field="auditDate" from="ec.user.nowTimestamp"/></if></if>
+                    <if condition="!auditDate"><set field="auditDate" from="ec.user.nowTimestamp"/></if>
+                    <if condition="!auditEnd"><set field="auditEnd" from="ec.user.nowTimestamp"/></if></if>
                 <if condition="checklistStatus == '50'">
                     <if condition="ec.user.isInGroup('afaudit_ADMIN') || ec.user.isInGroup('ADMIN')">
                     <else-if condition="reviewerId != ec.user.userId &amp;&amp; kaId != ec.user.userId"><message error="true">This review operation is not planned to you!</message><return/></else-if></if>
                     <if condition="!reviewDate"><set field="reviewDate" from="ec.user.nowTimestamp"/></if>
-
+                    <if condition="!reviewEnd"><set field="reviewEnd" from="ec.user.nowTimestamp"/></if>
                     <!--<if condition="reviewerId == ec.user.userId">-->
                         <!--<script>-->
                             <!--def flag = true-->
@@ -55,13 +62,14 @@
                 <if condition="checklistStatus == '60'">
                     <if condition="ec.user.isInGroup('afaudit_ADMIN') || ec.user.isInGroup('ADMIN')">
                     <else-if condition="kaId != ec.user.userId"><message error="true">This finish operation is not planned to you!</message><return/></else-if></if>
-                    <if condition="!finishDate"><set field="finishDate" from="ec.user.nowTimestamp"/></if></if>
+                    <if condition="!finishDate"><set field="finishDate" from="ec.user.nowTimestamp"/></if>
+                    <if condition="!finishEnd"><set field="finishEnd" from="ec.user.nowTimestamp"/></if></if>
 
                 <if condition="action == '0'">
                     <set field="map" from="context"/><script>map.remove("serveLineId"); map.remove("storeId")</script>
                     <service-call name="update#afaudit.ServeLineStore" in-map="map"/>
                 <else-if condition="action == '20' || action == '40' || action == '50' || action == '60'">
-                    <service-call name="update#afaudit.ServeLineStore" in-map="[serveLineStoreId:serveLineStoreId, checklistStatus:action, auditDate:auditDate, reviewDate:reviewDate, finishDate:finishDate]"/></else-if>
+                    <service-call name="update#afaudit.ServeLineStore" in-map="[serveLineStoreId:serveLineStoreId, checklistStatus:action, auditDate:auditDate, reviewDate:reviewDate, finishDate:finishDate, planEnd:planEnd, auditEnd:auditEnd, reviewEnd:reviewEnd, finishEnd:finishEnd]"/></else-if>
                 <else-if condition="action == '70'">
                     <if condition="serveLineStore.checklistStatus == 40"><set field="action" value="35"/>
                     <else-if condition="serveLineStore.checklistStatus == 50"><set field="action" value="35"/></else-if></if>
@@ -185,6 +193,10 @@
             <else-if condition="reference.attribute=='FDA'">
                 <service-call name="afaudit.FDAServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
                 viewServeLineStore:viewServeLineStore, attachment:attachment]"/>
+            </else-if>
+            <else-if condition="reference.attribute=='BreakTalk'">
+                <service-call name="afaudit.BreakTalkServices.fill#Checklist" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+            viewServeLineStore:viewServeLineStore, attachment:attachment]"/>
             </else-if></if>
         </actions>
         <default-response url="."/>
@@ -368,7 +380,7 @@
                                         <!--<option key="ServeLineStore-AuditConfirm" text="ServeLineStore-AuditConfirm"/>-->
                                         <option key="ServeLineStore-Checklist" text="ServeLineStore-Checklist"/>
                                         <option key="ServeLineStore-Summary" text="ServeLineStore-Summary"/>
-                                    </drop-down></default-field></field>
+                                    </drop-down><label text="*" style="label-red"/></default-field></field>
                                 <field name="attachmentFile"><default-field title="File"><file/></default-field></field>
                                 <field name="submitButton"><default-field title="OK"><submit icon="glyphicon glyphicon-ok"/></default-field></field>
                             </form-single>
@@ -394,6 +406,10 @@
             <container>
                 <form-single name="EditServeLineStore" transition="updateServeLineStore" map="serveLineStore">
                     <field name="action"><default-field><hidden default-value="0"/></default-field></field>
+                    <field name="planEnd"><default-field><display/></default-field></field>
+                    <field name="auditEnd"><default-field><display/></default-field></field>
+                    <field name="reviewEnd"><default-field><display/></default-field></field>
+                    <field name="finishEnd"><default-field><display/></default-field></field>
                     <field name="serveLineStoreId"><default-field title="ID"><display/></default-field></field>
                     <field name="customerId" from="customerId">
                         <conditional-field condition="serveLineStoreId">
@@ -487,7 +503,7 @@
                     <field name="storeManager"><default-field><text-line size="50"/></default-field></field>
                     <field name="comment"><default-field><text-area cols="100"/></default-field></field>
                     <!--<field name="keyPoint"><default-field><text-area/></default-field></field>-->
-                    <!--<field name="remark"><default-field><text-area/></default-field></field>-->
+                    <field name="remark"><default-field><text-area cols="100"/></default-field></field>
                     <field name="rejectRemark">
                         <conditional-field condition="ec.user.isInGroup('afaudit_ADMIN')||ec.user.isInGroup('ADMIN')||ec.user.isInGroup('afaudit_KA')||ec.user.isInGroup('afaudit_REVIEWER')">
                             <text-area cols="100"/></conditional-field>
