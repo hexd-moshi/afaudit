@@ -406,10 +406,10 @@
             <container>
                 <form-single name="EditServeLineStore" transition="updateServeLineStore" map="serveLineStore">
                     <field name="action"><default-field><hidden default-value="0"/></default-field></field>
-                    <field name="planEnd"><default-field><display/></default-field></field>
-                    <field name="auditEnd"><default-field><display/></default-field></field>
-                    <field name="reviewEnd"><default-field><display/></default-field></field>
-                    <field name="finishEnd"><default-field><display/></default-field></field>
+                    <field name="planEnd"><default-field><hidden/></default-field></field>
+                    <field name="auditEnd"><default-field><hidden/></default-field></field>
+                    <field name="reviewEnd"><default-field><hidden/></default-field></field>
+                    <field name="finishEnd"><default-field><hidden/></default-field></field>
                     <field name="serveLineStoreId"><default-field title="ID"><display/></default-field></field>
                     <field name="customerId" from="customerId">
                         <conditional-field condition="serveLineStoreId">

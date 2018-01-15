@@ -44,54 +44,58 @@
                 int beginRow; int beginCol; int itemNoCol; int defectCol; int remarkCol;
                 HashMap mapAttachment; Iterator itAttachment;
 
-                String[] strs = viewServeLineStore.remark.replace("\r\n","").split(";");
+                String[] strs = viewServeLineStore.remark.replace("\r","").replace("\n","").split(";");
                 Map<String, String> mapRemark = new HashMap<String, String>();
                 for(String s:strs){
                     String[] ms = s.split("=");
-                    mapRemark.put(ms[0], ms[1]);
+                    if(ms.size()==2){
+                        if(ms[0].length()>0){mapRemark.put(ms[0], ms[1])}
+                    }
                 }
-                strs = viewServeLineStore.storeRemark.replace("\r\n","").split(";");
+                strs = viewServeLineStore.storeRemark.replace("\r","").replace("\n","").split(";");
                 for(String s:strs){
                     String[] ms = s.split("=");
-                    mapRemark.put(ms[0], ms[1]);
+                    if(ms.size()==2){
+                        if(ms[0].length()>0){mapRemark.put(ms[0], ms[1])}
+                    }
                 }
 
                 sheet = wb.getSheet("汇总页")
                 sheet.getRow(2).getCell(0).setCellValue("工厂名称：" + viewServeLineStore.chineseName)
                 sheet.getRow(2).getCell(3).setCellValue("工厂地址：" + viewServeLineStore.address)
-                sheet.getRow(3).getCell(0).setCellValue("邮政编码："+ mapRemark.get("邮政编码"))
-                sheet.getRow(3).getCell(3).setCellValue("隶属总部（如有）："+ mapRemark.get("隶属总部（如有）"))
-                sheet.getRow(4).getCell(0).setCellValue("贸易商名称（如有）："+ mapRemark.get("贸易商名称（如有）"))
-                sheet.getRow(4).getCell(3).setCellValue("两者关系（如有）："+ mapRemark.get("两者关系（如有）"))
+                sheet.getRow(3).getCell(0).setCellValue("邮政编码："+ (mapRemark.get("邮政编码")?mapRemark.get("邮政编码"):""))
+                sheet.getRow(3).getCell(3).setCellValue("隶属总部（如有）："+ (mapRemark.get("隶属总部（如有）")?mapRemark.get("隶属总部（如有）"):""))
+                sheet.getRow(4).getCell(0).setCellValue("贸易商名称（如有）："+ (mapRemark.get("贸易商名称（如有）")?mapRemark.get("贸易商名称（如有）"):""))
+                sheet.getRow(4).getCell(3).setCellValue("两者关系（如有）："+ (mapRemark.get("两者关系（如有）")?mapRemark.get("两者关系（如有）"):""))
                 sheet.getRow(5).getCell(0).setCellValue("工厂联系人："+viewServeLineStore.contact)
-                sheet.getRow(5).getCell(3).setCellValue("职责和职位："+ mapRemark.get("工厂联系人职责和职位"))
+                sheet.getRow(5).getCell(3).setCellValue("职责和职位："+ (mapRemark.get("工厂联系人职责和职位")?mapRemark.get("工厂联系人职责和职位"):""))
                 sheet.getRow(6).getCell(0).setCellValue("手机和电话："+viewServeLineStore.tel)
                 sheet.getRow(6).getCell(3).setCellValue("电子邮箱："+viewServeLineStore.email)
-                sheet.getRow(7).getCell(0).setCellValue("可供产品种类："+ mapRemark.get("可供产品种类"))
-                sheet.getRow(7).getCell(3).setCellValue("是否是新厂商："+ mapRemark.get("是否是新厂商"))
-                sheet.getRow(8).getCell(0).setCellValue("已供应产品种类："+ mapRemark.get("已供应产品种类"))
-                sheet.getRow(8).getCell(3).setCellValue("审核时生产的产品："+ mapRemark.get("审核时生产的产品"))
-                sheet.getRow(9).getCell(0).setCellValue("已供应品的年最大可供货量(吨)："+ mapRemark.get("已供应品的年最大可供货量(吨)"))
-                sheet.getRow(9).getCell(3).setCellValue("年总产能(吨): "+ mapRemark.get("年总产能(吨)"))
-                sheet.getRow(10).getCell(0).setCellValue("已供应品的年供货量(吨)："+ mapRemark.get("已供应品的年供货量(吨)"))
-                sheet.getRow(10).getCell(3).setCellValue("年已供品产能(吨): "+ mapRemark.get("年已供品产能(吨)"))
-                sheet.getRow(11).getCell(0).setCellValue("已供应的产量占比%："+ mapRemark.get("已供应的产量占比%"))
-                sheet.getRow(11).getCell(3).setCellValue("已供应的产能占比%："+ mapRemark.get("已供应的产能占比%"))
-                sheet.getRow(12).getCell(0).setCellValue("生产区域面积: "+ mapRemark.get("生产区域面积"))
-                sheet.getRow(12).getCell(3).setCellValue("仓库面积: "+ mapRemark.get("仓库面积"))
-                sheet.getRow(13).getCell(0).setCellValue("原料和成品冷冻库容积: "+ mapRemark.get("原料和成品冷冻库容积"))
-                sheet.getRow(13).getCell(3).setCellValue("原料和成品冷藏库容积:"+ mapRemark.get("原料和成品冷藏库容积"))
-                sheet.getRow(14).getCell(0).setCellValue("工厂总人数（男/女）："+ mapRemark.get("工厂总人数（男/女）"))
-                sheet.getRow(14).getCell(3).setCellValue("品保/品控人员数："+ mapRemark.get("品保/品控人员数"))
-                sheet.getRow(15).getCell(0).setCellValue("QS/SC号码: "+ mapRemark.get("QS/SC号码"))
-                sheet.getRow(15).getCell(3).setCellValue("有效期："+ mapRemark.get("QS/SC号码有效期"))
-                sheet.getRow(16).getCell(0).setCellValue("其他证书号码："+ mapRemark.get("ISO22000证书"))
-                sheet.getRow(16).getCell(3).setCellValue("有效期："+ mapRemark.get("ISO22000证书有效期"))
-                sheet.getRow(17).getCell(0).setCellValue("其他证书号码："+ mapRemark.get("HACCP证书"))
-                sheet.getRow(17).getCell(3).setCellValue("有效期："+ mapRemark.get("HACCP证书有效期"))
+                sheet.getRow(7).getCell(0).setCellValue("可供产品种类："+ (mapRemark.get("可供产品种类")?mapRemark.get("可供产品种类"):""))
+                sheet.getRow(7).getCell(3).setCellValue("是否是新厂商："+ (mapRemark.get("是否是新厂商")?mapRemark.get("是否是新厂商"):""))
+                sheet.getRow(8).getCell(0).setCellValue("已供应产品种类："+ (mapRemark.get("已供应产品种类")?mapRemark.get("已供应产品种类"):""))
+                sheet.getRow(8).getCell(3).setCellValue("审核时生产的产品："+ (mapRemark.get("审核时生产的产品")?mapRemark.get("审核时生产的产品"):""))
+                sheet.getRow(9).getCell(0).setCellValue("已供应品的年最大可供货量(吨)："+ (mapRemark.get("已供应品的年最大可供货量(吨)")?mapRemark.get("已供应品的年最大可供货量(吨)"):""))
+                sheet.getRow(9).getCell(3).setCellValue("年总产能(吨): "+ (mapRemark.get("年总产能(吨)")?mapRemark.get("年总产能(吨)"):""))
+                sheet.getRow(10).getCell(0).setCellValue("已供应品的年供货量(吨)："+ (mapRemark.get("已供应品的年供货量(吨)")?mapRemark.get("已供应品的年供货量(吨)"):""))
+                sheet.getRow(10).getCell(3).setCellValue("年已供品产能(吨): "+ (mapRemark.get("年已供品产能(吨)")?mapRemark.get("年已供品产能(吨)"):""))
+                sheet.getRow(11).getCell(0).setCellValue("已供应的产量占比%："+ (mapRemark.get("已供应的产量占比%")?mapRemark.get("已供应的产量占比%"):""))
+                sheet.getRow(11).getCell(3).setCellValue("已供应的产能占比%："+ (mapRemark.get("已供应的产能占比%")?mapRemark.get("已供应的产能占比%"):""))
+                sheet.getRow(12).getCell(0).setCellValue("生产区域面积: "+ (mapRemark.get("生产区域面积")?mapRemark.get("生产区域面积"):""))
+                sheet.getRow(12).getCell(3).setCellValue("仓库面积: "+ (mapRemark.get("仓库面积")?mapRemark.get("仓库面积"):""))
+                sheet.getRow(13).getCell(0).setCellValue("原料和成品冷冻库容积: "+ (mapRemark.get("原料和成品冷冻库容积")?mapRemark.get("原料和成品冷冻库容积"):""))
+                sheet.getRow(13).getCell(3).setCellValue("原料和成品冷藏库容积:"+ (mapRemark.get("原料和成品冷藏库容积")?mapRemark.get("原料和成品冷藏库容积"):""))
+                sheet.getRow(14).getCell(0).setCellValue("工厂总人数（男/女）："+ (mapRemark.get("工厂总人数（男/女）")?mapRemark.get("工厂总人数（男/女）"):""))
+                sheet.getRow(14).getCell(3).setCellValue("品保/品控人员数："+ (mapRemark.get("品保/品控人员数")?mapRemark.get("品保/品控人员数"):""))
+                sheet.getRow(15).getCell(0).setCellValue("QS/SC号码: "+ (mapRemark.get("QS/SC号码")?mapRemark.get("QS/SC号码"):""))
+                sheet.getRow(15).getCell(3).setCellValue("有效期："+ (mapRemark.get("QS/SC号码有效期")?mapRemark.get("QS/SC号码有效期"):""))
+                sheet.getRow(16).getCell(0).setCellValue("其他证书号码："+ (mapRemark.get("ISO22000证书")?mapRemark.get("ISO22000证书"):""))
+                sheet.getRow(16).getCell(3).setCellValue("有效期："+ (mapRemark.get("ISO22000证书有效期")?mapRemark.get("ISO22000证书有效期"):""))
+                sheet.getRow(17).getCell(0).setCellValue("其他证书号码："+ (mapRemark.get("HACCP证书")?mapRemark.get("HACCP证书"):""))
+                sheet.getRow(17).getCell(3).setCellValue("有效期："+ (mapRemark.get("HACCP证书有效期")?mapRemark.get("HACCP证书有效期"):""))
                 sheet.getRow(18).getCell(0).setCellValue("审核员："+viewServeLineStore.auditor)
                 sheet.getRow(19).getCell(0).setCellValue("审核日期："+viewServeLineStore.auditDate)
-                sheet.getRow(19).getCell(3).setCellValue("对应顶新事业群："+ mapRemark.get("对应顶新事业群"))
+                sheet.getRow(19).getCell(3).setCellValue("对应顶新事业群："+ (mapRemark.get("对应顶新事业群")?mapRemark.get("对应顶新事业群"):""))
                 sheet.getRow(20).getCell(0).setCellValue("审核开始时间: "+viewServeLineStore.auditBegin)
                 sheet.getRow(20).getCell(3).setCellValue("审核结束时间: "+viewServeLineStore.auditEnd)
                 sheet.getRow(21).getCell(0).setCellValue("上次审核日期：")
@@ -145,7 +149,7 @@
                 sheet = wb.getSheet("改善措施")
                 sheet.getRow(2).getCell(2).setCellValue(viewServeLineStore.chineseName)
                 sheet.getRow(2).getCell(7).setCellValue(viewServeLineStore.auditor)
-                sheet.getRow(3).getCell(2).setCellValue(mapRemark.get("产品类别"))
+                sheet.getRow(3).getCell(2).setCellValue(mapRemark.get("产品类别")?mapRemark.get("产品类别"):"")
                 sheet.getRow(3).getCell(7).setCellValue(viewServeLineStore.auditDate)
 
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
