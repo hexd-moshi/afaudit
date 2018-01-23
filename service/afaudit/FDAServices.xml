@@ -64,7 +64,7 @@
                 sheet.getRow(2).getCell(3).setCellValue(viewServeLineStore.tel)
                 sheet.getRow(3).getCell(1).setCellValue(mapRemark.get("食品类别"))
                 sheet.getRow(3).getCell(3).setCellValue(viewServeLineStore.auditor)
-                sheet.getRow(4).getCell(0).setCellValue("审核评价：" + viewServeLineStore.comment.trim())
+                sheet.getRow(4).getCell(0).setCellValue("审核评价：" + viewServeLineStore.comment)
 
                 sheet = wb.getSheet("排查表")
                 it = viewAuditedCheckItemList.iterator()
