@@ -60,13 +60,13 @@
                         <conditional-field condition="serveId">
                             <display-entity entity-name="afaudit.Customer" text="CustomerIdTemplate"/></conditional-field>
                         <conditional-field condition="ec.user.isInGroup('afaudit_KA')">
-                            <drop-down>
+                            <drop-down allow-empty="true">
                                 <entity-options text="CustomerIdTemplate">
                                     <entity-find entity-name="afaudit.Customer">
                                         <econdition field-name="kaId" from="ec.user.userId"/></entity-find></entity-options>
                             </drop-down><label text="*" style="label-red"/></conditional-field>
                         <default-field>
-                            <drop-down>
+                            <drop-down allow-empty="true">
                                 <entity-options text="CustomerIdTemplate">
                                     <entity-find entity-name="afaudit.Customer"/></entity-options>
                             </drop-down><label text="*" style="label-red"/></default-field></field>

@@ -12,18 +12,18 @@
         </in-parameters>
 
         <actions>
-            <if condition="viewServeLineStore.serveType + viewServeLineStore.checklistVersion == 'HQ1'">
-                <service-call name="afaudit.MetroServices.get#HQ1" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+            <if condition="viewServeLineStore.serveType + viewServeLineStore.checklistVersion == 'Hygiene1'">
+                <service-call name="afaudit.MetroServices.get#Hygiene1" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
                 viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment, viewRoundInServeList:viewRoundInServeList]"/>
                 <return/>
             </if>
 
-            <service-call name="afaudit.MetroServices.get#HQ1" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+            <service-call name="afaudit.MetroServices.get#Hygiene1" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
                 viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment, viewRoundInServeList:viewRoundInServeList]"/>
         </actions>
     </service>
 
-    <service verb="get" noun="HQ1">
+    <service verb="get" noun="Hygiene1">
         <in-parameters>
             <parameter name="serveLineStoreId" required="true"/>
             <parameter name="viewAuditedCheckItem" type="Map" required="true"/>

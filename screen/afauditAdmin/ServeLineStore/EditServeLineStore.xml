@@ -175,6 +175,7 @@
                         <econdition field-name="storeId" from="viewServeLineStore.storeId"/>
                         <econdition field-name="storeId" or-null="true"/>
                     </econditions>
+                    <econdition field-name="fromDate" operator="less-equals" from="viewServeLineStore.fromDate"/>
                     <order-by field-name="fromDate"/>
                     <order-by field-name="auditDate"/>
                 </entity-find>
@@ -526,19 +527,19 @@
                         </field>
                     </form-list>
 
-                    <form-list name="ListCheckItemAttachment" list="checkItemAttachmentList">
-                        <field name="attachmentId"><default-field title="ID">
-                            <link text="${attachmentId}" url="downloadAttachment" icon="glyphicon glyphicon-save" parameter-map="[attachmentLocation:attachmentLocation]"/>
-                        </default-field></field>
-                        <field name="checkGroup"><default-field><display/></default-field></field>
-                        <field name="checkType"><default-field><display/></default-field></field>
-                        <field name="itemNo"><default-field><display/></default-field></field>
-                        <field name="attachmentType"><default-field title="Type"><display/></default-field></field>
-                        <field name="attachmentLocation"><default-field title="Location"><display/></default-field></field>
-                        <field name="delete" hide="serveLineStore.checklistStatus == 60"><default-field>
-                            <link url="deleteAttachment" text="Delete" confirmation="${ec.l10n.localize('Really Delete?')}" icon="glyphicon glyphicon-remove" parameter-map="[attachmentId:attachmentId]"/></default-field>
-                        </field>
-                    </form-list>
+                    <!--<form-list name="ListCheckItemAttachment" list="checkItemAttachmentList">-->
+                        <!--<field name="attachmentId"><default-field title="ID">-->
+                            <!--<link text="${attachmentId}" url="downloadAttachment" icon="glyphicon glyphicon-save" parameter-map="[attachmentLocation:attachmentLocation]"/>-->
+                        <!--</default-field></field>-->
+                        <!--<field name="checkGroup"><default-field><display/></default-field></field>-->
+                        <!--<field name="checkType"><default-field><display/></default-field></field>-->
+                        <!--<field name="itemNo"><default-field><display/></default-field></field>-->
+                        <!--<field name="attachmentType"><default-field title="Type"><display/></default-field></field>-->
+                        <!--<field name="attachmentLocation"><default-field title="Location"><display/></default-field></field>-->
+                        <!--<field name="delete" hide="serveLineStore.checklistStatus == 60"><default-field>-->
+                            <!--<link url="deleteAttachment" text="Delete" confirmation="${ec.l10n.localize('Really Delete?')}" icon="glyphicon glyphicon-remove" parameter-map="[attachmentId:attachmentId]"/></default-field>-->
+                        <!--</field>-->
+                    <!--</form-list>-->
                 </widgets>
             </section>
         </container>

@@ -56,7 +56,7 @@
                         <!--<conditional-field condition="customerId">-->
                             <!--<display-entity entity-name="afaudit.Reference" text="ReferenceIdTemplate" key-field-name="referenceId"/></conditional-field>-->
                         <default-field>
-                            <drop-down>
+                            <drop-down allow-empty="true">
                                 <list-options list="customerRefList" text="ReferenceIdTemplate"/>
                             </drop-down><label text="*" style="label-red"/></default-field></field>
                     <field name="shortName"><default-field><text-line size="50"/><label text="*" style="label-red"/></default-field></field>

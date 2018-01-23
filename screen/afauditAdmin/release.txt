@@ -1,6 +1,21 @@
 Release Notes
 
 -------------------------------------------------
+1.0.47-beta
+
+1. Set NA all check items in one department
+    FindCheckItem.xml
+2. Allow empty option in drop-down list
+    EditChecklist.xml, EditCustomer.xml, EditStore.xml, EditServe.xml, EditReference.xml
+3. Update condition from HQ1 to Hygiene1, to decide checklist by ServeType + checklist Version
+    MetroServices.xml
+4. Reference is for Customer and used, it cannot be deleted
+    FindReference.xml
+5. Only select the serve line before current serve line, and not display check item photo list
+    EditServeLineStore.xml
+6. Update BreakTalk template for serve line store Remark value format
+    BreakTalkServices.xml,
+-------------------------------------------------
 1.0.46-beta
 
 1. Modify tables
@@ -21,6 +36,9 @@ Release Notes
     ALTER TABLE SERVE_LINE_STORE ADD AUDIT_END DATETIME(3);
     ALTER TABLE SERVE_LINE_STORE ADD REVIEW_END DATETIME(3);
     ALTER TABLE SERVE_LINE_STORE ADD FINISH_END DATETIME(3);
+    ALTER TABLE SERVE_LINE_STORE_CHECK_ITEM MODIFY REMARK VARCHAR(4000);
+    ALTER TABLE SERVE_LINE_STORE_CHECK_ITEM MODIFY DEFECT_REMARK VARCHAR(4000);
+    ALTER TABLE SERVE_LINE_STORE_CHECK_ITEM MODIFY ACTION_REMARK VARCHAR(4000);
     ALTER TABLE ATTACHMENT MODIFY ATTACHMENT_URL VARCHAR(4000);
     ALTER TABLE ATTACHMENT MODIFY ATTACHMENT_LOCATION VARCHAR(4000);
 2. Update afauditViewEntities.xml, for new view ViewCustomer

@@ -42,7 +42,7 @@
                     HSSFWorkbook wb = new HSSFWorkbook(fs)
                     HSSFSheet sheet = wb.getSheetAt(0)
 
-                    ec.entity.find("afaudit.CheckItem").condition("checklistId", checklistId).deleteAll()
+                    //ec.entity.find("afaudit.CheckItem").condition("checklistId", checklistId).deleteAll()
 
                     EntityValue customer = ec.entity.find("afaudit.Customer").condition("customerId", customerId).one()
                     EntityValue reference = ec.entity.find("afaudit.Reference").condition("referenceId", customer.customerRefId).one()
@@ -72,6 +72,8 @@
                         EntityValue checkItem = ec.entity.find("afaudit.CheckItem").condition("checklistId", checklistId).condition("checkGroupRefId", checkGroupRefId).condition("itemNo", itemNo).one()
                         if(!checkItem){
                             ec.service.sync().name("create", "afaudit.CheckItem").parameters([checklistId:checklistId, checkGroupRefId:checkGroupRefId, checkTypeRefId:checkTypeRefId, itemNo:itemNo, checkLevelRefId:checkLevelRefId, checkPoint:checkPoint, remark:remark]).call()
+                        }else{
+                            ec.service.sync().name("update", "afaudit.CheckItem").parameters([checkItemId:checkItem.checkItemId, checkLevelRefId:checkLevelRefId, checkPoint:checkPoint, remark:remark]).call()
                         }
                     }
 

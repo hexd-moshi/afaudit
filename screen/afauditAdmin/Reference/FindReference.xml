@@ -11,6 +11,12 @@
     </transition>
     <transition name="deleteReference">
         <actions>
+            <if condition="enterprise=='COMMON' &amp;&amp; category=='Customer'">
+                <entity-find-count entity-name="afaudit.Reference" count-field="count">
+                    <econdition field-name="enterprise" from="attribute"/></entity-find-count>
+                <if condition="count > 0">
+                    <message error="true">It has been used!</message></if>
+            </if>
             <service-call name="delete#afaudit.Reference" in-map="[referenceId:referenceId]"/>
         </actions>
         <default-response url="."/>
@@ -123,7 +129,7 @@
                 <field name="referenceId"><header-field title="ID"/><default-field>
                     <link text="${referenceId}" url="editReference" link-type="anchor-button" icon="glyphicon glyphicon-chevron-right"/></default-field></field>
                 <field name="delete"><default-field title="">
-                    <link url="deleteReference" text="Delete" icon="glyphicon glyphicon-remove" confirmation="${ec.l10n.localize('Really Delete?')}" parameter-map="[referenceId:referenceId]"/>
+                    <link url="deleteReference" text="Delete" icon="glyphicon glyphicon-remove" confirmation="${ec.l10n.localize('Really Delete?')}" parameter-map="[referenceId:referenceId, enterprise:enterprise, category:category, attribute:attribute]"/>
                 </default-field></field>
             </form-list>
         </container>

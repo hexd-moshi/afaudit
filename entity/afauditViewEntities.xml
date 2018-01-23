@@ -95,6 +95,7 @@
         <alias-all entity-alias="ServeLineStore"/>
         <alias entity-alias="ServeLine" name="serveLineNo" field="serveLineNo"/>
         <alias entity-alias="ServeLine" name="checklistId" field="checklistId"/>
+        <alias entity-alias="ServeLine" name="fromDate" field="fromDate"/>
         <alias entity-alias="Store" name="storeId" field="storeId"/>
         <alias entity-alias="ReferenceRegion" name="region" field="attributeValue"/>
         <alias entity-alias="ReferenceLocation" name="location" field="attributeValue"/>

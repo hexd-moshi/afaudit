@@ -132,7 +132,7 @@
                         <conditional-field condition="checklistId">
                             <display-entity entity-name="afaudit.Customer" key-field-name="customerId" text="CustomerIdTemplate"/></conditional-field>
                         <default-field>
-                            <drop-down>
+                            <drop-down allow-empty="true">
                                 <entity-options text="CustomerIdTemplate">
                                     <entity-find entity-name="afaudit.Customer"/>
                                 </entity-options>

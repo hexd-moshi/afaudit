@@ -43,7 +43,7 @@
                 <form-single name="EditReference" transition="updateReference" map="reference">
                     <field name="referenceId"><default-field title="ID"><display/></default-field></field>
                     <field name="enterprise"><default-field>
-                        <drop-down>
+                        <drop-down allow-empty="true">
                             <option key="COMMON" text="COMMON"/>
                             <entity-options key="${attribute}" text="${attribute} | ${attributeValue}">
                                 <entity-find entity-name="afaudit.Reference">
@@ -51,7 +51,7 @@
                             </entity-options>
                         </drop-down><label text="*" style="label-red"/></default-field></field>
                     <field name="category"><default-field>
-                        <drop-down>
+                        <drop-down allow-empty="true">
                             <option key="Customer" text="Customer"/><option key="BU" text="BU"/><option key="Team" text="Team"/><option key="DisplayFields" text="DisplayFields"/>
                             <option key="Region" text="Region"/><option key="Location" text="Location"/><option key="ServeType" text="ServeType"/>
                             <option key="CheckGroup" text="CheckGroup"/><option key="CheckType" text="CheckType"/><option key="CheckLevel" text="CheckLevel"/>
