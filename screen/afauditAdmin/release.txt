@@ -14,7 +14,7 @@ Release Notes
 5. Only select the serve line before current serve line, and not display check item photo list
     EditServeLineStore.xml
 6. Update BreakTalk template for serve line store Remark value format
-    BreakTalkServices.xml,
+    BreakTalkServices.xml
 -------------------------------------------------
 1.0.46-beta
 
