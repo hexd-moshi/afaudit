@@ -30,12 +30,22 @@
         <entity-find entity-name="afaudit.Reference" list="referenceCheckGroupList">
             <econdition field-name="enterprise" from="reference.attribute"/>
             <econdition field-name="category" value="CheckGroup"/>
-            <econdition field-name="remark" value="USED"/>
+            <!--<econdition field-name="remark" value="USED"/>-->
+            <econditions combine="and">
+                <econdition field-name="remark" operator="like" value="%USED=Y%"/>
+                <econdition field-name="remark" operator="like" value="%TYPE=${viewServeLineStore.orderType==1 ? 'AUDITING':(viewServeLineStore.orderType==2 ? 'SAMPLING':'')}%"/>
+            </econditions>
+            <order-by field-name="sequenceNo"/>
         </entity-find>
         <entity-find entity-name="afaudit.Reference" list="referenceCheckTypeList">
             <econdition field-name="enterprise" from="reference.attribute"/>
             <econdition field-name="category" value="CheckType"/>
-            <econdition field-name="remark" value="USED"/>
+            <!--<econdition field-name="remark" value="USED"/>-->
+            <econditions combine="and">
+                <econdition field-name="remark" operator="like" value="%USED=Y%"/>
+                <econdition field-name="remark" operator="like" value="%TYPE=${viewServeLineStore.orderType==1 ? 'AUDITING':(viewServeLineStore.orderType==2 ? 'SAMPLING':'')}%"/>
+            </econditions>
+            <order-by field-name="sequenceNo"/>
         </entity-find>
 
         <set field="checkGroupRefId" from="checkGroupRefId?:referenceCheckGroupList.referenceId[0]"/>

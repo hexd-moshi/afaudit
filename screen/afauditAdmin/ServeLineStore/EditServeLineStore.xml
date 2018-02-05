@@ -370,7 +370,7 @@
     <widgets>
         <container style="project-afaudit">
             <container>
-                <link url="../FindServeLineStore" text="Back" icon="glyphicon glyphicon-step-backward"/>
+                <link url="../FindServeLineStore" text="Back" icon="glyphicon glyphicon-step-backward" parameter-map="[serveLineStoreId:serveLineStoreId]"/>
                 <section name="SectionServeLineStoreId" condition="(serveLineStore.checklistStatus == 30)||(serveLineStore.checklistStatus == 35)||(serveLineStore.checklistStatus == 40)||(serveLineStore.checklistStatus == 50)">
                     <widgets>
                         <container-dialog id="UploadAttachmentDialog" button-text="Upload">

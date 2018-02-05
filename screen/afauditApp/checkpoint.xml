@@ -101,10 +101,13 @@
         <entity-find-one entity-name="afaudit.Reference" value-field="referenceCustomer">
             <field-map field-name="referenceId" from="viewCheckItem.customerRefId"/>
         </entity-find-one>
+        <entity-find-one entity-name="afaudit.ViewChecklist" value-field="viewChecklist">
+            <field-map field-name="checklistId" from="viewCheckItem.checklistId"/>
+        </entity-find-one>
         <entity-find-one entity-name="afaudit.Reference" value-field="referenceDisplayFields">
             <field-map field-name="enterprise" from="referenceCustomer.attribute"/>
             <field-map field-name="category" value="DisplayFields"/>
-            <field-map field-name="attribute" value="Checkpoint"/>
+            <field-map field-name="attribute" from="viewChecklist.attribute"/>
         </entity-find-one>
     </actions>
 

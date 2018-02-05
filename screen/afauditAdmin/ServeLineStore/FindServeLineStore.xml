@@ -43,7 +43,7 @@
         <default-response type="none"/>
     </transition>
     <transition name="getStoreId">
-        <service-call name="afaudit.afauditServices.get#StoreIds" in-map="[customerId : customerId]"/>
+        <service-call name="afaudit.afauditServices.get#StoreIds" in-map="[customerId:customerId]"/>
 
         <default-response type="none"/>
     </transition>
@@ -72,7 +72,9 @@
                 <if condition="!serveLineStore">
                     <if condition="customer.customer == 'BreakTalk'">
                         <set field="remark" value="隶属总部（如有）=无\r\n贸易商名称（如有）=无\r\n两者关系（如有）=无\r\n工厂联系人职责和职位=\r\n可供产品种类=\r\n是否是新厂商=是\r\n已供应产品种类=\r\n审核时生产的产品=\r\n已供应品的年最大可供货量(吨)=目前还未合作\r\n年总产能(吨)=\r\n已供应品的年供货量(吨)=目前还未合作\r\n年已供品产能(吨)=目前还未合作\r\n已供应的产量占比%=目前还未合作\r\n已供应的产能占比%=目前还未合作\r\n生产区域面积=\r\n仓库面积=\r\n原料和成品冷冻库容积=\r\n原料和成品冷藏库容积=\r\n工厂总人数（男/女）=\r\n品保/品控人员数=\r\nQS/SC号码=\r\nQS/SC号码有效期=\r\nISO22000证书=\r\nISO22000证书有效期=\r\nHACCP证书=\r\nHACCP证书有效期=\r\n对应顶新事业群=\r\n产品类别="/>
-                    </if>
+                    <else-if condition="customer.customer == 'FDA'">
+                        <set field="remark" value="委托机构=\r\n食品生产许可证号=\r\n食品类别=\r\n报告编号="/>
+                    </else-if></if>
                     <service-call name="create#afaudit.ServeLineStore"
                                   in-map="[checklistStatus:10, serveLineId:serveLineId, storeId:store.storeId, auditType:1, auditDate:serveLine.fromDate, kaId:customer.kaId, remark:remark]"/>
                 </if>

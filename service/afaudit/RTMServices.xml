@@ -11,6 +11,120 @@
         </in-parameters>
 
         <actions>
+            <if condition="viewServeLineStore.serveType == 'FP'">
+                <service-call name="afaudit.RTMServices.get#FP" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment]"/>
+                <return/>
+            <else-if condition="viewServeLineStore.serveType == 'Sampling'">
+                <service-call name="afaudit.RTMServices.get#Sampling" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment]"/>
+                <return/>
+            </else-if></if>
+
+            <service-call name="afaudit.RTMServices.get#FP" in-map="[serveLineStoreId:serveLineStoreId, viewAuditedCheckItem:viewAuditedCheckItem,
+                viewServeLineStore:viewServeLineStore, viewAuditedCheckItemList:viewAuditedCheckItemList, attachment:attachment]"/>
+        </actions>
+    </service>
+
+    <service verb="get" noun="Sampling">
+        <in-parameters>
+            <parameter name="serveLineStoreId" required="true"/>
+            <parameter name="viewAuditedCheckItem" type="Map" required="true"/>
+            <parameter name="viewServeLineStore" type="Map" required="true"/>
+            <parameter name="viewAuditedCheckItemList" type="List" required="true"/>
+            <parameter name="attachment" type="Map" required="true"/>
+        </in-parameters>
+
+        <actions>
+            <script><![CDATA[
+                import org.moqui.resource.ResourceReference
+                import org.moqui.util.StringUtilities
+                import org.apache.poi.hssf.usermodel.HSSFRow
+                import org.apache.poi.hssf.usermodel.HSSFSheet
+                import org.apache.poi.hssf.usermodel.HSSFWorkbook
+                import org.apache.poi.poifs.filesystem.POIFSFileSystem
+
+                org.moqui.context.ExecutionContext ec = context.ec
+
+                ResourceReference newRr = ec.resource.getLocationReference(attachment.attachmentLocation)
+                InputStream resourceInputStream = newRr.openStream()
+
+                POIFSFileSystem fs = new POIFSFileSystem(resourceInputStream)
+                HSSFWorkbook wb = new HSSFWorkbook(fs)
+
+                HashMap map; HSSFSheet sheet; HSSFRow row;
+                int beginRow; int beginCol; int itemNoCol; int productCol; int productNoCol; int dateCol; int temperatureDeviceCol; int temperatureProductionCol; int providerCol;
+
+                sheet = wb.getSheet("RTM")
+                int month = viewServeLineStore.auditDate.getMonth() + 1
+                sheet.getRow(0).getCell(0).setCellValue("大润发采样清单"+ (month.toString().length()==2 ?:("0"+month.toString())) +"月份")
+                sheet.getRow(1).getCell(2).setCellValue(viewServeLineStore.storeName)
+                sheet.getRow(1).getCell(6).setCellValue(viewServeLineStore.auditDate)
+
+                beginRow = 8; itemNoCol = 1; productCol = 3; productNoCol = 4; dateCol = 5; temperatureDeviceCol = 6; temperatureProductionCol = 7; providerCol = 8;
+                Iterator it = viewAuditedCheckItemList.iterator()
+                while(it.hasNext()){
+                    map = it.next()
+
+                    row = sheet.getRow(beginRow)
+
+                    for(int rownum = beginRow; rownum <= sheet.getLastRowNum(); rownum++){
+                        row = sheet.getRow(rownum);
+
+                        if(row.getCell(itemNoCol).getStringCellValue().equals(map.get("itemNo"))){
+                            String[] strs = map.get("remark").split("\r\n");
+                            Map<String, String> mapRemark = new HashMap<String, String>();
+                            for(String s:strs){
+                                String[] ms = s.split("=");
+                                if(ms.size()==2){
+                                    if(ms[0].length()>0){mapRemark.put(ms[0], ms[1])}
+                                }
+                            }
+
+                            row.getCell(productCol).setCellValue(mapRemark.get("产品名称")?:(mapRemark.get("名称")?("名称  " + mapRemark.get("名称")):""))
+                            row.getCell(productNoCol).setCellValue(mapRemark.get("产品编码"))
+                            row.getCell(dateCol).setCellValue(mapRemark.get("时间")?:(mapRemark.get("采样时间")?("时间  " + mapRemark.get("采样时间")):""))
+                            row.getCell(temperatureDeviceCol).setCellValue(mapRemark.get("设备温度"))
+                            row.getCell(temperatureProductionCol).setCellValue(mapRemark.get("产品温度")?:(mapRemark.get("设备位置")?("设备位置  " + mapRemark.get("设备位置")):(mapRemark.get("员工姓名")?("员工姓名  " + mapRemark.get("员工姓名")):"")))
+                            row.getCell(providerCol).setCellValue(mapRemark.get("供应商"))
+
+                            break;
+                        }
+                    }
+                    sheet.setForceFormulaRecalculation(true);
+                }
+
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                wb.write(bos)
+                resourceInputStream.close()
+                ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+
+                String fileName = "Checklist_" + viewServeLineStore.shortName + "_" + viewServeLineStore.storeName + "_" + viewServeLineStore.auditDate + "(" + serveLineStoreId + ")" + ".xls"
+                String attachmentType = "ServeLineStore-Checklist"
+                String attachmentLocation = "dbresource://afauditApp/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+                String attachmentUrl = ec.web.getWebappRootUrl(true, null) + "/apps/afauditApp/rest/attachment/${attachmentType}/${serveLineStoreId}/${fileName}"
+
+                newRr = ec.resource.getLocationReference(attachmentLocation)
+                newRr.putStream(bis)
+                bos.close()
+                bis.close()
+
+                ec.service.sync().name("create", "afaudit.Attachment").parameters([attachmentType: attachmentType, dataId: serveLineStoreId, attachmentLocation: attachmentLocation, attachmentUrl: attachmentUrl]).call()
+
+            ]]></script>
+        </actions>
+    </service>
+
+    <service verb="get" noun="FP">
+        <in-parameters>
+            <parameter name="serveLineStoreId" required="true"/>
+            <parameter name="viewAuditedCheckItem" type="Map" required="true"/>
+            <parameter name="viewServeLineStore" type="Map" required="true"/>
+            <parameter name="viewAuditedCheckItemList" type="List" required="true"/>
+            <parameter name="attachment" type="Map" required="true"/>
+        </in-parameters>
+
+        <actions>
             <script><![CDATA[
                 import org.moqui.resource.ResourceReference
                 import org.moqui.util.StringUtilities

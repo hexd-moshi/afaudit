@@ -112,6 +112,7 @@
         <alias entity-alias="UserAccountKa" name="ka" field="username"/>
         <alias entity-alias="Serve" name="serveNo" field="serveNo"/>
         <alias entity-alias="Serve" name="serveId" field="serveId"/>
+        <alias entity-alias="Serve" name="orderType" field="orderType"/>
         <alias entity-alias="Customer" name="customerRefId" field="customerRefId"/>
         <alias entity-alias="Customer" name="customerId" field="customerId"/>
         <alias entity-alias="Customer" name="customerKaId" field="kaId"/>

@@ -1,10 +1,35 @@
 Release Notes
 
 -------------------------------------------------
+1.0.48-beta
+
+1. Filter Reference.checkGroup and Reference.checkType by Serve.orderType(Auditing, Sampling)
+    afauditViewEntities.xml
+    checkpoints.xml
+    UPDATE REFERENCE SET REMARK='USED=Y
+    TYPE=AUDITING' where REMARK='USED'
+2. Add new field sequenceNo in table REFERENCE, CHECKITEM
+    ALTER TABLE REFERENCE ADD SEQENCE_NO VARCHAR(64);
+    ALTER TABLE CHECK_ITEM ADD SEQENCE_NO VARCHAR(64);
+3. Set initial value to ServeLineStore.remark for BreakTalk, FDA when to do Batch
+    FindServeLineStore.xml
+4. Set parameter when to do Back
+    EditServeLineStore.xml
+5. Update FDA service
+    FDAServices.xml
+6. Select Reference.displayFields by customer and serveType, to add new DisplayFields in DB
+    checkpoint.xml
+    UPDATE REFERENCE SET ATTRIBUTE='FP' WHERE ENTERPRISE='RTM' AND CATEGORY='DisplayFields' AND ATTRIBUTE='CheckPoint'
+7. Show default remark from viewCheckItem.remark
+    checkpoint.html.ftl
+7. Add new serveType=Sampling for RTM
+    RTMServices.xml
+-------------------------------------------------
 1.0.47-beta
 
-1. Set NA all check items in one department
+1. Set NA all check items in one department for Metro
     FindCheckItem.xml
+    Add CheckType=ALL in Reference, ItemNo=0-0 in CheckItem
 2. Allow empty option in drop-down list
     EditChecklist.xml, EditCustomer.xml, EditStore.xml, EditServe.xml, EditReference.xml
 3. Update condition from HQ1 to Hygiene1, to decide checklist by ServeType + checklist Version

@@ -62,7 +62,7 @@
                     <div class="weui-cell">
                         <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('Defect')}:</label></div>
                         <div class="weui-cell__bd">
-                            <input class="weui-input" type="number" pattern="[0-9]*" placeholder="${ec.l10n.localize('Input quantity')}" value="<#if checkItem?has_content>${checkItem.defect!}</#if>" name="defect"/>
+                            <input class="weui-input" type="number" pattern="[0-9]*" placeholder="${ec.l10n.localize('Input quantity')}" value="<#if checkItem?has_content>${checkItem.defect!}<#else>1</#if>" name="defect"/>
                         </div>
                     </div>
                 </#if>
@@ -88,7 +88,7 @@
                     <div class="weui-cell">
                         <div class="weui-cell__hd"><label class="weui-label">${ec.l10n.localize('Remark')}:</label></div>
                         <div class="weui-cell__bd">
-                            <textarea class="weui-textarea" placeholder="${ec.l10n.localize('Input remark')}" rows="2" name="remark"><#if checkItem?has_content>${checkItem.remark!}</#if></textarea>
+                            <textarea class="weui-textarea" placeholder="${ec.l10n.localize('Input remark')}" rows="6" name="remark"><#if checkItem?has_content>${checkItem.remark!}<#else>${viewCheckItem.remark!}</#if></textarea>
                             <div class="weui-textarea-counter"></div>
                         </div>
                     </div>

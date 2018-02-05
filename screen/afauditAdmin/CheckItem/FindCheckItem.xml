@@ -59,7 +59,7 @@
                         checkLevel = (row.getCell(3).getCellType() == CellType.NUMERIC) ? (int)row.getCell(3).getNumericCellValue() : row.getCell(3).getRichStringCellValue().getString();
 
                         checkPoint = row.getCell(4).getStringCellValue();
-                        if(checkPoint.length()>255){checkPoint = checkPoint.substring(0,255)}
+                        if(checkPoint.length()>4000){checkPoint = checkPoint.substring(0,3999)}
                         remark = row.getCell(5).getStringCellValue();
 
                         reference = ec.entity.find("afaudit.Reference").condition("enterprise", enterprise).condition("category", "CheckGroup").condition("attributeValue", checkGroup).one()

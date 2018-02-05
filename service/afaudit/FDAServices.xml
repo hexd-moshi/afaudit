@@ -44,11 +44,13 @@
                 int beginRow; int beginCol; int itemNoCol; int defectCol; int remarkCol;
                 HashMap mapAttachment; Iterator itAttachment;
 
-                String[] strs = viewServeLineStore.storeRemark.split(";");
+                String[] strs = viewServeLineStore.remark.split("\r\n");
                 Map<String, String> mapRemark = new HashMap<String, String>();
                 for(String s:strs){
                     String[] ms = s.split("=");
-                    mapRemark.put(ms[0], ms[1]);
+                    if(ms.size()==2){
+                        if(ms[0].length()>0){mapRemark.put(ms[0], ms[1])}
+                    }
                 }
 
                 sheet = wb.getSheet("封面")
@@ -58,6 +60,7 @@
                 sheet.getRow(6).getCell(4).setCellValue(viewServeLineStore.auditDate)
                 sheet.getRow(7).getCell(4).setCellValue(mapRemark.get("食品生产许可证号"))
                 sheet.getRow(8).getCell(4).setCellValue(mapRemark.get("食品类别"))
+                sheet.getRow(9).getCell(4).setCellValue(mapRemark.get("报告编号"))
 
                 sheet = wb.getSheet("得分表")
                 sheet.getRow(2).getCell(1).setCellValue(viewServeLineStore.contact)
