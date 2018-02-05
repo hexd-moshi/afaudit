@@ -49,7 +49,7 @@
                     String enterprise = reference.attribute
 
                     HSSFRow row;
-	                String checkGroup; String checkType; String itemNo; String checkLevel; String checkPoint;
+	                String checkGroup; String checkType; String itemNo; String checkLevel; String checkPoint; String remark; String sequenceNo;
                     for(int rownum = sheet.getFirstRowNum()+1; rownum <= sheet.getLastRowNum(); rownum++){
                         row = sheet.getRow(rownum);
 
@@ -61,6 +61,7 @@
                         checkPoint = row.getCell(4).getStringCellValue();
                         if(checkPoint.length()>4000){checkPoint = checkPoint.substring(0,3999)}
                         remark = row.getCell(5).getStringCellValue();
+                        sequenceNo = row.getCell(6).getStringCellValue();
 
                         reference = ec.entity.find("afaudit.Reference").condition("enterprise", enterprise).condition("category", "CheckGroup").condition("attributeValue", checkGroup).one()
                         String checkGroupRefId = reference.referenceId
@@ -71,9 +72,9 @@
 
                         EntityValue checkItem = ec.entity.find("afaudit.CheckItem").condition("checklistId", checklistId).condition("checkGroupRefId", checkGroupRefId).condition("itemNo", itemNo).one()
                         if(!checkItem){
-                            ec.service.sync().name("create", "afaudit.CheckItem").parameters([checklistId:checklistId, checkGroupRefId:checkGroupRefId, checkTypeRefId:checkTypeRefId, itemNo:itemNo, checkLevelRefId:checkLevelRefId, checkPoint:checkPoint, remark:remark]).call()
+                            ec.service.sync().name("create", "afaudit.CheckItem").parameters([checklistId:checklistId, checkGroupRefId:checkGroupRefId, checkTypeRefId:checkTypeRefId, itemNo:itemNo, checkLevelRefId:checkLevelRefId, checkPoint:checkPoint, remark:remark, sequenceNo:sequenceNo]).call()
                         }else{
-                            ec.service.sync().name("update", "afaudit.CheckItem").parameters([checkItemId:checkItem.checkItemId, checkLevelRefId:checkLevelRefId, checkPoint:checkPoint, remark:remark]).call()
+                            ec.service.sync().name("update", "afaudit.CheckItem").parameters([checkItemId:checkItem.checkItemId, checkLevelRefId:checkLevelRefId, checkPoint:checkPoint, remark:remark, sequenceNo:sequenceNo]).call()
                         }
                     }
 

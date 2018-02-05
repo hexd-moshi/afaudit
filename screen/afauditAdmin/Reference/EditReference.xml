@@ -59,6 +59,7 @@
                     <field name="attribute"><default-field title="Attribute"><text-line size="100"/><label text="*" style="label-red"/></default-field></field>
                     <field name="attributeValue"><default-field><text-line size="100"/><label text="*" style="label-red"/></default-field></field>
                     <field name="remark"><default-field><text-area cols="100"/></default-field></field>
+                    <field name="sequenceNo"><default-field><text-line size="20"/></default-field></field>
 
                     <field name="updateButton"><default-field title="Update"><submit icon="glyphicon glyphicon-floppy-disk"/></default-field></field>
                 </form-single>

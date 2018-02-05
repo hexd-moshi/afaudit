@@ -3,14 +3,16 @@ Release Notes
 -------------------------------------------------
 1.0.48-beta
 
-1. Filter Reference.checkGroup and Reference.checkType by Serve.orderType(Auditing, Sampling)
+1. Filter Reference.checkGroup and Reference.checkType by Serve.orderType(Auditing, Sampling) in RTM
     afauditViewEntities.xml
     checkpoints.xml
     UPDATE REFERENCE SET REMARK='USED=Y
     TYPE=AUDITING' where REMARK='USED'
-2. Add new field sequenceNo in table REFERENCE, CHECKITEM
-    ALTER TABLE REFERENCE ADD SEQENCE_NO VARCHAR(64);
-    ALTER TABLE CHECK_ITEM ADD SEQENCE_NO VARCHAR(64);
+2. Add new field sequenceNo in table REFERENCE, CHECKITEM to import
+    FindReference.xml, EditdReference.xml
+    FindCheckItem.xml, EditCheckItem.xml
+    ALTER TABLE REFERENCE ADD SEQUENCE_NO VARCHAR(63);
+    ALTER TABLE CHECK_ITEM ADD SEQUENCE_NO VARCHAR(63);
 3. Set initial value to ServeLineStore.remark for BreakTalk, FDA when to do Batch
     FindServeLineStore.xml
 4. Set parameter when to do Back
@@ -22,7 +24,7 @@ Release Notes
     UPDATE REFERENCE SET ATTRIBUTE='FP' WHERE ENTERPRISE='RTM' AND CATEGORY='DisplayFields' AND ATTRIBUTE='CheckPoint'
 7. Show default remark from viewCheckItem.remark
     checkpoint.html.ftl
-7. Add new serveType=Sampling for RTM
+8. Add new serveType=Sampling for RTM
     RTMServices.xml
 -------------------------------------------------
 1.0.47-beta
